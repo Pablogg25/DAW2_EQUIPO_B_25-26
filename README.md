@@ -1,137 +1,179 @@
-# 🌄 Reto DAW2: Gestión de Rutas en Actividades al Aire Libre (plantilla)
+# 🧺 Sistema de Gestión Integral para Tintorería y Lavandería
 
-**Ciclo:** CFGS Desarrollo de Aplicaciones Web  
-**Centro:** IES Miguel Herrero (o el centro correspondiente)  
-**Equipo:** DAW2 - EQUIPO B  
-**Repositorio GitHub:** https://github.com/Pablogg25/DAW2_EQUIPO_B_25-26
+**CFGS Desarrollo de Aplicaciones Web — Proyecto Final**  
+**Centro:** IES Miguel Herrero
+**Equipo:** DAW2 — EQUIPO B  
+**Repositorio:** https://github.com/Pablogg25/DAW2_EQUIPO_B_25-26
 
 ---
 
-## 🧭 Asignaturas involucradas (curso 25-26)
+## 📘 Asignaturas involucradas (curso 25–26)
 
-- DWEC (Desarrollo Web en Entorno Cliente) — JavaScript, DOM, APIs Web
-- DWES (Desarrollo Web en Entorno Servidor) — PHP, arquitectura servidor, persistencia
-- Diseño de Interfaces Web — UX / UI, accesibilidad, prototipado, HTML/CSS
-- DevOps — integración continua, automatización, contenedores
-- Despliegue de aplicaciones web — hosting, servidores, Docker, CI/CD
+- **DWEC (Cliente):** JavaScript, validaciones, consumo de API, interfaz interactiva
+- **DWES (Servidor):** PHP 8.x, arquitectura MVC/REST, seguridad, autenticación
+- **Diseño de Interfaces Web:** diseño responsive, accesibilidad, prototipado y experiencia de usuario
+- **Despliegue de Aplicaciones Web:** hosting, CI/CD, contenedores, entornos
+- **DevOps:** Docker, automatización, integración continua
+- **Bases de datos:** modelado, consultas SQL, procedimientos y triggers
 
 ---
 
 ## 👥 Integrantes del equipo
 
-- [Nombre 1] — [Rol]
-- [Nombre 2] — [Rol]
-- [Nombre 3] — [Rol]
-- [Nombre 4] — [Rol]
-- [Nombre 5] — [Rol]
-
-(Escribe los nombres y roles y los incorporo en la tabla y en la sección de “Responsabilidades”.)
+- Gustavo Rodrigo Bautista Pocohuanca
+- Pablo Núñez Sanchez
+- Sergio López Iglesias
+- Pablo González García
 
 ---
 
-## 🧾 Objetivo del proyecto
+## 🎯 Objetivo del proyecto
 
-Desarrollar una aplicación web para la creación, gestión y visualización de rutas al aire libre, con funciones para:
+Desarrollar una **aplicación web completa** para gestionar de forma integral todos los procesos de una tintorería/lavandería:
 
-- Crear/editar/visualizar rutas (puntos, track GPX)
-- Exportar/importar rutas (GPX, CSV, otros)
-- Gestión de usuarios y roles (admin, diseñador de rutas, usuario)
-- Interfaz accesible y usable (trabajo de Diseño de Interfaces)
-- Despliegue reproducible y automatizado (DevOps / Despliegue)
+- Gestión de **clientes**, **usuarios** y **roles**
+- Registro y control de **prendas**
+- Gestión y seguimiento de **trabajos**
+- Control de **inventario** de materiales y productos
+- **Facturación automática** por trabajo
+- Sistema de **notificaciones** por correo
+- Panel de administración seguro, responsivo y accesible
+- Despliegue automatizado en entorno de producción
 
-(Ajustaré el objetivo cuando me des la especificación final del proyecto.)
-
----
-
-## 📦 Estructura de módulos y entregables (sugerido)
-
-1. Backend (DWES - PHP)
-
-   - API REST o controlador MVC en PHP
-   - Persistencia en MySQL / MariaDB
-   - Scripts SQL de creación y datos de ejemplo
-
-2. Frontend (DWEC, Diseño de Interfaces)
-
-   - Páginas HTML/CSS y SPA o componentes con JavaScript
-   - Accesibilidad y diseño responsivo
-   - Validación y consumo de la API
-
-3. Integración de formatos / transformación
-
-   - Importador/exportador GPX (y/o XSLT si aplica)
-   - Conversión a CSV/HTML para informes
-
-4. DevOps y despliegue
-
-   - Dockerfile(s) y docker-compose
-   - Pipelines CI/CD (GitHub Actions u otro)
-   - Guía de despliegue y entorno de producción
-
-5. Documentación
-   - Manual de instalación/despliegue
-   - Manual de usuario
-   - UML: casos de uso, clases, secuencias
-   - IPE (Itinerario personal para la empleabilidad) y memoria del proyecto
+Este proyecto integra todos los módulos del ciclo y aplica buenas prácticas de desarrollo.
 
 ---
 
-## 🛠 Tecnologías (propuesta inicial)
+## 🧩 Funcionalidades principales
 
-- Frontend: HTML5, CSS3, JavaScript (ES6+), posiblemente framework/librería si decidís usarlo
-- Backend: PHP 8.x, servidor Apache/Nginx
-- BBDD: MySQL / MariaDB
-- Contenedores/CI: Docker, GitHub Actions (o GitLab CI), docker-compose
-- Otros: XSLT (si hace falta transformar GPX), herramientas de diseño (Figma/Sketch)
+### Gestión de usuarios
 
-(Indica si queréis otras tecnologías y lo actualizo.)
+- Autenticación con hash
+- Roles: administrador, empleado, cliente
+- Registro, edición y recuperación
+
+### Gestión de clientes
+
+- Alta, baja y modificación
+- Búsquedas y filtros
+- Historial de prendas y facturas
+
+### Gestión de prendas
+
+- Registrar y actualizar prendas
+- Listado por cliente
+- Vinculación con trabajos realizados
+
+### Gestión de trabajos
+
+- Crear trabajo (lavado, planchado, arreglo…)
+- Cambio de estado
+- Asignación de empleado
+- Trabajos por fecha
+- Aviso de próxima entrega
+
+### Gestión de inventario
+
+- Registrar productos y materiales
+- Control de stock y alertas automáticas
+- Relación inventario–trabajos
+
+### Facturación
+
+- Generación automática de facturas
+- Cálculo de totales e impuestos
+- Descarga en PDF
+- Historial por cliente
+
+### Notificaciones
+
+- Envío de correos automáticos
+- Recordatorios de entrega
+- Plantillas configurables
 
 ---
 
-## 📁 Organización del repositorio (sugerencia)
+## 📦 Módulos y entregables
 
-- /backend — código PHP, endpoints, scripts SQL
-- /frontend — HTML, CSS, JS, assets
-- /docs — diagramas, manuales, IPE
-- /deploy — Dockerfiles, docker-compose, scripts de despliegue
-- README.md — documentación principal
+### 1. Backend — PHP (DWES)
+
+- API REST o MVC
+- Controladores por módulo
+- Validaciones y middleware de seguridad
+- Scripts SQL de creación y datos iniciales
+
+### 2. Frontend — HTML/CSS/JS (DWEC + Interfaces)
+
+- Interfaz responsive basada en prototipos UX
+- Formularios accesibles y validaciones
+- Peticiones AJAX/Fetch a la API
+
+### 3. Integraciones
+
+- Generación de PDF
+- Notificaciones automáticas
+- Exportaciones/importaciones si aplica
+
+### 4. DevOps / Despliegue
+
+- Dockerfile y docker-compose
+- CI/CD con GitHub Actions
+- Entorno de producción reproducible
+
+### 5. Documentación
+
+- Manual de usuario
+- Manual técnico
+- Diagramas UML: casos de uso, clases, secuencia, despliegue
+- Memoria final e IPE
 
 ---
 
-## ✅ Guía rápida para contribuir
+## 🛠 Tecnologías utilizadas
 
-1. Clona el repositorio.
-2. Crea una rama por tarea: feature/nombre-tarea.
-3. Abre PR con descripción y checklist de pruebas.
-4. Usa issues para bugs/ideas y asigna responsables.
-
-(Puedo añadir plantillas de ISSUE/PR si queréis.)
+- **Frontend:** HTML5, CSS3, JavaScript (ES6), Bootstrap o Tailwind
+- **Backend:** PHP 8.x (MVC / REST)
+- **Base de datos:** MySQL / MariaDB
+- **Servidor:** Apache / Nginx
+- **Contenedores:** Docker & docker-compose
+- **CI/CD:** GitHub Actions
+- **Otros:** FPDF / DomPDF, PHPMailer, Figma
 
 ---
 
-## 🗓 Cronograma y entregas (plantilla)
+## 🤝 Flujo de trabajo (contribución)
 
-- Fase 1 — Análisis y diseño: [fechas]
-- Fase 2 — Desarrollo backend: [fechas]
-- Fase 3 — Desarrollo frontend y diseño UI: [fechas]
-- Fase 4 — Integración, pruebas y despliegue: [fechas]
-- Entrega final: [fecha]
+1. Crear una rama por funcionalidad:
+   - `feature/gestion-clientes`
+   - `feature/api-facturacion`
+2. Subir commits claros y descriptivos.
+3. Abrir Pull Request contra la rama `develop`.
+4. Revisiones por parte del equipo.
+5. Integración con CI/CD automática.
 
-(Añade las fechas reales y las pego aquí.)
+---
+
+## 🗓 Cronograma del proyecto (plantilla)
+
+- **Fase 1 — Análisis y diseño:** [fechas]
+- **Fase 2 — Backend / API:** [fechas]
+- **Fase 3 — Frontend / UI:** [fechas]
+- **Fase 4 — Integración y despliegue:** [fechas]
+- **Entrega final:** [fecha]
 
 ---
 
 ## 📌 Licencia
 
-- [Indicar licencia, por ejemplo MIT] — (poner la licencia escogida)
+Licencia recomendada: **MIT**, **GPL-3.0**, u otra que el equipo decida.
 
 ---
 
-## Contacto y coordinación
+## 📬 Contacto
 
-- Profesor / tutor: [Nombre, email]
-- Portavoz del equipo: [Nombre, GitHub/Email]
+- **Profesor/Tutor:** [Nombre, Email]
+- **Portavoz del equipo:** [Nombre, GitHub/Email]
 
 ---
 
-© 2025 — Proyecto DAW2 — Equipo B
+© 2025 — Proyecto Final DAW2 — Equipo B
