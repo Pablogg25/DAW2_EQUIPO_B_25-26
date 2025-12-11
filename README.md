@@ -100,4 +100,37 @@ Diseñar y desarrollar una **aplicación web profesional** para la gestión inte
 
 ---
 
-## 📦 Estructura del repositorio (sugerida)
+## 🤝 Flujo de trabajo (contribución)
+
+1. Crear rama por funcionalidad (`feature/nombre-funcionalidad`).
+2. Hacer commits descriptivos y frecuentes.
+3. Abrir Pull Request hacia `main`.
+4. Validación automática mediante CI/CD.
+5. Revisión y merge.
+
+---
+
+## 🗓 Cronograma del proyecto (plantilla)
+
+- **Fase 1 — Análisis y diseño:** [fechas]
+- **Fase 2 — Backend / API:** [fechas]
+- **Fase 3 — Frontend / UI:** [fechas]
+- **Fase 4 — Integración, pruebas y despliegue:** [fechas]
+- **Entrega final:** [fecha]
+
+---
+
+## 📌 Licencia
+
+Licencia a definir por el equipo (MIT recomendada).
+
+---
+
+## 📬 Contacto
+
+- **Profesor/Tutor:** [Nombre, email]
+- **Portavoz:** [Nombre, email/GitHub]
+
+---
+
+© 2025 — Proyecto DAW2 — Equipo B — La Cremallera
