@@ -3,7 +3,7 @@
 **CFGS Desarrollo de Aplicaciones Web — Proyecto Final**  
 **Centro:** IES Miguel Herrero (o el centro correspondiente)  
 **Equipo:** DAW2 — EQUIPO B  
-**Repositorio:** https://github.com/XXXX/XXXXXX
+**Repositorio:** https://github.com/Pablogg25/DAW2_EQUIPO_B_25-26
 
 ---
 
@@ -87,8 +87,8 @@ Diseñar y desarrollar una **aplicación web profesional** para la gestión inte
 
 ## 🛠 Tecnologías utilizadas
 
-- **Frontend:** HTML5, CSS3, JavaScript (ES6+)
-- **Backend:** PHP 8.x (MVC o REST)
+- **Frontend:** HTML5, CSS3, JavaScript (ES6+), React
+- **Backend:** PHP 8 / Laravel
 - **BBDD:** MySQL / MariaDB
 - **Servidor:** Apache / Nginx
 - **Contenedores:** Docker, docker-compose
@@ -122,14 +122,14 @@ Diseñar y desarrollar una **aplicación web profesional** para la gestión inte
 
 ## 📌 Licencia
 
-Licencia a definir por el equipo (MIT recomendada).
+Licencia a definir por el equipo (MIT probablemente).
 
 ---
 
 ## 📬 Contacto
 
-- **Profesor/Tutor:** [Nombre, email]
-- **Portavoz:** [Nombre, email/GitHub]
+- **Profesor/Tutor:** [Alejandro Federico López Camus, aflopezc01@educantabria.es]
+- **Portavoz:** [Pablo González García, Pgonzalezg12@educantabria.es/[GitHub](https://github.com/Pablogg25)]
 
 ---
 
