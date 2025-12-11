@@ -3,7 +3,7 @@
 **CFGS Desarrollo de Aplicaciones Web — Proyecto Final**  
 **Centro:** IES Miguel Herrero (o el centro correspondiente)  
 **Equipo:** DAW2 — EQUIPO B  
-**Repositorio:** https://github.com/Pablogg25/DAW2_EQUIPO_B_25-26
+**Repositorio:** [https://github.com/Pablogg25/DAW2_EQUIPO_B_25-26](https://github.com/Pablogg25/DAW2_EQUIPO_B_25-26)
 
 ---
 
