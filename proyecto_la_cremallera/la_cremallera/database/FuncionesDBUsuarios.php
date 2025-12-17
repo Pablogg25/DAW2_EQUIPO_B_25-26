@@ -1,10 +1,10 @@
 <?php
 
-use la_cremallera\database\ConexionBD;
-use la_cremallera\err\FuncionesDBException;
 
 require_once __DIR__ . '/ConexionDB.php';
 
+use la_cremallera\database\ConexionBD;
+use la_cremallera\err\FuncionesDBException;
 use PDO;
 use PDOException;
 
@@ -21,10 +21,35 @@ final class FuncionesDBUsuarios
             throw new FuncionesDBException("ERROR FUNCIONES BD: no se ha podido establecer conexion BBDD");
         }
 
-        $comandoSql = "SELECT * FROM usuarios";
+        $comandoSql = "SELECT usuarioId,nombre,telefono,email,direccion,username,rol,fecha_regitro FROM usuarios";
 
         $stmt = $conexion->prepare($comandoSql);
         $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    final public static function getUsuario($args){
+        //obtener todos los usuarios de la base de datos
+
+        $nombreUsuario=$args['username']??'';
+        if ($nombreUsuario=='') {
+            throw new FuncionesDBException("ERROR FUNCIONES BD: se requiere rellenar el campo username");
+        }
+
+
+        $conexion = ConexionBD::getConnection();
+
+        if (!isset($conexion)) {
+            throw new FuncionesDBException("ERROR FUNCIONES BD: no se ha podido establecer conexion BBDD");
+        }
+
+        $comandoSql = "SELECT usuarioId,nombre,telefono,email,direccion,username,rol,fecha_regitro FROM usuarios WHERE username= :username";
+
+        $stmt = $conexion->prepare($comandoSql);
+        $stmt->execute([
+            ":username"=>$nombreUsuario
+        ]);
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
