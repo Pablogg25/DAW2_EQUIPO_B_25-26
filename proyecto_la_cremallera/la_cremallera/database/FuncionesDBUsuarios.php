@@ -1,12 +1,12 @@
 <?php
 
+namespace la_cremallera\database;
 
 require_once __DIR__ . '/ConexionDB.php';
 
 use la_cremallera\database\ConexionBD;
 use la_cremallera\err\FuncionesDBException;
 use PDO;
-use PDOException;
 
 final class FuncionesDBUsuarios
 {
@@ -29,11 +29,12 @@ final class FuncionesDBUsuarios
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    final public static function getUsuario($args){
+    final public static function getUsuario($args)
+    {
         //obtener todos los usuarios de la base de datos
 
-        $nombreUsuario=$args['username']??'';
-        if ($nombreUsuario=='') {
+        $nombreUsuario = $args['username'] ?? '';
+        if ($nombreUsuario == '') {
             throw new FuncionesDBException("ERROR FUNCIONES BD: se requiere rellenar el campo username");
         }
 
@@ -48,7 +49,7 @@ final class FuncionesDBUsuarios
 
         $stmt = $conexion->prepare($comandoSql);
         $stmt->execute([
-            ":username"=>$nombreUsuario
+            ":username" => $nombreUsuario
         ]);
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -262,12 +263,13 @@ final class FuncionesDBUsuarios
      * - FuncionesDBException
      * - PDOException
      */
-    final public static function deleteUsuario($args) {
-        $q_deleteUsuario="DELETE FROM usuarios WHERE usuarioId = :id";
+    final public static function deleteUsuario($args)
+    {
+        $q_deleteUsuario = "DELETE FROM usuarios WHERE usuarioId = :id";
 
-        $usuarioId=$args['usuarioId']??-1;
+        $usuarioId = $args['usuarioId'] ?? -1;
 
-        if($usuarioId<0){
+        if ($usuarioId < 0) {
             throw new FuncionesDBException("ERROR FUNCIONES DB: usuario id no identificado");
         }
 
@@ -284,6 +286,5 @@ final class FuncionesDBUsuarios
         ]);
 
         return $exito;
-
     }
 }
