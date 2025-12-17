@@ -1,23 +1,29 @@
 <?php
 
-namespace la_cremallera\database;
+use la_cremallera\database\ConexionBD;
+
+require_once __DIR__ . '/ConexionDB.php';
 
 use PDO;
 
 final class FuncionesDB{
 
-    final public static function getUsuarios(PDO $conexion){
+    final public static function getUsuarios(){
         //obtener todos los usuarios de la base de datos
+        $conexion = ConexionBD::getConnection();
 
-        if(isset($conexion)){
+        if(!isset($conexion)){
             echo "<p>ERROR CONEXION BD: conexión no establecida</p>";
             return;
         }
-        $q_selectUsuarios="SELECT nombre,email FROM usuarios";
 
-        $resultadoQuery=$conexion->query($q_selectUsuarios);
+        $comandoSql = "SELECT * FROM usuarios";
 
-        return $resultadoQuery;
+        $stmt = $conexion -> prepare($comandoSql);
+        $stmt -> execute();
+
+        return $stmt -> fetchAll(PDO::FETCH_ASSOC);
+
     }
 
 }
