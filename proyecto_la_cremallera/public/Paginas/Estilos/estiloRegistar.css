@@ -1,0 +1,121 @@
+/* Configuracion general */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: #f1f1f1;
+}
+
+/* Contenedor principal centrado */
+.registro {
+    display: flex;
+    padding: 30px 40px;
+    max-width: 1100px;
+    width: 100%;
+}
+
+/* Contenedor de logos */
+.logos {
+    width: 700px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 auto;
+    margin-right: 50px;
+}
+
+/* Logos individuales */
+.logos img {
+    width: 350px;
+    height: auto;
+    object-fit: contain;
+}
+
+/* Texto de La Cremallera */
+.logo-cremallera{
+    text-align: center;
+}
+
+.logo-cremallera p{
+    font-family: "Brush Script MT";
+    font-size: 65px;
+    color: black;
+    margin-top: 5px;
+}
+
+/* Contenedor del formulario */
+.formulario-registro {
+    width: 900px;
+    background: rgba(180, 180, 180, 0.5);
+    padding: 30px 40px;
+    border-radius: 12px;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+    margin: 0 auto;
+}
+
+/* Formulario */
+.formulario-registro form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    margin-top: 55px;
+}
+
+/* Cada fila del formulario */
+.orden {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;   
+}
+
+/* Labels alineados a la izquierda */
+.orden label {
+    width: 200px;
+    font-size: 15px;
+    font-weight: bold;
+    text-align: left;
+}
+
+/* Inputs alineados a la derecha */
+.orden input {
+    flex: 1;
+    padding: 8px 10px;
+    border: 1px solid #000000;
+    border-radius: 2px;
+}
+
+/* Contenedor de botones */
+.botones {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+/* Botones */
+.botones button {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    background: #0059b3;
+    color: white;
+    font-weight: bold;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.botones button:hover {
+    background: #003d80;
+}
+
+
