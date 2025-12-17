@@ -11,3 +11,5 @@ if ($conn->connect_error) {
 }
 echo "Conectado a MySQL en EC2 desde proyecto local - mi pc fisica!";
 ?>
+
+<!-- Pablo Nunez -->
