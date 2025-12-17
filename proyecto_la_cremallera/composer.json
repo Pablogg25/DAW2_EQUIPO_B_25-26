@@ -1,0 +1,18 @@
+{
+    "name": "grupo3/la_cremallera",
+    "description": "Proyecto de intermodular para curso DAW2",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "la_Cremallera\\": "la_cremallera/"
+        }
+    },
+    "authors": [
+        {
+            "name": "grupo3"
+        }
+    ],
+    "require": {
+        "vlucas/phpdotenv": "^5.6"
+    }
+}
