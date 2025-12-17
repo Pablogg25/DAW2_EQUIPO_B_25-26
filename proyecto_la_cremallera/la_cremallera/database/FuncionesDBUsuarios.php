@@ -10,6 +10,7 @@ use PDOException;
 final class FuncionesDBUsuarios
 {
 
+    // --- READ ---
     final public static function getUsuarios()
     {
         //obtener todos los usuarios de la base de datos
@@ -30,10 +31,48 @@ final class FuncionesDBUsuarios
 
     /**
      * validatePassword($args)
-     * valida el password de un usuario id para comprobar si el id pasado es igual que el de los argumentos de forma segura
+     * valida el password de un username para comprobar si el password pasado es igual que el de los argumentos de forma segura
+     * requiere username y password a comporbar
      */
-    final public static function validatePassword($args){
+    final public static function checkPassword($args){
+        $q_checkPassword="SELECT count(*) as found FROM usuarios WHERE username == :nombre AND password_hash == SHA2(:password_h,224)";
 
+        $contrasena=$args['password']??'';
+        $username=$args['username']??'';
+
+        if($contrasena==''){
+            echo "<p class='error'>ERROR FUNCIONES DB: Se requiere rellenar el campo contraseña</p>";
+            return false;
+        }
+
+        if($username==''){
+            echo "<p class='error'>ERROR FUNCIONES DB: Se requiere rellenar el campo username</p>";
+            return false;
+        }
+
+        try{
+
+            $conexion=ConexionBD::getConnection();
+
+            if (!isset($conexion)) {
+                echo "<p class='error'>ERROR CONEXION BD: no se ha podido establecer conexion</p>";
+                return false;
+            }
+
+            $stmt = $conexion->prepare($q_checkPassword);
+            $stmt->execute();
+
+            $result= $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if($result['found']!=0){
+                return true;
+            }else{
+                return false;
+            }
+        }catch(PDOException $e){
+            echo "<p class='error'> error al comprobar: " . $e->getMessage() . " </p>";
+            return false;
+        }
     }
 
     // --- CREATE ---
@@ -47,14 +86,13 @@ final class FuncionesDBUsuarios
 
         $q_insertUsuario = "INSERT INTO usuarios" .
             "(nombre,telefono,email,direccion,username,password_hash,rol) VALUES" .
-            "(:nombre,:telefono,:email,:direccion,:username,SHA2(':password',224),'cliente')";
+            "(:nombre,:telefono,:email,:direccion,:username,SHA2(:password_h,224),'cliente')";
 
         //obligatorios: nombre, usuario, password, email
         $nombre = $args['nombre'] ?? '';
         $username = $args['username'] ?? '';
         $password = $args['password'] ?? '';
         $email = $args['email'] ?? '';
-
 
         //no required
         $telefono = $args['telefono'] ?? '';
@@ -81,7 +119,7 @@ final class FuncionesDBUsuarios
                 ':email' => $email,
                 ':direccion' => $direccion,
                 ':username' => $username,
-                ':password' => $password
+                ':password_h' => $password
             ]);
 
             return $success;
@@ -163,8 +201,44 @@ final class FuncionesDBUsuarios
     /**
      * updatePasswordUsuario($args)
      * permite actualizar el password de un usuario manteniendo la seguridad
+     * Solo usable por el propio usuario o un admin con privilegios de gestión
      */
-    final public static function updatePasswordUsuario($args){
+    final public static function updatePasswordUsuario($args):bool{
+        $q_updatePassword="UPDATE usuarios SET password_hash = SHA2(:password_h,224) WHERE usuarioId = :id";
 
+        $contrasena=$args['password']??'';
+        $usuarioId=$args['usuarioId']??-1;
+
+        if($contrasena==''){
+            echo "<p class='error'> error al actualizar: campo contraseña vacío </p>";
+            return false;
+        }
+
+        if($usuarioId<0){
+            echo "<p class='error'> error al actualizar: usuario id no identificado </p>";
+            return false;
+        }
+
+        try{
+
+            $conexion=ConexionBD::getConnection();
+
+            if(!isset($conexion)){
+                echo "<p class='error'> error al actualizar usuario: no se ha establecido conexión </p>";
+                return false;
+            }
+
+            $stmn=$conexion->prepare($q_updatePassword);
+
+            $exito=$stmn->execute([
+                ':password_h'=>$contrasena,
+                ':id'=>$usuarioId
+            ]);
+
+            return $exito;
+        }catch(PDOException $e){
+            echo "<p class='error'> error al actualizar: " . $e->getMessage() . " </p>";
+            return false;
+        }
     }
 }
