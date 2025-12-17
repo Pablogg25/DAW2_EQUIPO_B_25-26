@@ -28,6 +28,15 @@ final class FuncionesDBUsuarios
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    /**
+     * validatePassword($args)
+     * valida el password de un usuario id para comprobar si el id pasado es igual que el de los argumentos de forma segura
+     */
+    final public static function validatePassword($args){
+
+    }
+
+    // --- CREATE ---
     /** 
      * registrarUsuario($args)
      * Requiere nombre, email, username, y password
@@ -45,6 +54,7 @@ final class FuncionesDBUsuarios
         $username = $args['username'] ?? '';
         $password = $args['password'] ?? '';
         $email = $args['email'] ?? '';
+
 
         //no required
         $telefono = $args['telefono'] ?? '';
@@ -71,13 +81,90 @@ final class FuncionesDBUsuarios
                 ':email' => $email,
                 ':direccion' => $direccion,
                 ':username' => $username,
-                ':passord' => $password
+                ':password' => $password
             ]);
 
             return $success;
         } catch (PDOException $e) {
-            echo "<p class='error'> error al inertar: " . $e->getMessage() . " </p>";
+            echo "<p class='error'> error al insertar: " . $e->getMessage() . " </p>";
             return false;
         }
+    }
+
+    // --- UPDATE ---
+
+    /**
+     * updateDatosUsuario($args)
+     * requiere usuarioId objetivo
+     * actualiza los datos personales del usuario
+     * telefono, email, dirección, nombre usuario y nombre
+     * nombre y email son no null
+     * email es unique
+     * nombre usuario es unique
+     */
+    final public static function updateDatosUsuario($args):bool{
+        $q_updateUsuario="UPDATE usuarios SET nombre = :nombre".
+        ",telefono = :telefono".
+        ",email = :email".
+        ",direccion = :direccion".
+        ",username = :username".
+        ",rol = :rol".
+        "WHERE usuarioId = :id";
+
+        //obligatorios: nombre, usuario, password, email
+        $nombre = $args['nombre'] ?? '';
+        $username = $args['username'] ?? '';
+        $email = $args['email'] ?? '';
+        $rol=$args['rol']??'';
+
+        $idUsuario=$args['idUsuario']??-1;
+
+        if($idUsuario<0){
+            echo "<p class='error'>ERROR FUNCIONES DB: no se ha podido identificar id usuario</p>";
+            return false;
+        }
+
+        if($nombre==''||$username==''||$email==''||$rol==''){
+            echo "<p class='error'> error de validación: no se han rellenado los campos requeridos </p>";
+            return false;
+        }
+
+        //no required
+        $telefono = $args['telefono'] ?? '';
+        $direccion = $args['direccion'] ?? '';
+        
+        try{
+            $conexion=ConexionBD::getConnection();
+
+            if(!isset($conexion)){
+                echo "<p class='error'> error al actualizar usuario: no se ha establecido conexión </p>";
+                return false;
+            }
+
+            $stmn=$conexion->prepare($q_updateUsuario);
+
+            $exito=$stmn->execute([
+                ':nombre' => $nombre,
+                ':telefono' => $telefono,
+                ':email' => $email,
+                ':direccion' => $direccion,
+                ':username' => $username,
+                ':rol' => $rol,
+                ':id'=>$idUsuario
+            ]);
+
+            return true;
+        }catch(PDOException $e){
+            echo "<p class='error'> error al actualizar: " . $e->getMessage() . " </p>";
+            return false;
+        }
+    }
+
+    /**
+     * updatePasswordUsuario($args)
+     * permite actualizar el password de un usuario manteniendo la seguridad
+     */
+    final public static function updatePasswordUsuario($args){
+
     }
 }
