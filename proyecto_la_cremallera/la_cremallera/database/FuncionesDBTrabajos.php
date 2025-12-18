@@ -9,10 +9,16 @@ use la_cremallera\database\ConexionBD;
 use la_cremallera\err\FuncionesDBException;
 use PDO;
 
+use function PHPSTORM_META\type;
+
 final class FuncionesDBTrabajos
 {
 
     // ---READ---
+    /**
+     * getTrabajos()
+     * Obtiene todos los datos de la tabla trabajos
+     */
     final public static function getTrabajos()
     {
         $q_selectTrabajos = "SELECT * FROM trabajos";
@@ -47,8 +53,8 @@ final class FuncionesDBTrabajos
         //requerido empleadoId
         $empleadoId = $args['empleadoId'] ?? -1;
 
-        if ($empleadoId < 0) {
-            throw new FuncionesDBException("ERROR FUNCIONES BD (TRABAJOS): empleadoId no reconocido");
+        if ($empleadoId < 0 || gettype($empleadoId)!='integer') {
+            throw new FuncionesDBException("ERROR FUNCIONES BD (TRABAJOS): valor de empleadoId no reconocido");
         }
 
         $conexion = ConexionBD::getConnection();
@@ -81,8 +87,8 @@ final class FuncionesDBTrabajos
         //requerido usuarioId
         $usuarioId = $args['usuarioId'] ?? -1;
 
-        if ($usuarioId < 0) {
-            throw new FuncionesDBException("ERROR FUNCIONES BD (TRABAJOS): usuarioId no reconocido");
+        if ($usuarioId < 0 || gettype($usuarioId)!='integer') {
+            throw new FuncionesDBException("ERROR FUNCIONES BD (TRABAJOS): valor de usuarioId no reconocido");
         }
 
         $conexion = ConexionBD::getConnection();
@@ -104,6 +110,15 @@ final class FuncionesDBTrabajos
      * 
      * Requiere prendaId, fecha_inicio, fecha_entrega.
      * Gestionar excepciones en negocio del endpoint.
+     * 
+     * args:
+     * - prendaId (requerido)
+     * - empleadoId
+     * - descripcion
+     * - fecha_inicio (requerido)
+     * - fecha_entrega (requerido)
+     * - estado (enum: 'pendiente','en_proceso','listo','entregado')
+     * - precio
      * 
      * Excepciones:
      * - FuncionesDBException
@@ -127,11 +142,11 @@ final class FuncionesDBTrabajos
         $estado = $args['estado'] ?? 'pendiente';
         $precio = $args['precio'] ?? 0;
 
-        if ($prendaId < 0) {
-            throw new FuncionesDBException("ERROR FUNCIONES BD (TRABAJOS): prendaId no reconocido");
+        if ($prendaId < 0 || gettype($prendaId)!='integer') {
+            throw new FuncionesDBException("ERROR FUNCIONES BD (TRABAJOS): valor de prendaId no reconocido");
         }
 
-        if ($fecha_i == '' | $fecha_e == '') {
+        if ($fecha_i == '' || $fecha_e == '') {
             throw new FuncionesDBException("ERROR FUNCIONES BD (TRABAJOS): fecha de inicio y fecha de entrega son campos requeridos");
         }
 
@@ -139,8 +154,10 @@ final class FuncionesDBTrabajos
             throw new FuncionesDBException("ERROR FUNCIONES BD (TRABAJOS): valor incorrecto en campo enumerado estado");
         }
 
-        if($empleadoId!='' && $empleadoId<0){
-            throw new FuncionesDBException("ERROR FUNCIONES BD (TRABAJOS): empleadoId no reconocido");
+        if($empleadoId!=''){
+            if(gettype($empleadoId)!='integer' && $empleadoId<0){
+                throw new FuncionesDBException("ERROR FUNCIONES BD (TRABAJOS): empleadoId no reconocido");
+            }
         }
 
         $conexion = ConexionBD::getConnection();
@@ -172,6 +189,16 @@ final class FuncionesDBTrabajos
      * Requiere trabajoId, prendaId, fecha_inicio, fecha_entrega.
      * Gestionar excepciones en negocio del endpoint.
      * 
+     * args:
+     * - trabajoId (requerido)
+     * - prendaId (requerido)
+     * - empleadoId
+     * - descripcion
+     * - fecha_inicio (requerido)
+     * - fecha_entrega (requerido)
+     * - estado (enum: 'pendiente','en_proceso','listo','entregado')
+     * - precio
+     * 
      * Excepciones:
      * - FuncionesDBException
      * - PDOException
@@ -189,8 +216,8 @@ final class FuncionesDBTrabajos
 
         $trabajoId=$args['trabajoId']??-1;
 
-        if($trabajoId<0){
-            throw new FuncionesDBException("ERROR FUNCIONES BD (TRABAJOS): trabajoId es un campo requerido");
+        if($trabajoId<0 || gettype($trabajoId)!='integer'){
+            throw new FuncionesDBException("ERROR FUNCIONES BD (TRABAJOS): valor de trabajoId no reconocido");
         }
 
         $prendaId = $args['prendaId'] ?? -1;
@@ -202,8 +229,8 @@ final class FuncionesDBTrabajos
         $estado = $args['estado'] ?? 'pendiente';
         $precio = $args['precio'] ?? 0;
 
-        if ($prendaId < 0) {
-            throw new FuncionesDBException("ERROR FUNCIONES BD (TRABAJOS): prendaId no reconocido");
+        if ($prendaId < 0 || gettype($prendaId)!='integer') {
+            throw new FuncionesDBException("ERROR FUNCIONES BD (TRABAJOS): valor de prendaId no reconocido");
         }
 
         if ($fecha_i == '' | $fecha_e == '') {
@@ -214,8 +241,10 @@ final class FuncionesDBTrabajos
             throw new FuncionesDBException("ERROR FUNCIONES BD (TRABAJOS): valor incorrecto en campo enumerado estado");
         }
 
-        if($empleadoId!='' && $empleadoId<0){
-            throw new FuncionesDBException("ERROR FUNCIONES BD (TRABAJOS): empleadoId no reconocido");
+        if($empleadoId!=''){
+            if(gettype($empleadoId)!='integer' && $empleadoId<0){
+                throw new FuncionesDBException("ERROR FUNCIONES BD (TRABAJOS): empleadoId no reconocido");
+            }
         }
 
         $conexion = ConexionBD::getConnection();
@@ -240,12 +269,18 @@ final class FuncionesDBTrabajos
     }
 
     // ---DELETE---
+
+    /**
+     * deleteTrabajo($args)
+     * Elimina un trabajo por trabajoId
+     * 
+     */
     final public static function deleteTrabajo($args){
         $q_deleteTrabajo="DELETE FROM trabajos WHERE trabajoId = :id";
 
         $trabajoId=$args['trabajoId']??-1;
 
-        if($trabajoId<0){
+        if($trabajoId<0 || gettype($trabajoId)!='integer'){
             throw new FuncionesDBException("ERROR FUNCIONES BD (TRABAJOS): trabajoId no reconocido");
         }
 
