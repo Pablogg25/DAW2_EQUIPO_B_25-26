@@ -91,7 +91,7 @@ final class FuncionesDBTrabajos
      */
     final public static function getTrabajosByUsuarioId($args)
     {
-        $q_selectTrabajosEmpleado = "SELECT * FROM trabajos t LEFT JOIN prendas p ON t.prendaId = p.prendaId WHERE p.usuaruioId= :id";
+        $q_selectTrabajosEmpleado = "SELECT * FROM trabajos t LEFT JOIN prendas p ON t.prendaId = p.prendaId WHERE p.usuarioId= :id";
 
         //requerido usuarioId
         $usuarioId = $args['usuarioId'] ?? -1;
@@ -109,6 +109,42 @@ final class FuncionesDBTrabajos
 
         $stmn = $conexion->prepare($q_selectTrabajosEmpleado);
         $stmn->execute([":id" => $usuarioId]);
+
+        return $stmn->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // getConsumos
+
+    /**
+     * getConsumosTrabajo($args)
+     * Recibe un id de trabajoy muestra sus consumos asociados
+     * 
+     * $args:
+     * - trabajoId (required, FK)
+     * 
+     * Excepciones:
+     * - FuncionesDBException
+     * - PDOException
+     */
+    final public static function getConsumosTrabajo($args){
+        $q_selectConsumos="SELECT * FROM consumos_trabajo WHERE trabajoId = :id";
+        
+        //requerido usuarioId
+        $trabajoId = $args['trabajoId'] ?? -1;
+
+        //controla que el valor del id sea correcto
+        if ($trabajoId < 0 || gettype($trabajoId) != 'integer') {
+            throw new FuncionesDBException("ERROR FUNCIONES BD (TRABAJOS): valor de trabajoId no reconocido");
+        }
+
+        $conexion = ConexionBD::getConnection();
+
+        if (!isset($conexion)) {
+            throw new FuncionesDBException("ERROR FUNCIONES BD (TRABAJOS): no se ha podido establecer conexion BBDD");
+        }
+
+        $stmn = $conexion->prepare($q_selectConsumos);
+        $stmn->execute([":id" => $trabajoId]);
 
         return $stmn->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -187,6 +223,40 @@ final class FuncionesDBTrabajos
             ":fecha_e" => $fecha_e,
             ":estado" => $estado,
             ":precio" => $precio
+        ]);
+
+        return $exito;
+    }
+
+    //createConsumo
+    
+    final public static function asociarConsumo($args){
+        $q_insertConsumo="INSERT INTO consumos_trabajo (trabajo_id,itemId,cantidad_usada) VALUES ".
+        "(:trabajo,:item,:cantidad)";
+
+        $trabajoid=$args['trabajoId']??-1;
+        $itemId=$args['itemId']??-1;
+        $cantidad=$args['cantidad']??0;
+
+        if ($trabajoid < 0 || gettype($trabajoid) != 'integer') {
+            throw new FuncionesDBException("ERROR FUNCIONES BD (TRABAJOS): valor de trabajoid no reconocido");
+        }
+
+        if ($itemId < 0 || gettype($itemId) != 'integer') {
+            throw new FuncionesDBException("ERROR FUNCIONES BD (TRABAJOS): valor de itemId no reconocido");
+        }
+
+        $conexion = ConexionBD::getConnection();
+
+        if (!isset($conexion)) {
+            throw new FuncionesDBException("ERROR FUNCIONES BD (TRABAJOS): no se ha podido establecer conexion BBDD");
+        }
+
+        $stmn = $conexion->prepare($q_insertConsumo);
+        $exito = $stmn->execute([
+            ":trabajo" => $trabajoid,
+            ":item" => $itemId,
+            ":cantidad" => $cantidad
         ]);
 
         return $exito;
@@ -319,4 +389,6 @@ final class FuncionesDBTrabajos
 
         return $exito;
     }
+
+    //delete consumo
 }

@@ -132,9 +132,6 @@ final class FuncionesDBInventario{
         return $exito;
     }
 
-    // insertar consumo
-
-
     // ---UPDATE---
     /**
      * updateItem($args) 
@@ -186,9 +183,6 @@ final class FuncionesDBInventario{
         return $exito;
     }
 
-    //update consumo
-
-
     // ---DELETE---
 
     /**
@@ -223,8 +217,5 @@ final class FuncionesDBInventario{
 
         return $exito;
     }
-
-    //delete consumo
-
 
 }
