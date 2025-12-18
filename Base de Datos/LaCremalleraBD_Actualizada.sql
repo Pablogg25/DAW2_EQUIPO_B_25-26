@@ -157,7 +157,7 @@ VALUES
 (10, '2025-11-30', FALSE);
 
 -- Factura -> Trabajos
-INSERT INTO factura_trabajos (facturaId, trabajoId, precio_trabajoId)
+INSERT INTO factura_trabajos (facturaId, trabajoId)
 VALUES
 (1, 1),
 (2, 4),
