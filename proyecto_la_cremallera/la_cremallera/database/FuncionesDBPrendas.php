@@ -42,7 +42,7 @@ final class FuncionesDBPrendas
      * Gestionar excepciones en negocio del endpoint.
      * 
      * $args:
-     * - usuarioId (requerido)
+     * - usuarioId (requerido, FK)
      * 
      * Excepciones:
      * - FuncionesDBException
@@ -82,7 +82,7 @@ final class FuncionesDBPrendas
      * Gestionar excepciones en negocio del endpoint.
      * 
      * $args:
-     * - usuarioId (requerido)
+     * - usuarioId (requerido, FK)
      * - tipo
      * - descripcion
      * - color
@@ -137,7 +137,7 @@ final class FuncionesDBPrendas
      * 
      * $args:
      * - prendaId (requerido)
-     * - usuarioId (requerido)
+     * - usuarioId (requerido, FK)
      * - tipo
      * - descripcion
      * - color

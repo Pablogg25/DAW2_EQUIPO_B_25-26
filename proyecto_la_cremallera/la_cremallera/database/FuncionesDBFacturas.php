@@ -38,7 +38,7 @@ final class FuncionesDBFacturas
 
     /**
      * getFacturaById($args)
-     * Obtiene los datosde unafactura por id
+     * Obtiene los datos de una factura por id
      * 
      * $args:
      * - facturaId (requerido)
@@ -73,7 +73,7 @@ final class FuncionesDBFacturas
      * Obtiene los datos de las facturas pora un usuarioId
      * 
      * $args:
-     * - usuarioId (requerido)
+     * - usuarioId (requerido, FK)
      * 
      * Excepciones:
      * - FuncionesDBException
@@ -100,6 +100,37 @@ final class FuncionesDBFacturas
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    /**
+     * getItemsFactura($args)
+     * Obtiene los datos de los trabajos asociados a un id de facturaId en factura_trabajos
+     * 
+     * $args:
+     * - facturaId (requerido)
+     * 
+     * Excepciones:
+     * - FuncionesDBException
+     * - PDOException
+     */
+    final public static function getItemsFactura($args){
+        $q_selectItems="SELECT * FROM trabajos t RIGHT JOIN factura_trabajo ft on t.trabajoId=f.facturaId WHERE facturaId = :id";
+
+        $facturaId=$args['facturaId'] ?? -1;
+
+        if ($facturaId < 0 || gettype($facturaId) != 'integer') {
+            throw new FuncionesDBException("ERROR FUNCIONES BD (FACTURAS): valor de facturaId no reconocido");
+        }
+
+        $conexion = ConexionBD::getConnection();
+        if (!isset($conexion)) {
+            throw new FuncionesDBException("ERROR FUNCIONES BD (FACTURAS): no se ha podido establecer conexion BBDD");
+        }
+
+        $stmt = $conexion->prepare($q_selectItems);
+        $stmt->execute([":id" => $facturaId]);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     // ---CREATE---
 
     /**
@@ -108,7 +139,7 @@ final class FuncionesDBFacturas
      * el campo "total_calculado" puede calcularse después de forma automática"
      * 
      * $args:
-     * - usuarioId (requerido)
+     * - usuarioId (requerido, FK)
      * - fecha (requerido)
      * 
      * Excepciones:
@@ -146,6 +177,47 @@ final class FuncionesDBFacturas
         return $success;
     }
 
+    /**
+     * asociarFacturaTrabajo($args)
+     * Asocia en la tabla factura_trabajo una factura y un trabajo como su item
+     * 
+     * $args:
+     * - facturaId (requerido, FK)
+     * - trabajoId (requerido, FK)
+     * 
+     * Excepciones:
+     * - FuncionesDBException
+     * - PDOException
+     */
+    final public static function asociarFacturaTrabajo($args){
+        $q_insertFacturaTrabajo="INSERT INTO factura_trabajo (factura_id,trabajo_id) VALUES (:fid,:tid)";
+
+        $facturaId=$args['facturaId']??-1;
+        $trabajoId=$args['trabajoId']??-1;
+
+        if ($facturaId < 0 || gettype($facturaId) != 'integer') {
+            throw new FuncionesDBException("ERROR FUNCIONES BD (FACTURAS): valor facturaId no reconocido ");
+        }
+
+        if ($trabajoId < 0 || gettype($trabajoId) != 'integer') {
+            throw new FuncionesDBException("ERROR FUNCIONES BD (FACTURAS): valor de trabajoId no reconocido");
+        }
+
+        $conexion = ConexionBD::getConnection();
+        if (!isset($conexion)) {
+            throw new FuncionesDBException("ERROR FUNCIONES BD (FACTURAS): no se ha podido establecer conexion BBDD");
+        }
+
+        $stmn = $conexion->prepare($q_insertFacturaTrabajo);
+
+        $success = $stmn->execute([
+            ':fid' => $facturaId,
+            ':tid' => $trabajoId
+        ]);
+
+        return $success;
+    }
+
     // ---UPDATE---
 
     /**
@@ -154,7 +226,7 @@ final class FuncionesDBFacturas
      * 
      * $args:
      * - facturaId (requerido)
-     * - usuarioId (requerido)
+     * - usuarioId (requerido, FK)
      * - fecha (requerido)
      * - pagado, default 0
      * - total_calculado, default null
@@ -204,6 +276,18 @@ final class FuncionesDBFacturas
     }
 
     // ---DELETE---
+
+    /**
+     * deleteFactura($args)
+     * elimina una factura con el id pasado
+     * 
+     * $args:
+     * - facturaId (requerido)
+     * 
+     * Excepciones:
+     * - FuncionesDBException
+     * - PDOException
+     */
     final public static function deleteFactura($args){
         $q_deleteFactura="DELETE FROM facturas WHERE facturaId = :id";
 
@@ -217,7 +301,7 @@ final class FuncionesDBFacturas
         if (!isset($conexion)) {
             throw new FuncionesDBException("ERROR FUNCIONES BD (FACTURAS): no se ha podido establecer conexion BBDD");
         }
-        
+
         $stmn = $conexion->prepare($q_deleteFactura);
 
         $success = $stmn->execute([
@@ -225,5 +309,9 @@ final class FuncionesDBFacturas
         ]);
 
         return $success;
+    }
+
+    final public static function desasociarFacturaTrabajo($args){
+
     }
 }
