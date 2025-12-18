@@ -50,8 +50,6 @@ CREATE TABLE facturas (
     facturaId INT AUTO_INCREMENT PRIMARY KEY,
     usuarioId INT NOT NULL,
     fecha DATE NOT NULL,
-    total DECIMAL(10,2),
-    descripcion TEXT,
     pagado BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (usuarioId) REFERENCES usuarios(usuarioId)
 );
@@ -150,15 +148,15 @@ VALUES
 (8, 4, 'Sustituir forro interior', '2025-11-15', '2025-11-30', 'pendiente', 25.00);
 
 -- Facturas
-INSERT INTO facturas (usuarioId, fecha, total, descripcion, pagado)
+INSERT INTO facturas (usuarioId, fecha, pagado)
 VALUES
-(6, '2025-11-25', 12.50, 'Arreglo de bajo y ajuste lateral del pantalón', TRUE),
-(8, '2025-11-19', 10.00, 'Ajuste de cintura de falda', TRUE),
-(6, '2025-11-26', 18.00, 'Ajuste de vestido en cintura y hombros', FALSE),
-(10, '2025-11-30', 25.00, 'Sustitución completa del forro interior de chaqueta', FALSE);
+(6, '2025-11-25', TRUE),
+(8, '2025-11-19', TRUE),
+(6, '2025-11-26', FALSE),
+(10, '2025-11-30', FALSE);
 
 -- Factura -> Trabajos
-INSERT INTO factura_trabajos (facturaId, trabajoId)
+INSERT INTO factura_trabajos (facturaId, trabajoId, precio_trabajoId)
 VALUES
 (1, 1),
 (2, 4),
@@ -196,23 +194,3 @@ VALUES
 (6, 1, 'recordatorio_entrega', 'Su prenda estará lista para recoger el día 25'),
 (6, 2, 'trabajo_listo', 'Su vestido ya está disponible'),
 (7, 3, 'factura_generada', 'Se ha emitido su factura');
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
