@@ -42,7 +42,7 @@ final class FuncionesDBPrendas
      * Gestionar excepciones en negocio del endpoint.
      * 
      * $args:
-     * - usuarioId (requerido)
+     * - usuarioId (requerido, FK)
      * 
      * Excepciones:
      * - FuncionesDBException
@@ -54,7 +54,7 @@ final class FuncionesDBPrendas
 
         $usuarioId = $args['usuarioId'] ?? -1;
 
-        if ($usuarioId < 0) {
+        if ($usuarioId < 0 || gettype($usuarioId) != 'integer') {
             throw new FuncionesDBException("ERROR FUNCIONES BD (PRENDAS): usuarioId no reconocido");
         }
 
@@ -82,7 +82,7 @@ final class FuncionesDBPrendas
      * Gestionar excepciones en negocio del endpoint.
      * 
      * $args:
-     * - usuarioId (requerido)
+     * - usuarioId (requerido, FK)
      * - tipo
      * - descripcion
      * - color
@@ -105,7 +105,7 @@ final class FuncionesDBPrendas
         $talla = $args['talla'] ?? '';
 
         //usuarioId requerido
-        if ($usuarioId < 0) {
+        if ($usuarioId < 0  || gettype($usuarioId) != 'integer') {
             throw new FuncionesDBException("ERROR FUNCIONES BD (PRENDAS): usuarioId no reconocido");
         }
 
@@ -137,7 +137,7 @@ final class FuncionesDBPrendas
      * 
      * $args:
      * - prendaId (requerido)
-     * - usuarioId (requerido)
+     * - usuarioId (requerido, FK)
      * - tipo
      * - descripcion
      * - color
