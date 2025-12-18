@@ -136,13 +136,95 @@ final class FuncionesDBInventario{
 
 
     // ---UPDATE---
-
+    /**
+     * updateItem($args) 
+     * Recibe argumentos para actualizar un item del inventario
+     * 
+     * $args:
+     * - itemId (requerido)
+     * - nombre (requerido)
+     * - descripcion
+     * - cantidad (default 0)
+     * - stock_minimo (default 0)
+     * 
+     * Excepciones:
+     * - FuncionesDBException
+     * - PDOException
+     */
     final public static function updateItem($args){
-        $q_updateItem="";
+        $q_updateItem="UPDATE inventario SET nombre = :nombre, descripcion = .descripcion, cantidad = :cantidad, stock_minimo = :stock ".
+        "WHERE itemId = :id";
+
+        $itemId=$args['itemId']??-1;
+
+        if ($itemId < 0 || gettype($itemId) != 'integer') {
+            throw new FuncionesDBException("ERROR FUNCIONES BD (FACTURAS): valor de itemId no reconocido");
+        }
+        
+        $nombre=$args['nombre']??'';
+        $descripcion=$args['descripcion']??'';
+        $cantidad=$args['cantidad']??0;
+        $stock=$args['stock_minimo']??0;
+
+        if($nombre==''){
+            throw new FuncionesDBException("ERROR FUNCIONES BD (INVENTARIO): El campo nombre es requerido");
+        }
+
+        $conexion = ConexionBD::getConnection();
+        if (!isset($conexion)) {
+            throw new FuncionesDBException("ERROR FUNCIONES BD (INVENTARIO): no se ha podido establecer conexion BBDD");
+        }
+
+        $stmt = $conexion->prepare($q_updateItem);
+        $exito= $stmt->execute([
+            ":nombre"=>$nombre,
+            ":descripcion"=>$descripcion,
+            ":cantidad"=>$cantidad,
+            ":stock"=>$stock
+        ]);
+
+        return $exito;
     }
+
+    //update consumo
 
 
     // ---DELETE---
+
+    /**
+     * deleteItem($args)
+     * Elimina un item del inventario en base al id aportado
+     * 
+     * $args:
+     * - itemId (requerido)
+     * 
+     * Excepciones:
+     * - FuncionesDBException
+     * - PDOException
+     */
+    final public static function deleteItem($args){
+        $q_deleteItem="DELETE FROM inventario WHERE itemId = :id";
+
+        $itemId=$args['itemId']??-1;
+
+        if ($itemId < 0 || gettype($itemId) != 'integer') {
+            throw new FuncionesDBException("ERROR FUNCIONES BD (FACTURAS): valor de itemId no reconocido");
+        }
+
+        $conexion = ConexionBD::getConnection();
+        if (!isset($conexion)) {
+            throw new FuncionesDBException("ERROR FUNCIONES BD (INVENTARIO): no se ha podido establecer conexion BBDD");
+        }
+
+        $stmt = $conexion->prepare($q_deleteItem);
+        $exito= $stmt->execute([
+            ":id"=>$itemId
+        ]);
+
+        return $exito;
+    }
+
+    //delete consumo
 
 
 }
