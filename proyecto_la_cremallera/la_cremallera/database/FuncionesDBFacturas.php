@@ -104,7 +104,7 @@ final class FuncionesDBFacturas
 
     /**
      * insertFactura($args)
-     * Recibe parametros para insertar una factura, elcampo pagada se inicia a false, 
+     * Recibe parametros para insertar una factura, el campo pagada se inicia a false, 
      * el campo "total_calculado" puede calcularse después de forma automática"
      * 
      * $args:
@@ -144,5 +144,28 @@ final class FuncionesDBFacturas
         ]);
 
         return $success;
+    }
+
+    // ---UPDATE---
+
+    /**
+     * updateFactura($args)
+     * Actualiza los datos de una factura por el id indicado
+     * 
+     * $args:
+     * - facturaId (requerido)
+     * - usuarioId (requerido)
+     * - fecha (requerido)
+     * - pagado
+     * - total_calculado
+     * 
+     * Excepciones:
+     * - FuncionesDBException
+     * - PDOException
+     */
+    final public static function updateFactura($args){
+        $q_updateFactura="UPDATE facturas SET usuarioId = :usuarioId, fecha= :fecha, pagado= :pagado, total_calculado = :tc WHERE facturaId = :id";
+
+
     }
 }
