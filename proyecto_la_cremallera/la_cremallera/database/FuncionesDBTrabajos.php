@@ -9,8 +9,6 @@ use la_cremallera\database\ConexionBD;
 use la_cremallera\err\FuncionesDBException;
 use PDO;
 
-use function PHPSTORM_META\type;
-
 final class FuncionesDBTrabajos
 {
 
@@ -18,6 +16,10 @@ final class FuncionesDBTrabajos
     /**
      * getTrabajos()
      * Obtiene todos los datos de la tabla trabajos
+     * 
+     * Excepciones:
+     * - FuncionesDBException
+     * - PDOException
      */
     final public static function getTrabajos()
     {
@@ -42,6 +44,9 @@ final class FuncionesDBTrabajos
      * Requiere empleadoId
      * Gestionar excepciones en negocio del endpoint.
      * 
+     * $args:
+     * - empleadoId (requerido)
+     * 
      * Excepciones:
      * - FuncionesDBException
      * - PDOException
@@ -53,7 +58,8 @@ final class FuncionesDBTrabajos
         //requerido empleadoId
         $empleadoId = $args['empleadoId'] ?? -1;
 
-        if ($empleadoId < 0 || gettype($empleadoId)!='integer') {
+        //controla que el valor del id sea correcto
+        if ($empleadoId < 0 || gettype($empleadoId) != 'integer') {
             throw new FuncionesDBException("ERROR FUNCIONES BD (TRABAJOS): valor de empleadoId no reconocido");
         }
 
@@ -76,6 +82,9 @@ final class FuncionesDBTrabajos
      * requiere usuarioId
      * Gestionar excepciones en negocio del endpoint.
      * 
+     * $args:
+     * - usuarioId (requerido)
+     * 
      * Excepciones:
      * - FuncionesDBException
      * - PDOException
@@ -87,7 +96,8 @@ final class FuncionesDBTrabajos
         //requerido usuarioId
         $usuarioId = $args['usuarioId'] ?? -1;
 
-        if ($usuarioId < 0 || gettype($usuarioId)!='integer') {
+        //controla que el valor del id sea correcto
+        if ($usuarioId < 0 || gettype($usuarioId) != 'integer') {
             throw new FuncionesDBException("ERROR FUNCIONES BD (TRABAJOS): valor de usuarioId no reconocido");
         }
 
@@ -142,7 +152,8 @@ final class FuncionesDBTrabajos
         $estado = $args['estado'] ?? 'pendiente';
         $precio = $args['precio'] ?? 0;
 
-        if ($prendaId < 0 || gettype($prendaId)!='integer') {
+        //controla que el valor del id sea correcto
+        if ($prendaId < 0 || gettype($prendaId) != 'integer') {
             throw new FuncionesDBException("ERROR FUNCIONES BD (TRABAJOS): valor de prendaId no reconocido");
         }
 
@@ -154,8 +165,9 @@ final class FuncionesDBTrabajos
             throw new FuncionesDBException("ERROR FUNCIONES BD (TRABAJOS): valor incorrecto en campo enumerado estado");
         }
 
-        if($empleadoId!=''){
-            if(gettype($empleadoId)!='integer' && $empleadoId<0){
+        if ($empleadoId != '') {
+            //controla que el valor del id sea correcto
+            if (gettype($empleadoId) != 'integer' && $empleadoId < 0) {
                 throw new FuncionesDBException("ERROR FUNCIONES BD (TRABAJOS): empleadoId no reconocido");
             }
         }
@@ -167,14 +179,14 @@ final class FuncionesDBTrabajos
         }
 
         $stmn = $conexion->prepare($q_insertTrabajo);
-        $exito=$stmn->execute([
-            ":prenda"=>$prendaId,
-            ":empleado"=>$empleadoId,
-            ":descripcion"=>$descripcion,
-            ":fecha_i"=>$fecha_i,
-            ":fecha_e"=>$fecha_e,
-            ":estado"=>$estado,
-            ":precio"=>$precio
+        $exito = $stmn->execute([
+            ":prenda" => $prendaId,
+            ":empleado" => $empleadoId,
+            ":descripcion" => $descripcion,
+            ":fecha_i" => $fecha_i,
+            ":fecha_e" => $fecha_e,
+            ":estado" => $estado,
+            ":precio" => $precio
         ]);
 
         return $exito;
@@ -203,20 +215,22 @@ final class FuncionesDBTrabajos
      * - FuncionesDBException
      * - PDOException
      */
-    final public static function updateTrabajo($args){
-        $q_updateTrabajo="UPDATE trabajos SET ".
-        "prendaId = :prenda, empleadoId = :empleado, descripcion = :descr, ".
-        "fecha_inicio = :fecha_i, fecha_entrega = :fecha_e, estado = :estado, precio = :precio ".
-        "WHERE trabajoId = :id";
+    final public static function updateTrabajo($args)
+    {
+        $q_updateTrabajo = "UPDATE trabajos SET " .
+            "prendaId = :prenda, empleadoId = :empleado, descripcion = :descr, " .
+            "fecha_inicio = :fecha_i, fecha_entrega = :fecha_e, estado = :estado, precio = :precio " .
+            "WHERE trabajoId = :id";
 
-        
+
         //estado es enum 'pendiente','en_proceso','listo','entregado'
         //las fechas son no null
         //prendaId es no null
 
-        $trabajoId=$args['trabajoId']??-1;
+        $trabajoId = $args['trabajoId'] ?? -1;
 
-        if($trabajoId<0 || gettype($trabajoId)!='integer'){
+        //controla que el valor del id sea correcto
+        if ($trabajoId < 0 || gettype($trabajoId) != 'integer') {
             throw new FuncionesDBException("ERROR FUNCIONES BD (TRABAJOS): valor de trabajoId no reconocido");
         }
 
@@ -229,7 +243,8 @@ final class FuncionesDBTrabajos
         $estado = $args['estado'] ?? 'pendiente';
         $precio = $args['precio'] ?? 0;
 
-        if ($prendaId < 0 || gettype($prendaId)!='integer') {
+        //controla que el valor del id sea correcto
+        if ($prendaId < 0 || gettype($prendaId) != 'integer') {
             throw new FuncionesDBException("ERROR FUNCIONES BD (TRABAJOS): valor de prendaId no reconocido");
         }
 
@@ -241,8 +256,9 @@ final class FuncionesDBTrabajos
             throw new FuncionesDBException("ERROR FUNCIONES BD (TRABAJOS): valor incorrecto en campo enumerado estado");
         }
 
-        if($empleadoId!=''){
-            if(gettype($empleadoId)!='integer' && $empleadoId<0){
+        if ($empleadoId != '') {
+            //controla que el valor del id sea correcto
+            if (gettype($empleadoId) != 'integer' && $empleadoId < 0) {
                 throw new FuncionesDBException("ERROR FUNCIONES BD (TRABAJOS): empleadoId no reconocido");
             }
         }
@@ -254,15 +270,15 @@ final class FuncionesDBTrabajos
         }
 
         $stmn = $conexion->prepare($q_updateTrabajo);
-        $exito=$stmn->execute([
-            ":prenda"=>$prendaId,
-            ":empleado"=>$empleadoId,
-            ":descripcion"=>$descripcion,
-            ":fecha_i"=>$fecha_i,
-            ":fecha_e"=>$fecha_e,
-            ":estado"=>$estado,
-            ":precio"=>$precio,
-            ":id"=>$trabajoId
+        $exito = $stmn->execute([
+            ":prenda" => $prendaId,
+            ":empleado" => $empleadoId,
+            ":descripcion" => $descripcion,
+            ":fecha_i" => $fecha_i,
+            ":fecha_e" => $fecha_e,
+            ":estado" => $estado,
+            ":precio" => $precio,
+            ":id" => $trabajoId
         ]);
 
         return $exito;
@@ -274,25 +290,32 @@ final class FuncionesDBTrabajos
      * deleteTrabajo($args)
      * Elimina un trabajo por trabajoId
      * 
+     * $args:
+     * - trabajoId (requerido)
+     * 
+     * Excepciones:
+     * - FuncionesDBException
+     * - PDOException
      */
-    final public static function deleteTrabajo($args){
-        $q_deleteTrabajo="DELETE FROM trabajos WHERE trabajoId = :id";
+    final public static function deleteTrabajo($args)
+    {
+        $q_deleteTrabajo = "DELETE FROM trabajos WHERE trabajoId = :id";
 
-        $trabajoId=$args['trabajoId']??-1;
+        $trabajoId = $args['trabajoId'] ?? -1;
 
-        if($trabajoId<0 || gettype($trabajoId)!='integer'){
+        //controla que el valor del id sea correcto
+        if ($trabajoId < 0 || gettype($trabajoId) != 'integer') {
             throw new FuncionesDBException("ERROR FUNCIONES BD (TRABAJOS): trabajoId no reconocido");
         }
 
-        
         $conexion = ConexionBD::getConnection();
 
         if (!isset($conexion)) {
             throw new FuncionesDBException("ERROR FUNCIONES BD (TRABAJOS): no se ha podido establecer conexion BBDD");
         }
 
-        $stmn=$conexion->prepare($q_deleteTrabajo);
-        $exito=$stmn->execute([":id"=>$trabajoId]);
+        $stmn = $conexion->prepare($q_deleteTrabajo);
+        $exito = $stmn->execute([":id" => $trabajoId]);
 
         return $exito;
     }

@@ -11,6 +11,14 @@ use PDO;
 final class FuncionesDBPrendas
 {
     // ---READ---
+    /**
+     * getPrendas()
+     * Obtiene todos los datos de la tabla prendas
+     * 
+     * Excepciones:
+     * - FuncionesDBException
+     * - PDOException
+     */
     final public static function getPrendas()
     {
         //obtener todas las prendas de la base de datos
@@ -29,9 +37,12 @@ final class FuncionesDBPrendas
     }
 
     /**
-     *  getPrendasByUsuarioId($args)
+     * getPrendasByUsuarioId($args)
      * recibe usuarioId y devuelve los datos de prendas con ese usuarioId
      * Gestionar excepciones en negocio del endpoint.
+     * 
+     * $args:
+     * - usuarioId (requerido)
      * 
      * Excepciones:
      * - FuncionesDBException
@@ -67,14 +78,16 @@ final class FuncionesDBPrendas
     // ---CREATE---
     /**
      *  crearPrenda($args)
-     * recibe usuarioId y datos paracrearuna prenda
+     * recibe usuarioId y datos paracrearuna prenda.
      * Gestionar excepciones en negocio del endpoint.
      * 
-     * usuarioId,requerido
-     * tipo
-     * descripcion
-     * color
-     * talla
+     * $args:
+     * - usuarioId (requerido)
+     * - tipo
+     * - descripcion
+     * - color
+     * - talla
+     * 
      * Excepciones:
      * - FuncionesDBException
      * - PDOException
@@ -122,12 +135,14 @@ final class FuncionesDBPrendas
      * recibe prendaId y datos para actualizar una prenda
      * Gestionar excepciones en negocio del endpoint.
      * 
-     * prendaId,requerido
-     * usuarioId,requerido
-     * tipo
-     * descripcion
-     * color
-     * talla
+     * $args:
+     * - prendaId (requerido)
+     * - usuarioId (requerido)
+     * - tipo
+     * - descripcion
+     * - color
+     * - talla
+     * 
      * Excepciones:
      * - FuncionesDBException
      * - PDOException
@@ -146,12 +161,12 @@ final class FuncionesDBPrendas
         $talla = $args['talla'] ?? '';
 
         //usuarioId requerido
-        if ($usuarioId < 0) {
-            throw new FuncionesDBException("ERROR FUNCIONES BD (PRENDAS): usuarioId no reconocido");
+        if ($usuarioId < 0 || gettype($usuarioId) != 'integer') {
+            throw new FuncionesDBException("ERROR FUNCIONES BD (PRENDAS): valor de usuarioId no reconocido");
         }
 
-        if ($prendaId < 0) {
-            throw new FuncionesDBException("ERROR FUNCIONES BD (PRENDAS): prendaId no reconocido");
+        if ($prendaId < 0 || gettype($prendaId) != 'integer') {
+            throw new FuncionesDBException("ERROR FUNCIONES BD (PRENDAS): valor de prendaId no reconocido");
         }
 
         //prendaIdrequerido
@@ -177,11 +192,13 @@ final class FuncionesDBPrendas
     // ---DELETE---
 
     /**
-     *  deletePrenda($args)
+     * deletePrenda($args)
      * recibe prendaId para eliminar los datos de la prenda
      * Gestionar excepciones en negocio del endpoint.
      * 
-     * prendaId,requerido
+     * $args:
+     * - prendaId (requerido)
+     * 
      * Excepciones:
      * - FuncionesDBException
      * - PDOException
@@ -192,8 +209,8 @@ final class FuncionesDBPrendas
 
         $prendaId = $args['prendaId'] ?? -1;
 
-        if ($prendaId < 0) {
-            throw new FuncionesDBException("ERROR FUNCIONES BD (PRENDAS): prendaId no reconocido");
+        if ($prendaId < 0 || gettype($prendaId) != 'integer') {
+            throw new FuncionesDBException("ERROR FUNCIONES BD (PRENDAS): valor de prendaId no reconocido");
         }
 
         $conexion = ConexionBD::getConnection();

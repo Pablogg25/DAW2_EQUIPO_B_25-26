@@ -12,6 +12,14 @@ final class FuncionesDBUsuarios
 {
 
     // --- READ ---
+    /**
+     * getUsuarios()
+     * Obtiene los datos de todos los usuarios (excepto la contraseña)
+     * 
+     * Excepciones:
+     * - FuncionesDBException
+     * - PDOException
+     */
     final public static function getUsuarios()
     {
         //obtener todos los usuarios de la base de datos
@@ -29,7 +37,18 @@ final class FuncionesDBUsuarios
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    final public static function getUsuario($args)
+    /**
+     * getUsuarioByName($args)
+     * Obtiene los datos de un username, excepto contraseña
+     * 
+     * $args:
+     * - username (requerido)
+     * 
+     * Excepciones:
+     * - FuncionesDBException
+     * - PDOException
+     */
+    final public static function getUsuarioByName($args)
     {
         //obtener todos los usuarios de la base de datos
 
@@ -56,28 +75,71 @@ final class FuncionesDBUsuarios
     }
 
     /**
-     * validatePassword($args)
-     * valida el password de un username para comprobar si el password pasado es igual que el de los argumentos de forma segura
-     * requiere username y password a comporbar.
+     * getUsuarioById($args)
+     * Obtiene los datos de un username, excepto contraseña
      * 
-     * Gestionar excepciones en negocio del endpoint.
+     * $args:
+     * - username (requerido)
+     * 
      * Excepciones:
      * - FuncionesDBException
      * - PDOException
      */
-    final public static function checkPassword($args)
+    final public static function getUsuarioById($args)
+    {
+        //obtener todos los usuarios de la base de datos
+
+        $usuarioId = $args['usuarioId'] ?? -1;
+        if ($usuarioId == '' || gettype($usuarioId) != 'integer') {
+            throw new FuncionesDBException("ERROR FUNCIONES BD (USUARIOS): se requiere rellenar el campo username");
+        }
+
+
+        $conexion = ConexionBD::getConnection();
+
+        if (!isset($conexion)) {
+            throw new FuncionesDBException("ERROR FUNCIONES BD (USUARIOS): no se ha podido establecer conexion BBDD");
+        }
+
+        $comandoSql = "SELECT nombre,telefono,email,direccion,username,rol,fecha_regitro FROM usuarios WHERE usuarioId= :id";
+
+        $stmt = $conexion->prepare($comandoSql);
+        $stmt->execute([
+            ":id" => $usuarioId
+        ]);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * validatePassword($args)
+     * valida el password de un username para comprobar si el password pasado es igual que el de los argumentos de forma segura
+     * requiere username y password a comprobar. Devuelve true o false
+     * 
+     * Gestionar excepciones en negocio del endpoint.
+     * 
+     * $args:
+     * - username (requerido)
+     * - password (requerido)
+     * 
+     * Excepciones:
+     * - FuncionesDBException
+     * - PDOException
+     */
+    final public static function checkPassword($args): bool
     {
         $q_checkPassword = "SELECT count(*) as found FROM usuarios WHERE username == :nombre AND password_hash == SHA2(:password_h,224)";
 
         $contrasena = $args['password'] ?? '';
         $username = $args['username'] ?? '';
 
-        if ($contrasena == '') {
-            throw new FuncionesDBException("ERROR FUNCIONES DB (USUARIOS): Se requiere rellenar el campo contraseña");
-        }
 
         if ($username == '') {
             throw new FuncionesDBException("ERROR FUNCIONES DB (USUARIOS): Se requiere rellenar el campo username");
+        }
+
+        if ($contrasena == '') {
+            throw new FuncionesDBException("ERROR FUNCIONES DB (USUARIOS): Se requiere rellenar el campo contraseña");
         }
 
 
@@ -102,8 +164,16 @@ final class FuncionesDBUsuarios
     // --- CREATE ---
     /** 
      * registrarUsuario($args)
-     * recibe datos para crear un nuevo usuario
-     * Requiere nombre, email, username, y password
+     * Recibe datos para crear un nuevo usuario. La contraseña se codifica en SHA2 de longitud 224. Recibe por defecto rol 'cliente'
+     * 
+     * $args:
+     * - nombre (requerido)
+     * - username (requerido, unique)
+     * - password (requerido)
+     * - email (requerido, unique)
+     * - telefono
+     * - direccion
+     * - rol (enum:'cliente','empleado','admin'). Default: 'cliente'
      * 
      * Gestionar excepciones en negocio del endpoint.
      * Excepciones:
@@ -115,9 +185,9 @@ final class FuncionesDBUsuarios
 
         $q_insertUsuario = "INSERT INTO usuarios" .
             "(nombre,telefono,email,direccion,username,password_hash,rol) VALUES" .
-            "(:nombre,:telefono,:email,:direccion,:username,SHA2(:password_h,224),'cliente')";
+            "(:nombre,:telefono,:email,:direccion,:username,SHA2(:password_h,224),:rol)";
 
-        //obligatorios: nombre, usuario, password, email
+        //required
         $nombre = $args['nombre'] ?? '';
         $username = $args['username'] ?? '';
         $password = $args['password'] ?? '';
@@ -126,9 +196,14 @@ final class FuncionesDBUsuarios
         //no required
         $telefono = $args['telefono'] ?? '';
         $direccion = $args['direccion'] ?? '';
+        $rol=$args['rol']??'cliente';
 
         if ($nombre == '' || $username == '' || $password == '' || $email == '') {
             throw new FuncionesDBException("ERROR FUNCIONES DB (USUARIOS): Se requiere nombre, nombre de usuario, contraseña y correo electrónico válidos");
+        }
+
+        if($rol!='cliente'&&$rol!='empleado'&&$rol!='admin'){
+            throw new FuncionesDBException("ERROR FUNCIONES DB (USUARIOS): valor incorrecto en campo enumerado rol");
         }
 
         $conexion = ConexionBD::getConnection();
@@ -145,7 +220,8 @@ final class FuncionesDBUsuarios
             ':email' => $email,
             ':direccion' => $direccion,
             ':username' => $username,
-            ':password_h' => $password
+            ':password_h' => $password,
+            ':rol'=>$rol
         ]);
 
         return $success;
@@ -155,12 +231,17 @@ final class FuncionesDBUsuarios
 
     /**
      * updateDatosUsuario($args)
-     * requiere usuarioId objetivo.
-     * Actualiza los datos personales del usuario.
+     * Actualiza los datos personales de un usuario con id indicado.
      * telefono, email, dirección, username y nombre.
      * 
-     * nombre y email son no null.
-     * Unique: username, email.
+     * $args:
+     * - usuarioId (requerido)
+     * - nombre (requerido)
+     * - username (requerido, unique)
+     * - email (requerido, unique)
+     * - telefono
+     * - direccion
+     * - rol (enum:'cliente','empleado','admin'). Default: 'cliente'
      * 
      * Gestionar excepciones en negocio del endpoint.
      * Excepciones:
@@ -181,16 +262,20 @@ final class FuncionesDBUsuarios
         $nombre = $args['nombre'] ?? '';
         $username = $args['username'] ?? '';
         $email = $args['email'] ?? '';
-        $rol = $args['rol'] ?? '';
+        $rol = $args['rol'] ?? 'cliente';
 
-        $idUsuario = $args['idUsuario'] ?? -1;
+        $usuarioId = $args['usuarioId'] ?? -1;
 
-        if ($idUsuario < 0) {
-            throw new FuncionesDBException("ERROR FUNCIONES DB (USUARIOS): no se ha podido identificar id usuario");
+        if ($usuarioId < 0 || gettype($usuarioId) != 'integer') {
+            throw new FuncionesDBException("ERROR FUNCIONES DB (USUARIOS): valor de usuarioId no reconocido");
         }
 
         if ($nombre == '' || $username == '' || $email == '' || $rol == '') {
             throw new FuncionesDBException("ERROR FUNCIONES DB (USUARIOS): no se han rellenado los campos requeridos");
+        }
+
+        if($rol!='cliente'&&$rol!='empleado'&&$rol!='admin'){
+            throw new FuncionesDBException("ERROR FUNCIONES DB (USUARIOS): valor incorrecto en campo enumerado rol");
         }
 
         //no required
@@ -212,7 +297,7 @@ final class FuncionesDBUsuarios
             ':direccion' => $direccion,
             ':username' => $username,
             ':rol' => $rol,
-            ':id' => $idUsuario
+            ':id' => $usuarioId
         ]);
 
         return $exito;
@@ -220,8 +305,12 @@ final class FuncionesDBUsuarios
 
     /**
      * updatePasswordUsuario($args)
-     * Permite actualizar el password de un usuario manteniendo la seguridad.
-     * Solo usable por el propio usuario sobre sí mismo o un admin con privilegios de gestión.
+     * Permite actualizar el password de un usuario manteniendo la seguridad. La contraseña se codifica en SHA2 de longitud 224.
+     * Solo debe ser usable por el propio usuario sobre sí mismo o un admin con privilegios de gestión.
+     * 
+     * $args:
+     * - usuarioId (requerido)
+     * - password (requerido)
      * 
      * Gestionar excepciones en negocio del endpoint.
      * Excepciones:
@@ -232,15 +321,15 @@ final class FuncionesDBUsuarios
     {
         $q_updatePassword = "UPDATE usuarios SET password_hash = SHA2(:password_h,224) WHERE usuarioId = :id";
 
-        $contrasena = $args['password'] ?? '';
         $usuarioId = $args['usuarioId'] ?? -1;
+        $contrasena = $args['password'] ?? '';
 
         if ($contrasena == '') {
             throw new FuncionesDBException("ERROR FUNCIONES DB (USUARIOS): campo contraseña vacío");
         }
 
-        if ($usuarioId < 0) {
-            throw new FuncionesDBException("ERROR FUNCIONES DB (USUARIOS): usuario id no identificado");
+        if ($usuarioId < 0 || gettype($usuarioId) != 'integer') {
+            throw new FuncionesDBException("ERROR FUNCIONES DB (USUARIOS): valor de usuario id no identificado");
         }
 
         $conexion = ConexionBD::getConnection();
@@ -265,6 +354,9 @@ final class FuncionesDBUsuarios
      * deleteUsuario($args)
      * elimina un usuario cuyo usuarioId se indique.
      * 
+     * $args:
+     * - usuarioId (requerido)
+     * 
      * Gestionar excepciones en negocio del endpoint.
      * Excepciones:
      * - FuncionesDBException
@@ -276,7 +368,7 @@ final class FuncionesDBUsuarios
 
         $usuarioId = $args['usuarioId'] ?? -1;
 
-        if ($usuarioId < 0) {
+        if ($usuarioId < 0 || gettype($usuarioId) != 'integer') {
             throw new FuncionesDBException("ERROR FUNCIONES DB (USUARIOS): usuario id no identificado");
         }
 
