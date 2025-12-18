@@ -51,6 +51,7 @@ CREATE TABLE facturas (
     usuarioId INT NOT NULL,
     fecha DATE NOT NULL,
     pagado BOOLEAN DEFAULT FALSE,
+    total_calculado DECIMAL(10,2) DEFAULT NULL,
     FOREIGN KEY (usuarioId) REFERENCES usuarios(usuarioId)
 );
 
