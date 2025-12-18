@@ -17,7 +17,7 @@ final class FuncionesDBPrendas
         $conexion = ConexionBD::getConnection();
 
         if (!isset($conexion)) {
-            throw new FuncionesDBException("ERROR FUNCIONES BD: no se ha podido establecer conexion BBDD");
+            throw new FuncionesDBException("ERROR FUNCIONES BD (PRENDAS): no se ha podido establecer conexion BBDD");
         }
 
         $selectPrendas = "SELECT * FROM prendas";
@@ -44,13 +44,13 @@ final class FuncionesDBPrendas
         $usuarioId = $args['usuarioId'] ?? -1;
 
         if ($usuarioId < 0) {
-            throw new FuncionesDBException("ERROR FUNCIONES BD: usuarioId no reconocido");
+            throw new FuncionesDBException("ERROR FUNCIONES BD (PRENDAS): usuarioId no reconocido");
         }
 
         $conexion = ConexionBD::getConnection();
 
         if (!isset($conexion)) {
-            throw new FuncionesDBException("ERROR FUNCIONES BD: no se ha podido establecer conexion BBDD");
+            throw new FuncionesDBException("ERROR FUNCIONES BD (PRENDAS): no se ha podido establecer conexion BBDD");
         }
 
         $selectprendaByUser = "SELECT * FROM prendas WHERE usuarioId = :id";
@@ -93,17 +93,17 @@ final class FuncionesDBPrendas
 
         //usuarioId requerido
         if ($usuarioId < 0) {
-            throw new FuncionesDBException("ERROR FUNCIONES BD: usuarioId no reconocido");
+            throw new FuncionesDBException("ERROR FUNCIONES BD (PRENDAS): usuarioId no reconocido");
         }
 
         $conexion = ConexionBD::getConnection();
 
         if (!isset($conexion)) {
-            throw new FuncionesDBException("ERROR FUNCIONES BD: no se ha podido establecer conexion BBDD");
+            throw new FuncionesDBException("ERROR FUNCIONES BD (PRENDAS): no se ha podido establecer conexion BBDD");
         }
 
         $stmt = $conexion->prepare($q_insertPrenda);
-        $exito= $stmt->execute([
+        $exito = $stmt->execute([
             ":id" => $usuarioId,
             ":tipo" => $tipo,
             ":desc" => $descripcion,
@@ -132,12 +132,13 @@ final class FuncionesDBPrendas
      * - FuncionesDBException
      * - PDOException
      */
-    final public static function updatePrenda($args){
+    final public static function updatePrenda($args)
+    {
         $q_updatePrenda = "UPDATE prendas SET " .
-            "usuarioId = :usuarioId, tipo = :tipo, descripcion = :desc, color = :color, talla = :talla ".
+            "usuarioId = :usuarioId, tipo = :tipo, descripcion = :desc, color = :color, talla = :talla " .
             "WHERE prendaId = :id";
 
-        $prendaId= $args['prendaId']??-1;
+        $prendaId = $args['prendaId'] ?? -1;
         $usuarioId = $args['usuarioId'] ?? -1;
         $tipo = $args['tipo'] ?? '';
         $descripcion = $args['descripcion'] ?? '';
@@ -146,11 +147,11 @@ final class FuncionesDBPrendas
 
         //usuarioId requerido
         if ($usuarioId < 0) {
-            throw new FuncionesDBException("ERROR FUNCIONES BD: usuarioId no reconocido");
+            throw new FuncionesDBException("ERROR FUNCIONES BD (PRENDAS): usuarioId no reconocido");
         }
 
-        if($prendaId<0){
-            throw new FuncionesDBException("ERROR FUNCIONES BD: prendaId no reconocido");
+        if ($prendaId < 0) {
+            throw new FuncionesDBException("ERROR FUNCIONES BD (PRENDAS): prendaId no reconocido");
         }
 
         //prendaIdrequerido
@@ -158,11 +159,11 @@ final class FuncionesDBPrendas
         $conexion = ConexionBD::getConnection();
 
         if (!isset($conexion)) {
-            throw new FuncionesDBException("ERROR FUNCIONES BD: no se ha podido establecer conexion BBDD");
+            throw new FuncionesDBException("ERROR FUNCIONES BD (PRENDAS): no se ha podido establecer conexion BBDD");
         }
 
         $stmt = $conexion->prepare($q_updatePrenda);
-        $exito=$stmt->execute([
+        $exito = $stmt->execute([
             ":usuarioId" => $usuarioId,
             ":tipo" => $tipo,
             ":desc" => $descripcion,
@@ -185,25 +186,26 @@ final class FuncionesDBPrendas
      * - FuncionesDBException
      * - PDOException
      */
-    final public static function deletePrenda($args){
+    final public static function deletePrenda($args)
+    {
         $q_deletePrenda = "DELETE FROM prendas WHERE prendaId = :id";
 
-        $prendaId=$args['prendaId']??-1;
+        $prendaId = $args['prendaId'] ?? -1;
 
-        if($prendaId<0){
-            throw new FuncionesDBException("ERROR FUNCIONES BD: prendaId no reconocido");
+        if ($prendaId < 0) {
+            throw new FuncionesDBException("ERROR FUNCIONES BD (PRENDAS): prendaId no reconocido");
         }
 
         $conexion = ConexionBD::getConnection();
 
         if (!isset($conexion)) {
-            throw new FuncionesDBException("ERROR FUNCIONES BD: no se ha podido establecer conexion BBDD");
+            throw new FuncionesDBException("ERROR FUNCIONES BD (PRENDAS): no se ha podido establecer conexion BBDD");
         }
 
 
-        $stmn=$conexion->prepare($q_deletePrenda);
+        $stmn = $conexion->prepare($q_deletePrenda);
 
-        $exito=$stmn->execute([":id"=>$prendaId]);
+        $exito = $stmn->execute([":id" => $prendaId]);
 
         return $exito;
     }

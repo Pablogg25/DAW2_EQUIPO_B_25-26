@@ -18,7 +18,7 @@ final class FuncionesDBUsuarios
         $conexion = ConexionBD::getConnection();
 
         if (!isset($conexion)) {
-            throw new FuncionesDBException("ERROR FUNCIONES BD: no se ha podido establecer conexion BBDD");
+            throw new FuncionesDBException("ERROR FUNCIONES BD (USUARIOS): no se ha podido establecer conexion BBDD");
         }
 
         $comandoSql = "SELECT usuarioId,nombre,telefono,email,direccion,username,rol,fecha_regitro FROM usuarios";
@@ -35,14 +35,14 @@ final class FuncionesDBUsuarios
 
         $nombreUsuario = $args['username'] ?? '';
         if ($nombreUsuario == '') {
-            throw new FuncionesDBException("ERROR FUNCIONES BD: se requiere rellenar el campo username");
+            throw new FuncionesDBException("ERROR FUNCIONES BD (USUARIOS): se requiere rellenar el campo username");
         }
 
 
         $conexion = ConexionBD::getConnection();
 
         if (!isset($conexion)) {
-            throw new FuncionesDBException("ERROR FUNCIONES BD: no se ha podido establecer conexion BBDD");
+            throw new FuncionesDBException("ERROR FUNCIONES BD (USUARIOS): no se ha podido establecer conexion BBDD");
         }
 
         $comandoSql = "SELECT usuarioId,nombre,telefono,email,direccion,username,rol,fecha_regitro FROM usuarios WHERE username= :username";
@@ -58,7 +58,8 @@ final class FuncionesDBUsuarios
     /**
      * validatePassword($args)
      * valida el password de un username para comprobar si el password pasado es igual que el de los argumentos de forma segura
-     * requiere username y password a comporbar
+     * requiere username y password a comporbar.
+     * 
      * Gestionar excepciones en negocio del endpoint.
      * Excepciones:
      * - FuncionesDBException
@@ -72,18 +73,18 @@ final class FuncionesDBUsuarios
         $username = $args['username'] ?? '';
 
         if ($contrasena == '') {
-            throw new FuncionesDBException("ERROR FUNCIONES DB: Se requiere rellenar el campo contraseña");
+            throw new FuncionesDBException("ERROR FUNCIONES DB (USUARIOS): Se requiere rellenar el campo contraseña");
         }
 
         if ($username == '') {
-            throw new FuncionesDBException("ERROR FUNCIONES DB: Se requiere rellenar el campo username");
+            throw new FuncionesDBException("ERROR FUNCIONES DB (USUARIOS): Se requiere rellenar el campo username");
         }
 
 
         $conexion = ConexionBD::getConnection();
 
         if (!isset($conexion)) {
-            throw new FuncionesDBException("ERROR FUNCIONES BD: no se ha podido establecer conexion BBDD");
+            throw new FuncionesDBException("ERROR FUNCIONES BD (USUARIOS): no se ha podido establecer conexion BBDD");
         }
 
         $stmt = $conexion->prepare($q_checkPassword);
@@ -101,7 +102,9 @@ final class FuncionesDBUsuarios
     // --- CREATE ---
     /** 
      * registrarUsuario($args)
+     * recibe datos para crear un nuevo usuario
      * Requiere nombre, email, username, y password
+     * 
      * Gestionar excepciones en negocio del endpoint.
      * Excepciones:
      * - FuncionesDBException
@@ -125,13 +128,13 @@ final class FuncionesDBUsuarios
         $direccion = $args['direccion'] ?? '';
 
         if ($nombre == '' || $username == '' || $password == '' || $email == '') {
-            throw new FuncionesDBException("ERROR FUNCIONES DB: Se requiere nombre, nombre de usuario, contraseña y correo electrónico válidos");
+            throw new FuncionesDBException("ERROR FUNCIONES DB (USUARIOS): Se requiere nombre, nombre de usuario, contraseña y correo electrónico válidos");
         }
 
         $conexion = ConexionBD::getConnection();
 
         if (!isset($conexion)) {
-            throw new FuncionesDBException("ERROR FUNCIONES BD: no se ha podido establecer conexion BBDD");
+            throw new FuncionesDBException("ERROR FUNCIONES BD (USUARIOS): no se ha podido establecer conexion BBDD");
         }
 
         $stmn = $conexion->prepare($q_insertUsuario);
@@ -152,11 +155,13 @@ final class FuncionesDBUsuarios
 
     /**
      * updateDatosUsuario($args)
-     * requiere usuarioId objetivo
-     * actualiza los datos personales del usuario
-     * telefono, email, dirección, nombre usuario y nombre
-     * nombre y email son no null
-     * Unique: username, email
+     * requiere usuarioId objetivo.
+     * Actualiza los datos personales del usuario.
+     * telefono, email, dirección, username y nombre.
+     * 
+     * nombre y email son no null.
+     * Unique: username, email.
+     * 
      * Gestionar excepciones en negocio del endpoint.
      * Excepciones:
      * - FuncionesDBException
@@ -181,11 +186,11 @@ final class FuncionesDBUsuarios
         $idUsuario = $args['idUsuario'] ?? -1;
 
         if ($idUsuario < 0) {
-            throw new FuncionesDBException("ERROR FUNCIONES DB: no se ha podido identificar id usuario");
+            throw new FuncionesDBException("ERROR FUNCIONES DB (USUARIOS): no se ha podido identificar id usuario");
         }
 
         if ($nombre == '' || $username == '' || $email == '' || $rol == '') {
-            throw new FuncionesDBException("ERROR FUNCIONES DB: no se han rellenado los campos requeridos");
+            throw new FuncionesDBException("ERROR FUNCIONES DB (USUARIOS): no se han rellenado los campos requeridos");
         }
 
         //no required
@@ -195,7 +200,7 @@ final class FuncionesDBUsuarios
         $conexion = ConexionBD::getConnection();
 
         if (!isset($conexion)) {
-            throw new FuncionesDBException("ERROR FUNCIONES DB: no se ha podido establecer conexion BBDD");
+            throw new FuncionesDBException("ERROR FUNCIONES DB (USUARIOS): no se ha podido establecer conexion BBDD");
         }
 
         $stmn = $conexion->prepare($q_updateUsuario);
@@ -215,8 +220,9 @@ final class FuncionesDBUsuarios
 
     /**
      * updatePasswordUsuario($args)
-     * permite actualizar el password de un usuario manteniendo la seguridad
-     * Solo usable por el propio usuario sobre sí mismo o un admin con privilegios de gestión
+     * Permite actualizar el password de un usuario manteniendo la seguridad.
+     * Solo usable por el propio usuario sobre sí mismo o un admin con privilegios de gestión.
+     * 
      * Gestionar excepciones en negocio del endpoint.
      * Excepciones:
      * - FuncionesDBException
@@ -230,17 +236,17 @@ final class FuncionesDBUsuarios
         $usuarioId = $args['usuarioId'] ?? -1;
 
         if ($contrasena == '') {
-            throw new FuncionesDBException("ERROR FUNCIONES DB: campo contraseña vacío");
+            throw new FuncionesDBException("ERROR FUNCIONES DB (USUARIOS): campo contraseña vacío");
         }
 
         if ($usuarioId < 0) {
-            throw new FuncionesDBException("ERROR FUNCIONES DB: usuario id no identificado");
+            throw new FuncionesDBException("ERROR FUNCIONES DB (USUARIOS): usuario id no identificado");
         }
 
         $conexion = ConexionBD::getConnection();
 
         if (!isset($conexion)) {
-            throw new FuncionesDBException("ERROR FUNCIONES DB: no se ha podido establecer conexion BBDD");
+            throw new FuncionesDBException("ERROR FUNCIONES DB (USUARIOS): no se ha podido establecer conexion BBDD");
         }
 
         $stmn = $conexion->prepare($q_updatePassword);
@@ -257,7 +263,8 @@ final class FuncionesDBUsuarios
 
     /**
      * deleteUsuario($args)
-     * elimina un usuario cuyo usuarioId se indique
+     * elimina un usuario cuyo usuarioId se indique.
+     * 
      * Gestionar excepciones en negocio del endpoint.
      * Excepciones:
      * - FuncionesDBException
@@ -270,13 +277,13 @@ final class FuncionesDBUsuarios
         $usuarioId = $args['usuarioId'] ?? -1;
 
         if ($usuarioId < 0) {
-            throw new FuncionesDBException("ERROR FUNCIONES DB: usuario id no identificado");
+            throw new FuncionesDBException("ERROR FUNCIONES DB (USUARIOS): usuario id no identificado");
         }
 
         $conexion = ConexionBD::getConnection();
 
         if (!isset($conexion)) {
-            throw new FuncionesDBException("ERROR FUNCIONES DB: no se ha podido establecer conexion BBDD");
+            throw new FuncionesDBException("ERROR FUNCIONES DB (USUARIOS): no se ha podido establecer conexion BBDD");
         }
 
         $stmn = $conexion->prepare($q_deleteUsuario);
