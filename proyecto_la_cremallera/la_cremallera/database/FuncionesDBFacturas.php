@@ -156,8 +156,8 @@ final class FuncionesDBFacturas
      * - facturaId (requerido)
      * - usuarioId (requerido)
      * - fecha (requerido)
-     * - pagado
-     * - total_calculado
+     * - pagado, default 0
+     * - total_calculado, default null
      * 
      * Excepciones:
      * - FuncionesDBException
@@ -166,6 +166,64 @@ final class FuncionesDBFacturas
     final public static function updateFactura($args){
         $q_updateFactura="UPDATE facturas SET usuarioId = :usuarioId, fecha= :fecha, pagado= :pagado, total_calculado = :tc WHERE facturaId = :id";
 
+        $facturaId=$args['facturaId']??-1;
 
+        $usuarioId=$args['usuarioId']??-1;
+        $fecha=$args['fecha']??'';
+        $pagado=$args['pagado']??0;
+        $totalCalculado=$args['total_calculado']??'null';
+
+        if ($facturaId < 0 || gettype($facturaId) != 'integer') {
+            throw new FuncionesDBException("ERROR FUNCIONES BD (FACTURAS): valor de facturaId no reconocido");
+        }
+
+        if ($usuarioId < 0 || gettype($usuarioId) != 'integer') {
+            throw new FuncionesDBException("ERROR FUNCIONES BD (FACTURAS): valor de usuarioId no reconocido");
+        }
+
+        if($fecha==''){
+            throw new FuncionesDBException("ERROR FUNCIONES BD (FACTURAS): el campo fecha es requerido");
+        }
+
+        $conexion = ConexionBD::getConnection();
+        if (!isset($conexion)) {
+            throw new FuncionesDBException("ERROR FUNCIONES BD (FACTURAS): no se ha podido establecer conexion BBDD");
+        }
+
+        $stmn = $conexion->prepare($q_updateFactura);
+
+        $success = $stmn->execute([
+            ':id'=>$facturaId,
+            ':usuarioId' => $usuarioId,
+            ':fecha' => $fecha,
+            ':pagado'=>$pagado,
+            ':total_calculado'=>$totalCalculado
+        ]);
+
+        return $success;
+    }
+
+    // ---DELETE---
+    final public static function deleteFactura($args){
+        $q_deleteFactura="DELETE FROM facturas WHERE facturaId = :id";
+
+        $facturaId=$args['facturaId']??-1;
+        
+        if ($facturaId < 0 || gettype($facturaId) != 'integer') {
+            throw new FuncionesDBException("ERROR FUNCIONES BD (FACTURAS): valor de facturaId no reconocido");
+        }
+
+        $conexion = ConexionBD::getConnection();
+        if (!isset($conexion)) {
+            throw new FuncionesDBException("ERROR FUNCIONES BD (FACTURAS): no se ha podido establecer conexion BBDD");
+        }
+        
+        $stmn = $conexion->prepare($q_deleteFactura);
+
+        $success = $stmn->execute([
+            ':id'=>$facturaId,
+        ]);
+
+        return $success;
     }
 }
