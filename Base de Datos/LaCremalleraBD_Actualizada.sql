@@ -75,10 +75,10 @@ CREATE TABLE inventario (
 
 -- Tabla consumos_trabajo
 CREATE TABLE consumos_trabajo (
-    consumoId INT AUTO_INCREMENT PRIMARY KEY,
     trabajoId INT NOT NULL,
     itemId INT NOT NULL,
     cantidad_usada INT NOT NULL,
+    PRIMARY KEY(trabajoId,itemId),
     FOREIGN KEY (trabajoId) REFERENCES trabajos(trabajoId),
     FOREIGN KEY (itemId) REFERENCES inventario(itemId)
 );
