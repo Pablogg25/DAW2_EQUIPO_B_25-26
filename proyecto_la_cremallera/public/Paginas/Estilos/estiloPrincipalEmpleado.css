@@ -1,0 +1,108 @@
+@font-face {
+    font-family: 'MiFuenteBrush';
+    src: url('/public/Paginas/Fotns/Fonts_Package_eb90b99c66225f68ae96b28dac620bb5/BrushScriptMT/web/font/BrushScriptMT.woff2') format('woff2'),
+         url('/public/Paginas/Fotns/Fonts_Package_eb90b99c66225f68ae96b28dac620bb5/BrushScriptMT/web/font/BrushScriptMT.woff') format('woff'),
+         url('/public/Paginas/Fotns/Fonts_Package_eb90b99c66225f68ae96b28dac620bb5/BrushScriptMT/BrushScriptMT.ttf') format('truetype');
+}
+/* Configuracion general */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: #f1f1f1;
+}
+
+/* ===== Contenedor principal ===== */
+.contenedor {
+    display: flex;
+    padding: 30px 40px;
+    max-width: 1100px;
+    width: 100%;
+    background: rgba(180, 180, 180, 0.5);
+}
+
+/* ===== Logos ===== */
+.logos {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-right: 20px;
+}
+
+.logos img {
+    width: 250px;
+    height: auto;
+    object-fit: contain;
+}
+
+.logo-cremallera p {
+    font-family: 'MiFuenteBrush';
+    font-size: 50px;
+    color: #000;
+    margin-top: 5px;
+    text-align: center;
+}
+
+/* ===== Contenedor de la sección principal ===== */
+.contenedor>.botones-y-contenido {
+    display: flex;
+    width: 100%;
+    gap: 30px;
+}
+
+/* ===== Botones en columna ===== */
+.botones {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    min-width: 200px;
+    margin-right: 20px;
+}
+
+.botones button {
+    padding: 15px;
+    border: none;
+    border-radius: 6px;
+    background-color: #0059b3;
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.botones button:hover {
+    background-color: #003d80;
+}
+
+/* ===== Botón de cerrar sesión ===== */
+#cerrarSesion {
+    background-color: #b30000;
+}
+
+#cerrarSesion:hover {
+    background-color: #800000;
+}
+
+/* ===== Div de contenido al costado ===== */
+.contenido-lateral {
+    flex: 1;
+    background-color: rgba(158, 17, 17, 0.05);
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px;
+    font-size: 18px;
+    color: #333;
+}
+
