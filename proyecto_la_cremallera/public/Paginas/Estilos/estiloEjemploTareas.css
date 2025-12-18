@@ -1,0 +1,86 @@
+/* ===== Logos ===== */
+.logos {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-right: 20px;
+}
+
+.logos img {
+    width: 250px;
+    height: auto;
+    object-fit: contain;
+}
+
+.logo-cremallera p {
+    font-family: 'MiFuenteBrush';
+    font-size: 50px;
+    color: #000;
+    margin-top: 5px;
+    text-align: center;
+}
+
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: #f1f1f1;
+}
+.app {
+  display: flex;
+  height: 100vh;
+}
+
+.contenedor {
+    display: flex;
+    padding: 30px 40px;
+    max-width: 1100px;
+    width: 100%;
+    background: rgba(180, 180, 180, 0.5);
+}
+/* Contenido principal */
+.contenido {
+  flex: 1;
+  padding: 30px;
+  background-color: #ecf0f1;
+}
+
+.botones {
+  margin-bottom: 20px;
+}
+
+#volver {
+  padding: 8px 16px;
+  font-size: 1em;
+}
+
+/* Tabla con divs */
+.tabla {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #ccc;
+  background-color: white;
+}
+
+.fila {
+  display: flex;
+  border-bottom: 1px solid #ccc;
+}
+
+.fila div {
+  flex: 1;
+  padding: 10px;
+  border-right: 1px solid #ccc;
+}
+
+.fila div:last-child {
+  border-right: none;
+}
+
+.cabecera {
+  background-color: #bdc3c7;
+  font-weight: bold;
+}

@@ -1,0 +1,78 @@
+@font-face {
+    font-family: 'MiFuenteBrush';
+    src: url('/public/Paginas/Fotns/Fonts_Package_eb90b99c66225f68ae96b28dac620bb5/BrushScriptMT/web/font/BrushScriptMT.woff2') format('woff2'),
+         url('/public/Paginas/Fotns/Fonts_Package_eb90b99c66225f68ae96b28dac620bb5/BrushScriptMT/web/font/BrushScriptMT.woff') format('woff'),
+         url('/public/Paginas/Fotns/Fonts_Package_eb90b99c66225f68ae96b28dac620bb5/BrushScriptMT/BrushScriptMT.ttf') format('truetype');
+}
+ * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: #f1f1f1;
+}
+
+/* ===== Contenedor principal ===== */
+.contenedor {
+    display: flex;
+    padding: 30px 40px;
+    max-width: 1100px;
+    width: 100%;
+    background: rgba(180, 180, 180, 0.5);
+}
+
+/* ===== Logos ===== */
+.logos {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-right: 20px;
+}
+
+.logos img {
+    width: 250px;
+    height: auto;
+    object-fit: contain;
+}
+
+.logo-cremallera p {
+    font-family: 'MiFuenteBrush';
+    font-size: 50px;
+    color: #000;
+    margin-top: 5px;
+    text-align: center;
+}
+
+.table {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #ccc;
+}
+
+.fila {
+  display: flex;
+}
+
+.fila div {
+  flex: 1;
+  padding: 10px;
+  border-right: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+}
+
+.fila div:last-child {
+  border-right: none;
+}
+
+.cabecera {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}
