@@ -128,7 +128,7 @@ final class FuncionesDBUsuarios
      */
     final public static function checkPassword($args): bool
     {
-        $q_checkPassword = "SELECT count(*) as found FROM usuarios WHERE username == :nombre AND password_hash == SHA2(:password_h,224)";
+        $q_checkPassword = "SELECT count(*) as found FROM usuarios WHERE username == :username AND password_SHA2 == SHA2(:password_s,224)";
 
         $contrasena = $args['password'] ?? '';
         $username = $args['username'] ?? '';
@@ -150,7 +150,10 @@ final class FuncionesDBUsuarios
         }
 
         $stmt = $conexion->prepare($q_checkPassword);
-        $stmt->execute();
+        $stmt->execute([
+            ":username" => $username,
+            ":password_s" => $contrasena
+        ]);
 
         $result = $stmt->fetch(PDO::FETCH_COLUMN);
 
@@ -184,8 +187,8 @@ final class FuncionesDBUsuarios
     {
 
         $q_insertUsuario = "INSERT INTO usuarios" .
-            "(nombre,telefono,email,direccion,username,password_hash,rol) VALUES" .
-            "(:nombre,:telefono,:email,:direccion,:username,SHA2(:password_h,224),:rol)";
+            "(nombre,telefono,email,direccion,username,password_SHA2,rol) VALUES" .
+            "(:nombre,:telefono,:email,:direccion,:username,SHA2(:password_s,224),:rol)";
 
         //required
         $nombre = $args['nombre'] ?? '';
@@ -220,7 +223,7 @@ final class FuncionesDBUsuarios
             ':email' => $email,
             ':direccion' => $direccion,
             ':username' => $username,
-            ':password_h' => $password,
+            ':password_s' => $password,
             ':rol'=>$rol
         ]);
 
@@ -319,7 +322,7 @@ final class FuncionesDBUsuarios
      */
     final public static function updatePasswordUsuario($args): bool
     {
-        $q_updatePassword = "UPDATE usuarios SET password_hash = SHA2(:password_h,224) WHERE usuarioId = :id";
+        $q_updatePassword = "UPDATE usuarios SET password_SHA2 = SHA2(:password_s,224) WHERE usuarioId = :id";
 
         $usuarioId = $args['usuarioId'] ?? -1;
         $contrasena = $args['password'] ?? '';
@@ -341,7 +344,7 @@ final class FuncionesDBUsuarios
         $stmn = $conexion->prepare($q_updatePassword);
 
         $exito = $stmn->execute([
-            ':password_h' => $contrasena,
+            ':password_s' => $contrasena,
             ':id' => $usuarioId
         ]);
 
