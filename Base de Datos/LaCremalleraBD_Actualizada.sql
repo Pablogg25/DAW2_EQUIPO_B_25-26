@@ -99,14 +99,14 @@ CREATE TABLE calendario (
 -- Tabla notificaciones
 CREATE TABLE notificaciones (
     notificacionId INT AUTO_INCREMENT PRIMARY KEY,
-    clienteId INT NOT NULL,
+    receptorId INT NOT NULL,
     remitenteId INT NOT NULL,
     trabajoId INT,
     tipo ENUM('recordatorio_entrega','trabajo_listo','factura_generada','notificacion'),
     asunto VARCHAR(100),
-    mensaje TEXT,
+    mensaje TEXT NOT NULL,
     fecha_envio TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (clienteId) REFERENCES usuarios(usuarioId),
+    FOREIGN KEY (receptorId) REFERENCES usuarios(usuarioId),
     FOREIGN KEY (remitenteId) REFERENCES usuarios(usuarioId),
     FOREIGN KEY (trabajoId) REFERENCES trabajos(trabajoId)
 );
@@ -193,7 +193,7 @@ VALUES
 ('Entrega chaqueta', 'Cliente Carlos', '2025-11-20 11:00', '2025-11-20 11:30', 5, 3);
 
 -- Notificaciones
-INSERT INTO notificaciones (clienteId,remitenteId, trabajoId, tipo, asunto, mensaje)
+INSERT INTO notificaciones (receptorId,remitenteId, trabajoId, tipo, asunto, mensaje)
 VALUES
 (6, 1, 1, 'recordatorio_entrega', 'recogida prenda', 'Su prenda estará lista para recoger el día 25'),
 (6, 1, 2, 'trabajo_listo', 'trabajo acabado', 'Su vestido ya está disponible'),
