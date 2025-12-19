@@ -90,8 +90,10 @@ CREATE TABLE calendario (
     descripcion TEXT,
     fecha_inicio DATETIME NOT NULL,
     fecha_fin DATETIME NOT NULL,
+    usuarioId INT NOT NULL,
     empleadoId INT,
     trabajoId INT,
+    FOREIGN KEY (usuarioId) REFERENCES usuarios(usuarioId),
     FOREIGN KEY (empleadoId) REFERENCES usuarios(usuarioId),
     FOREIGN KEY (trabajoId) REFERENCES trabajos(trabajoId)
 );
@@ -186,11 +188,11 @@ VALUES
 (8, 5, 1);
 
 -- Calendario
-INSERT INTO calendario (titulo, descripcion, fecha_inicio, fecha_fin, empleadoId, trabajoId)
+INSERT INTO calendario (titulo, descripcion, fecha_inicio, fecha_fin, usuarioId, empleadoId, trabajoId)
 VALUES
-('Entrega de pantalón', 'Cliente Ana', '2025-11-25 10:00', '2025-11-25 10:30', 3, 1),
-('Revisión vestido', 'Cliente Ana', '2025-11-26 09:00', '2025-11-26 09:30', 4, 2),
-('Entrega chaqueta', 'Cliente Carlos', '2025-11-20 11:00', '2025-11-20 11:30', 5, 3);
+('Entrega de pantalón', 'Cliente Ana', '2025-11-25 10:00', '2025-11-25 10:30', 6, 3, 1),
+('Revisión vestido', 'Cliente Ana', '2025-11-26 09:00', '2025-11-26 09:30', 6, 4, 2),
+('Entrega chaqueta', 'Cliente Carlos', '2025-11-20 11:00', '2025-11-20 11:30',7, 5, 3);
 
 -- Notificaciones
 INSERT INTO notificaciones (receptorId,remitenteId, trabajoId, tipo, asunto, mensaje)
