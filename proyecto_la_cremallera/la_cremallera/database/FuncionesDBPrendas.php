@@ -15,6 +15,14 @@ final class FuncionesDBPrendas
      * getPrendas()
      * Obtiene todos los datos de la tabla prendas
      * 
+     * Columnas:
+     * - prendaId
+     * - usuarioId (FK)
+     * - tipo
+     * - descripcion
+     * - color
+     * - talla
+     * 
      * Excepciones:
      * - FuncionesDBException
      * - PDOException
@@ -43,6 +51,14 @@ final class FuncionesDBPrendas
      * 
      * $args:
      * - usuarioId (requerido, FK)
+     * 
+     * Columnas:
+     * - prendaId
+     * - usuarioId (FK)
+     * - tipo
+     * - descripcion
+     * - color
+     * - talla
      * 
      * Excepciones:
      * - FuncionesDBException

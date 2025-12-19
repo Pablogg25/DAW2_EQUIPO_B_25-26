@@ -17,6 +17,16 @@ final class FuncionesDBTrabajos
      * getTrabajos()
      * Obtiene todos los datos de la tabla trabajos
      * 
+     * Columnas:
+     * - trabajoId
+     * - prendaId (FK)
+     * - empleadoId (FK)
+     * - descripcion 
+     * - fecha_inicio
+     * - fecha_entrega
+     * - estado
+     * - precio
+     * 
      * Excepciones:
      * - FuncionesDBException
      * - PDOException
@@ -41,11 +51,20 @@ final class FuncionesDBTrabajos
      * getTrabajosByEmpleadoId($args)
      * recibe un empleadoId y devuelve los datos filas con ese empleadoId
      * 
-     * Requiere empleadoId
      * Gestionar excepciones en negocio del endpoint.
      * 
      * $args:
      * - empleadoId (requerido)
+     * 
+     * Columnas:
+     * - trabajoId
+     * - prendaId (FK)
+     * - empleadoId (FK)
+     * - descripcion 
+     * - fecha_inicio
+     * - fecha_entrega
+     * - estado
+     * - precio
      * 
      * Excepciones:
      * - FuncionesDBException
@@ -79,11 +98,20 @@ final class FuncionesDBTrabajos
      * getTrabajosByUsuarioId($args)
      * recibe un usuarioId y devuelve los datos de trabajos cuyas prendas en tabla prendas tengan ese usuarioId
      * 
-     * requiere usuarioId
      * Gestionar excepciones en negocio del endpoint.
      * 
      * $args:
      * - usuarioId (requerido)
+     * 
+     * Columnas:
+     * - trabajoId
+     * - prendaId (FK)
+     * - empleadoId (FK)
+     * - descripcion 
+     * - fecha_inicio
+     * - fecha_entrega
+     * - estado
+     * - precio
      * 
      * Excepciones:
      * - FuncionesDBException
@@ -122,6 +150,10 @@ final class FuncionesDBTrabajos
      * $args:
      * - trabajoId (required, FK)
      * 
+     * Columnas:
+     * - trabajoId (FK)
+     * - itemId (FK)
+     * - cantidad_usada
      * Excepciones:
      * - FuncionesDBException
      * - PDOException

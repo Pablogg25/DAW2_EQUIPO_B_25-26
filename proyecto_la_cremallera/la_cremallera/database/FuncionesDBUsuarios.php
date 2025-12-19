@@ -16,6 +16,16 @@ final class FuncionesDBUsuarios
      * getUsuarios()
      * Obtiene los datos de todos los usuarios (excepto la contraseña)
      * 
+     * Columnas:
+     * - usuarioId
+     * - nombre
+     * - telefono
+     * - email
+     * - direccion
+     * - username
+     * - rol
+     * - fecha_registro
+     * 
      * Excepciones:
      * - FuncionesDBException
      * - PDOException
@@ -43,6 +53,17 @@ final class FuncionesDBUsuarios
      * 
      * $args:
      * - username (requerido)
+     * 
+     * 
+     * Columnas:
+     * - usuarioId
+     * - nombre
+     * - telefono
+     * - email
+     * - direccion
+     * - username
+     * - rol
+     * - fecha_registro
      * 
      * Excepciones:
      * - FuncionesDBException
@@ -80,6 +101,16 @@ final class FuncionesDBUsuarios
      * 
      * $args:
      * - username (requerido)
+     * 
+     * Columnas:
+     * - usuarioId
+     * - nombre
+     * - telefono
+     * - email
+     * - direccion
+     * - username
+     * - rol
+     * - fecha_registro
      * 
      * Excepciones:
      * - FuncionesDBException
@@ -121,6 +152,8 @@ final class FuncionesDBUsuarios
      * $args:
      * - username (requerido)
      * - password (requerido)
+     * 
+     * returns: bool
      * 
      * Excepciones:
      * - FuncionesDBException

@@ -17,6 +17,16 @@ final class FuncionesDBCalendario
      * getEventos()
      * Obtiene todos los datos de eventos del calendario
      * 
+     * Columnas:
+     * - eventoId
+     * - titulo
+     * - descripcion
+     * - fecha_inicio
+     * - fecha_fin
+     * - usuarioId (FK)
+     * - empleado_id (FK)
+     * - trabajoId (FK)
+     * 
      * Excepciones:
      * - FuncionesDBException
      * - PDOException
@@ -43,6 +53,16 @@ final class FuncionesDBCalendario
      * 
      * $args:
      * - usuarioId (requerido, FK)
+     * 
+     * Columnas:
+     * - eventoId
+     * - titulo
+     * - descripcion
+     * - fecha_inicio
+     * - fecha_fin
+     * - usuarioId (FK)
+     * - empleado_id (FK)
+     * - trabajoId (FK)
      * 
      * Excepciones:
      * - FuncionesDBException
@@ -77,6 +97,16 @@ final class FuncionesDBCalendario
      * $args:
      * - empleadoId (requerido, FK)
      * 
+     * Columnas:
+     * - eventoId
+     * - titulo
+     * - descripcion
+     * - fecha_inicio
+     * - fecha_fin
+     * - usuarioId (FK)
+     * - empleado_id (FK)
+     * - trabajoId (FK)
+     * 
      * Excepciones:
      * - FuncionesDBException
      * - PDOException
@@ -109,6 +139,16 @@ final class FuncionesDBCalendario
      * 
      * $args:
      * - trabajoId (requerido, FK)
+     * 
+     * Columnas:
+     * - eventoId
+     * - titulo
+     * - descripcion
+     * - fecha_inicio
+     * - fecha_fin
+     * - usuarioId (FK)
+     * - empleado_id (FK)
+     * - trabajoId (FK)
      * 
      * Excepciones:
      * - FuncionesDBException

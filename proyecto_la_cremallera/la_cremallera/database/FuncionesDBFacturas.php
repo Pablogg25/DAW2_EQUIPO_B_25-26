@@ -17,6 +17,13 @@ final class FuncionesDBFacturas
      * getFacturas()
      * devuelve todos los datos de la tabla facturas
      * 
+     * Columnas:
+     * - facturaId
+     * - usuarioId FK
+     * - fecha
+     * - pagado
+     * - total_calculado
+     * 
      * Excepciones:
      * - FuncionesDBException
      * - PDOException
@@ -42,6 +49,13 @@ final class FuncionesDBFacturas
      * 
      * $args:
      * - facturaId (requerido)
+     * 
+     * Columnas:
+     * - facturaId
+     * - usuarioId FK
+     * - fecha
+     * - pagado
+     * - total_calculado
      * 
      * Excepciones:
      * - FuncionesDBException
@@ -75,6 +89,13 @@ final class FuncionesDBFacturas
      * $args:
      * - usuarioId (requerido, FK)
      * 
+     * Columnas:
+     * - facturaId
+     * - usuarioId FK
+     * - fecha
+     * - pagado
+     * - total_calculado
+     * 
      * Excepciones:
      * - FuncionesDBException
      * - PDOException
@@ -106,6 +127,16 @@ final class FuncionesDBFacturas
      * 
      * $args:
      * - facturaId (requerido)
+     * 
+     * Columnas:
+     * - trabajoId
+     * - prendaId (FK)
+     * - empleadoId (FK)
+     * - descripcion
+     * - fecha_inicio
+     * - fecha_entrega
+     * - estado
+     * - precio
      * 
      * Excepciones:
      * - FuncionesDBException
@@ -139,6 +170,13 @@ final class FuncionesDBFacturas
      * $args:
      * - trabajoId (requerido,FK)
      * 
+     * Columnas:
+     * - facturaId
+     * - usuarioId FK
+     * - fecha
+     * - pagado
+     * - total_calculado
+     * 
      * Excepciones:
      * - FuncionesDBException
      * - PDOException
@@ -170,6 +208,8 @@ final class FuncionesDBFacturas
      * 
      * $args:
      * - facturaId (requerido)
+     * 
+     * returns: float
      * 
      * Excepciones:
      * - FuncionesDBException

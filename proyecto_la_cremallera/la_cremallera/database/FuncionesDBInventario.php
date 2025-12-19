@@ -16,6 +16,13 @@ final class FuncionesDBInventario{
      * getInventario()
      * Obtiene todos los datos de la tabla de inventario
      * 
+     * Columnas:
+     * - itemId
+     * - nombre
+     * - descripcion
+     * - cantidad
+     * - stock_minimo
+     * 
      * Excepciones:
      * - FuncionesDBException
      * - PDOException
@@ -40,6 +47,13 @@ final class FuncionesDBInventario{
      * 
      * $args:
      * - itemId (requerido)
+     * 
+     * Columnas:
+     * - itemId
+     * - nombre
+     * - descripcion
+     * - cantidad
+     * - stock_minimo
      * 
      * Excepciones:
      * - FuncionesDBException
@@ -68,6 +82,13 @@ final class FuncionesDBInventario{
     /**
      * getItemsBajoStock()
      * Obtiene una lista de los items en el inventario cuyo stock es menor o igual que la cantidad mínima
+     * 
+     * Columnas:
+     * - itemId
+     * - nombre
+     * - descripcion
+     * - cantidad
+     * - stock_minimo
      * 
      * Excepciones:
      * - FuncionesDBException

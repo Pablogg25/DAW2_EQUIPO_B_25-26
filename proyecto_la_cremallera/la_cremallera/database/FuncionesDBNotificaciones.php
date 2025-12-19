@@ -18,6 +18,16 @@ final class FuncionesDBNotificaciones
      * getNotificaciones()
      * Obtiene todos los datos de la tabla notificaciones
      * 
+     * Columnas:
+     * - notificacionId
+     * - receptorId (FK)
+     * - remitenteId (FK)
+     * - trabajoId (FK)
+     * - tipo
+     * - asunto
+     * - mensaje
+     * - fecha_envio
+     * 
      * Excepciones:
      * - FuncionesDBException
      * - PDOException
@@ -44,6 +54,16 @@ final class FuncionesDBNotificaciones
      * 
      * $args:
      * - receptorId (requerido usuarioId, FK)
+     * 
+     * Columnas:
+     * - notificacionId
+     * - receptorId (FK)
+     * - remitenteId (FK)
+     * - trabajoId (FK)
+     * - tipo
+     * - asunto
+     * - mensaje
+     * - fecha_envio
      * 
      * Excepciones:
      * - FuncionesDBException
@@ -81,6 +101,16 @@ final class FuncionesDBNotificaciones
      * $args:
      * - remitenteId (requerido usuarioId, FK)
      * 
+     * Columnas:
+     * - notificacionId
+     * - receptorId (FK)
+     * - remitenteId (FK)
+     * - trabajoId (FK)
+     * - tipo
+     * - asunto
+     * - mensaje
+     * - fecha_envio
+     * 
      * Excepciones:
      * - FuncionesDBException
      * - PDOException
@@ -116,6 +146,16 @@ final class FuncionesDBNotificaciones
      * 
      * $args:
      * - trabajoId (requerido, FK)
+     * 
+     * Columnas:
+     * - notificacionId
+     * - receptorId (FK)
+     * - remitenteId (FK)
+     * - trabajoId (FK)
+     * - tipo
+     * - asunto
+     * - mensaje
+     * - fecha_envio
      * 
      * Excepciones:
      * - FuncionesDBException
