@@ -99,7 +99,7 @@ final class FuncionesDBPrendas
      * 
      * $args:
      * - usuarioId (requerido, FK)
-     * - tipo (requerido)
+     * - tipo
      * - descripcion
      * - color
      * - talla
@@ -127,6 +127,7 @@ final class FuncionesDBPrendas
 
         if($tipo==''){
             throw new FuncionesDBException("ERROR FUNCIONES BD (PRENDAS): el campo tipo es requerido");
+
         }
 
         $conexion = ConexionDB::getConnection();
@@ -158,7 +159,7 @@ final class FuncionesDBPrendas
      * $args:
      * - prendaId (requerido)
      * - usuarioId (requerido, FK)
-     * - tipo (requerido)
+     * - tipo
      * - descripcion
      * - color
      * - talla
@@ -176,9 +177,9 @@ final class FuncionesDBPrendas
         $prendaId = $args['prendaId'] ?? -1;
         $usuarioId = $args['usuarioId'] ?? -1;
         $tipo = $args['tipo'] ?? '';
-        $descripcion = $args['descripcion'] ?? 'null';
-        $color = $args['color'] ?? 'null';
-        $talla = $args['talla'] ?? 'null';
+        $descripcion = $args['descripcion'] ?? '';
+        $color = $args['color'] ?? '';
+        $talla = $args['talla'] ?? '';
 
         //usuarioId requerido
         if ($usuarioId < 0 || gettype($usuarioId) != 'integer') {
@@ -187,10 +188,6 @@ final class FuncionesDBPrendas
 
         if ($prendaId < 0 || gettype($prendaId) != 'integer') {
             throw new FuncionesDBException("ERROR FUNCIONES BD (PRENDAS): valor de prendaId no reconocido");
-        }
-
-        if($tipo==''){
-            throw new FuncionesDBException("ERROR FUNCIONES BD (PRENDAS): el campo tipo es requerido");
         }
 
         //prendaIdrequerido
@@ -207,8 +204,7 @@ final class FuncionesDBPrendas
             ":tipo" => $tipo,
             ":desc" => $descripcion,
             ":color" => $color,
-            ":talla" => $talla,
-            ":id" => $prendaId
+            ":talla" => $talla
         ]);
 
         return $exito;
