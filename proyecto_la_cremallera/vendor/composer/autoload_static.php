@@ -15,7 +15,7 @@ class ComposerStaticInit7cf62c70b75ee73e5d8aa5dbf9d4dc38
     public static $prefixLengthsPsr4 = array (
         'l' =>
         array (
-            'la_Cremallera\\' => 14,
+            'la_cremallera\\' => 14,
         ),
         'S' =>
         array (
@@ -38,7 +38,7 @@ class ComposerStaticInit7cf62c70b75ee73e5d8aa5dbf9d4dc38
     );
 
     public static $prefixDirsPsr4 = array (
-        'la_Cremallera\\' =>
+        'la_cremallera\\' =>
         array (
             0 => __DIR__ . '/../..' . '/la_cremallera',
         ),

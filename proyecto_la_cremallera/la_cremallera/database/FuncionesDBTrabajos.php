@@ -5,7 +5,7 @@ namespace la_cremallera\database;
 
 require_once __DIR__ . '/ConexionDB.php';
 
-use la_cremallera\database\ConexionBD;
+use la_cremallera\database\ConexionDB;
 use la_cremallera\err\FuncionesDBException;
 use PDO;
 
@@ -35,7 +35,7 @@ final class FuncionesDBTrabajos
     {
         $q_selectTrabajos = "SELECT * FROM trabajos";
 
-        $conexion = ConexionBD::getConnection();
+        $conexion = ConexionDB::getConnection();
 
         if (!isset($conexion)) {
             throw new FuncionesDBException("ERROR FUNCIONES BD (TRABAJOS): no se ha podido establecer conexion BBDD");
@@ -82,7 +82,7 @@ final class FuncionesDBTrabajos
             throw new FuncionesDBException("ERROR FUNCIONES BD (TRABAJOS): valor de empleadoId no reconocido");
         }
 
-        $conexion = ConexionBD::getConnection();
+        $conexion = ConexionDB::getConnection();
 
         if (!isset($conexion)) {
             throw new FuncionesDBException("ERROR FUNCIONES BD (TRABAJOS): no se ha podido establecer conexion BBDD");
@@ -129,7 +129,7 @@ final class FuncionesDBTrabajos
             throw new FuncionesDBException("ERROR FUNCIONES BD (TRABAJOS): valor de usuarioId no reconocido");
         }
 
-        $conexion = ConexionBD::getConnection();
+        $conexion = ConexionDB::getConnection();
 
         if (!isset($conexion)) {
             throw new FuncionesDBException("ERROR FUNCIONES BD (TRABAJOS): no se ha podido establecer conexion BBDD");
@@ -169,7 +169,7 @@ final class FuncionesDBTrabajos
             throw new FuncionesDBException("ERROR FUNCIONES BD (TRABAJOS): valor de trabajoId no reconocido");
         }
 
-        $conexion = ConexionBD::getConnection();
+        $conexion = ConexionDB::getConnection();
 
         if (!isset($conexion)) {
             throw new FuncionesDBException("ERROR FUNCIONES BD (TRABAJOS): no se ha podido establecer conexion BBDD");
@@ -240,7 +240,7 @@ final class FuncionesDBTrabajos
             }
         }
 
-        $conexion = ConexionBD::getConnection();
+        $conexion = ConexionDB::getConnection();
 
         if (!isset($conexion)) {
             throw new FuncionesDBException("ERROR FUNCIONES BD (TRABAJOS): no se ha podido establecer conexion BBDD");
@@ -289,7 +289,7 @@ final class FuncionesDBTrabajos
             throw new FuncionesDBException("ERROR FUNCIONES BD (TRABAJOS): valor de itemId no reconocido");
         }
 
-        $conexion = ConexionBD::getConnection();
+        $conexion = ConexionDB::getConnection();
 
         if (!isset($conexion)) {
             throw new FuncionesDBException("ERROR FUNCIONES BD (TRABAJOS): no se ha podido establecer conexion BBDD");
@@ -376,7 +376,7 @@ final class FuncionesDBTrabajos
             }
         }
 
-        $conexion = ConexionBD::getConnection();
+        $conexion = ConexionDB::getConnection();
 
         if (!isset($conexion)) {
             throw new FuncionesDBException("ERROR FUNCIONES BD (TRABAJOS): no se ha podido establecer conexion BBDD");
@@ -425,7 +425,7 @@ final class FuncionesDBTrabajos
             throw new FuncionesDBException("ERROR FUNCIONES BD (TRABAJOS): valor de itemId no reconocido");
         }
 
-        $conexion = ConexionBD::getConnection();
+        $conexion = ConexionDB::getConnection();
 
         if (!isset($conexion)) {
             throw new FuncionesDBException("ERROR FUNCIONES BD (TRABAJOS): no se ha podido establecer conexion BBDD");
@@ -465,7 +465,7 @@ final class FuncionesDBTrabajos
             throw new FuncionesDBException("ERROR FUNCIONES BD (TRABAJOS): trabajoId no reconocido");
         }
 
-        $conexion = ConexionBD::getConnection();
+        $conexion = ConexionDB::getConnection();
 
         if (!isset($conexion)) {
             throw new FuncionesDBException("ERROR FUNCIONES BD (TRABAJOS): no se ha podido establecer conexion BBDD");
@@ -503,7 +503,7 @@ final class FuncionesDBTrabajos
             throw new FuncionesDBException("ERROR FUNCIONES BD (TRABAJOS): valor de itemId no reconocido");
         }
 
-        $conexion = ConexionBD::getConnection();
+        $conexion = ConexionDB::getConnection();
 
         if (!isset($conexion)) {
             throw new FuncionesDBException("ERROR FUNCIONES BD (TRABAJOS): no se ha podido establecer conexion BBDD");
