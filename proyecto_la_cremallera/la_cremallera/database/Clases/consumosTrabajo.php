@@ -3,49 +3,53 @@
 namespace la_cremallera\database\Clases;
 
 
-class consumosTrabajo{
+class ConsumosTrabajo{
 
+    //Variables de la Clase ConsumosTrabajo
     private $trabajoId;
     private $itemId;
-    private $cantidad_usada;
+    private $cantidadUsada;
 
-    public function __construct($trabajoId, $itemId, $cantidad_usada)
+    //Constructor para inicializa la clase ConsumosTrabajo
+    public function __construct($itemId = null, $cantidadUsada = null, $trabajoId = null)
     {
-        $this->trabajoId = $trabajoId;
         $this->itemId = $itemId;
-        $this->cantidad_usada = $cantidad_usada;
-
+        $this->cantidadUsada = $cantidadUsada;
+        if (!$trabajoId == null) {
+            $this->trabajoId = $trabajoId;
+        }
     }
 
-
-    public function __get($nombreVariable)
+    //Funcion get magico que devuelve la variable pasando el nombre de la variable
+     public function __get($nombreVariable)
     {
-        switch($nombreVariable){
-            case "trabajoId":
+        switch(strtolower($nombreVariable)){
+            case "trabajoid":
             case "trabajo":
-                $this->trabajoId;
-            case "itemId":
+                return $this->trabajoId;
+            case "itemid":
             case "item":
-                $this->itemId;
+                return $this->itemId;
             case "cantidad usada":
             case "cantidad":
-                $this->cantidad_usada;
+                return $this->cantidadUsada;
             default:
                 return null;
         }
     }
-    public function __set($nombreVariable, $value)
+
+    //Funcion set magico que modifica la variable pasando el nombre de la variable a modificar y el nuevo valor de la variable
+    public function __set($nombreVariable, $nuevaVariable)
     {
-        switch($nombreVariable){
-            case "trabajoId":
-            case "trabajo":
-                $this->trabajoId = $value;
-            case "itemId":
+        switch(strtolower($nombreVariable)){
+            case "itemid":
             case "item":
-                $this->itemId = $value;
+                $this->itemId = $nuevaVariable;
+                return true;
             case "cantidad usada":
             case "cantidad":
-                $this->cantidad_usada = $value;
+                $this->cantidadUsada = $nuevaVariable;
+                return true;
             default:
                 return null;
         }
@@ -53,7 +57,5 @@ class consumosTrabajo{
 
 
 }
-
-
 
 ?>

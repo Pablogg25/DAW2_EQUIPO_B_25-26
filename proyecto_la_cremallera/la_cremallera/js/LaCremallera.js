@@ -1,6 +1,6 @@
 const LaCremallera = {
     nombreEmpresa : "La Cremallera",
-    logo: "/public/Paginas/Imagenes/Logo - La Cremallera - Sin Fondo.png",
+    logo: "/proyecto_la_cremallera/public/Paginas/Imagenes/Logo - La Cremallera - Sin Fondo.png",
     detalle: "Arreglos de Ropa, todo lo que desees lo hacemos realidad",
     categoria: "Servicio de Costura y Arreglos",
     descripcion: "Empresa con mas de 40 años de antiguedad en arreglos de todo tipo de prendas, fundada por 'nombre' y desde hace 20 años dirigida por Leyda Mercedes Pocohuanca Requejo, imnovando en el sector y ofreciendo un servicio impecable a todos los clientes",

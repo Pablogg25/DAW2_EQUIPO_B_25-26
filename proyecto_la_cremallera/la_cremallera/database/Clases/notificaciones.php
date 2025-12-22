@@ -2,73 +2,95 @@
 
 namespace la_cremallera\database\Clases;
 
-class notificaciones{
+class Notificaciones{
+
+    //Variables de la clase Notificaciones
     private $notificacionesId;
     private $receptorId;
     private $remitenteId;
+    private $trabajoId;
     private $tipo;
     private $asunto;
     private $mensaje;
-    private $fecha_envio;
+    private $fechaEnvio;
 
-    public function __construct($notificacionesId, $receptorId, $remitenteId, $tipo, $asunto, $mensaje, $fecha_envio)
-    {
-        $this->notificacionesId = $notificacionesId;
+    //Constructor que incializa la clase Notificaciones
+    public function __construct($receptorId = null, $remitenteId = null, $tipo = null, $asunto = null, $mensaje = null, $fechaEnvio = null, $notificacionesId = null)
+    {     
         $this->receptorId = $receptorId;
         $this->remitenteId = $remitenteId;
         $this->tipo = $tipo;
         $this->asunto = $asunto;
         $this->mensaje = $mensaje;
-        $this->fecha_envio = $fecha_envio;
+        $this->fechaEnvio = $fechaEnvio;
+        if (!$notificacionesId == null) {
+            $this->notificacionesId = $notificacionesId;
+        }
     }
 
+    //Funcion get magico que devuelve la variable pasando el nombre de la variable
     public function __get($nombreVariable)
     {
-        switch($nombreVariable){
-            case "notificacionesId":
+        switch(strtolower($nombreVariable)){
+            case "notificacionesid":
             case "notificaciones":
-                $this->notificacionesId;
+            case "noti":
+                return $this->notificacionesId;
             case "receptorId":
             case "receptor":
-                $this->receptorId;
+            case "recep":
+                return $this->receptorId;
             case "remitenteId":
             case "remitente":
-                $this->remitenteId;
+            case "remi":
+                return $this->remitenteId;
             case "tipo":
-                $this->tipo;
+                return $this->tipo;
             case "asunto":
-                $this->asunto;
+            case "asun":
+                return $this->asunto;
             case "mensaje":
-                $this->mensaje;
+            case "men":
+                return $this->mensaje;
             case "fecha envio":
             case "fecha":
-                $this->fecha_envio;
+            case "fec":
+                return $this->fechaEnvio;
             default:
                 return null;
         }
     }
 
-    public function __set($nombreVariable, $value)
+    //Funcion set magico que modifica la variable pasando el nombre de la variable a modificar y el nuevo valor de la variable
+    public function __set($nombreVariable, $nuevaVariable)
     {
-        switch($nombreVariable){
-            case "notificacionesId":
-            case "notificaciones":
-                $this->notificacionesId = $value;
+        switch(strtolower($nombreVariable)){
             case "receptorId":
             case "receptor":
-                $this->receptorId = $value;
+            case "recep":
+                $this->receptorId = $nuevaVariable;
+                return true;
             case "remitenteId":
             case "remitente":
-                $this->remitenteId = $value;
+            case "remi":
+                $this->remitenteId = $nuevaVariable;
+                return true;
             case "tipo":
-                $this->tipo = $value;
+                $this->tipo = $nuevaVariable;
+                return true;
             case "asunto":
-                $this->asunto = $value;
+            case "asun":
+                $this->asunto = $nuevaVariable;
+                return true;
             case "mensaje":
-                $this->mensaje = $value;
+            case "men":
+                $this->mensaje = $nuevaVariable;
+                return true;
             case "fecha envio":
             case "fecha":
-                $this->fecha_envio = $value;
+            case "fec":
+                $this->fecha_envio = $nuevaVariable;
+                return true;
             default:
                 return null;
         }

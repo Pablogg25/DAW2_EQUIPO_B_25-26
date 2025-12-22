@@ -3,46 +3,34 @@
 
 namespace la_cremallera\database\Clases;
 
-class facturaTrabajos{
+class FacturaTrabajos{
 
+    //Variables de la clase FacturaTrabajos
     private int $facturaId;
     private int $trabajoId;
 
-
+    //Constructor que incializa la clase FacturaTrabajos
     public function __construct($facturaId, $trabajoId)
     {
         $this->facturaId = $facturaId;
         $this->trabajoId = $trabajoId;
     }
 
+    //Funcion get magico que devuelve la variable pasando el nombre de la variable
     public function __get($nombreVariable)
     {
-        switch($nombreVariable){
-            case "facturaId":
+        switch(strtolower($nombreVariable)){
+            case "facturaid":
             case "factura":
-                $this->facturaId;
-            case "trabajoID":
+                return $this->facturaId;
+            case "trabajoid":
             case "trabajo":
-                $this->trabajoId;
+                return $this->trabajoId;
             default:
                 return null;
         }
     }
-
-    public function __set($nombreVariable, $value)
-    {
-        switch($nombreVariable){
-            case "facturaID":
-            case "factura":
-                $this->facturaId = $value;
-            case "trabajoID":
-            case "trabajo":
-                $this->trabajoId = $value ;
-            default:
-                return null;
-        }
-    }
-
-
 
 }
+
+?>

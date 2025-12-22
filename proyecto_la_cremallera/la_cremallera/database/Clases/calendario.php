@@ -2,75 +2,109 @@
 
 namespace la_cremallera\database\Clases;
 
-class calendario{
+class Calendario{
+
+    //Variables de la Clase Calendario
     private $eventoId;
     private $titulo;
     private $descripcion;
-    private $fecha_inicio;
-    private $fecha_fin;
+    private $fechaInicio;
+    private $fechaFin;
+    private $usuarioId;
     private $empleadoId;
     private $trabajoId;
 
-
-    public function __construct($eventoId, $titulo, $descripcion, $fecha_inicio, $fecha_fin, $empleadoId, $trabajoId)
+    //Constructor para inicializa la clase Calendario
+    public function __construct($titulo = null, $descripcion = null, $fechaInicio = null, $fechaFin = null, $usuarioId = null, $empleadoId = null, $trabajoId = null , $eventoId = null)
     {
-        $this->eventoId = $eventoId;
         $this->titulo = $titulo;
         $this->descripcion = $descripcion;
-        $this->fecha_inicio = $fecha_inicio;
-        $this->fecha_fin = $fecha_fin;
+        $this->fechaInicio = $fechaInicio;
+        $this->fechaFin = $fechaFin;
+        $this->usuarioId = $usuarioId;
         $this->empleadoId = $empleadoId;
         $this->trabajoId = $trabajoId;
+        if (!$eventoId == null) {
+            $this->eventoId = $eventoId;
+        }
     }
 
+    //Funcion get magico que devuelve la variable pasando el nombre de la variable
     public function __get($nombreVariable)
     {
-        switch($nombreVariable){
-            case "eventoId":
+        switch(strtolower($nombreVariable)){
+            case "eventoid":
             case "evento":
-                $this->eventoId;
+            case "even":
+                return $this->eventoId;
             case "titulo":
-                $this->titulo;
+            case "tit":
+                return $this->titulo;
             case "descripcion":
-                $this->descripcion;
+            case "des":
+                return $this->descripcion;
             case "fecha inicio":
             case "fecini":
-                $this->fecha_inicio;
+                return $this->fechaInicio;
             case "fecha fin":
             case "fecfin":
-                $this->fecha_fin;
-            case "empleadoId":
+                return $this->fechaFin;
+            case "usuarioid":
+            case "usuario":
+            case "usu":
+                return $this->usarioId;
+            case "empleadoid":
             case "empleado":
-                $this->empleadoId;
-            case "trabajoId":
+            case "emp":
+                return $this->empleadoId;
+            case "trabajoid":
             case "trabajo":
-                $this->trabajoId;
+            case "tra":
+                return $this->trabajoId;
+            default:
+                return null;
         }
     }
 
-    public function __set($nombreVariable, $value)
+    //Funcion set magico que modifica la variable pasando el nombre de la variable a modificar y el nuevo valor de la variable
+    public function __set($nombreVariable, $nuevaVariable)
     {
-        switch($nombreVariable){
-            case "eventoId":
-            case "evento":
-                $this->eventoId = $value;
+        switch(strtolower($nombreVariable)){
             case "titulo":
-                $this->titulo = $value;
+            case "tit":
+                $this->titulo = $nuevaVariable;
+                return true;
             case "descripcion":
-                $this->descripcion = $value;
+            case "des":
+                $this->descripcion = $nuevaVariable;
+                return true;
             case "fecha inicio":
             case "fecini":
-                $this->fecha_inicio = $value;
+                $this->fechaInicio = $nuevaVariable;
+                return true;
             case "fecha fin":
             case "fecfin":
-                $this->fecha_fin = $value;
-            case "empleadoId":
+                $this->fechaFin = $nuevaVariable;
+                return true;
+            case "usuarioid":
+            case "usuario":
+            case "usu":
+                $this->usarioId = $nuevaVariable;
+                return true;
+            case "empleadoid":
             case "empleado":
-                $this->empleadoId = $value;
-            case "trabajoId":
+            case "emp":
+                $this->empleadoId = $nuevaVariable;
+                return true;
+            case "trabajoid":
             case "trabajo":
-                $this->trabajoId = $value;
+            case "tra":
+                $this->trabajoId = $nuevaVariable;
+                return true;
+            default:
+                return null;
         }
+
     }
 
 }

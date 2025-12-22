@@ -30,12 +30,12 @@ body {
     object-fit: contain;
 }
 
-.logo-cremallera{
+.logo-cremallera {
     text-align: center;
 }
 
-.logo-cremallera p{
-    font-family: "Brush Script MT";
+.logo-cremallera p {
+    font-family: 'MiFuenteBrush';
     font-size: 60px;
     color: black;
     margin-top: 5px;
@@ -59,12 +59,15 @@ body {
 }
 
 /* Enlace */
+.enlace {
+    display: flex;
+    justify-content: center;
+    gap: 90px; /* espacio entre enlaces */
+}
+
 .enlace a {
-    display: block;
-    text-align: right;
     color: #003d80;
     text-decoration: none;
-    margin-top: 30px;
 }
 
 .enlace a:hover {
@@ -84,20 +87,20 @@ body {
     border-radius: 6px;
 }*/
 
-.orden{
+.orden {
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
 
-.orden label{
+.orden label {
     width: 140px;
     font-size: 15px;
     font-weight: bold;
     text-align: left;
 }
 
-.orden input{
+.orden input {
     flex: 1;
     padding: 3px 10px;
     font-size: 15px;
@@ -129,3 +132,9 @@ body {
     background: #003d80;
 }
 
+@font-face {
+    font-family: 'MiFuenteBrush';
+    src: url('/proyecto_la_cremallera/public/Paginas/Fotns/Fonts_Package_eb90b99c66225f68ae96b28dac620bb5/BrushScriptMT/web/font/BrushScriptMT.woff2') format('woff2'),
+        url('/proyecto_la_cremallera/public/Paginas/Fotns/Fonts_Package_eb90b99c66225f68ae96b28dac620bb5/BrushScriptMT/web/font/BrushScriptMT.woff') format('woff'),
+        url('/proyecto_la_cremallera/public/Paginas/Fotns/Fonts_Package_eb90b99c66225f68ae96b28dac620bb5/BrushScriptMT/BrushScriptMT.ttf') format('truetype');
+}

@@ -45,7 +45,7 @@ body {
 }
 
 .logo-cremallera p{
-    font-family: "Brush Script MT";
+    font-family: 'MiFuenteBrush';
     font-size: 65px;
     color: black;
     margin-top: 5px;
@@ -118,4 +118,9 @@ body {
     background: #003d80;
 }
 
-
+@font-face {
+    font-family: 'MiFuenteBrush';
+    src: url('/proyecto_la_cremallera/public/Paginas/Fotns/Fonts_Package_eb90b99c66225f68ae96b28dac620bb5/BrushScriptMT/web/font/BrushScriptMT.woff2') format('woff2'),
+         url('/proyecto_la_cremallera/public/Paginas/Fotns/Fonts_Package_eb90b99c66225f68ae96b28dac620bb5/BrushScriptMT/web/font/BrushScriptMT.woff') format('woff'),
+         url('/proyecto_la_cremallera/public/Paginas/Fotns/Fonts_Package_eb90b99c66225f68ae96b28dac620bb5/BrushScriptMT/BrushScriptMT.ttf') format('truetype');
+}

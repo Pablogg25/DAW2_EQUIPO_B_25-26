@@ -2,58 +2,72 @@
 
 namespace la_cremallera\database\Clases;
 
-
 class Inventario{
+
+    //Variables de la clase Inventario
     private $itemId;
     private $nombre;
     private $descripcion;
     private $cantidad;
-    private $stock_minimo;
+    private $stockMinimo;
 
-    public function __construct($itemId, $nombre, $descripcion, $cantidad, $stock_minimo)
+    //Constructor que incializa la clase Inventario
+    public function __construct($nombre = null, $descripcion = null, $cantidad = null, $stockMinimo = null, $itemId = null )
     {
         $this->itemId = $itemId;
         $this->nombre = $nombre;
         $this->descripcion = $descripcion;
         $this->cantidad = $cantidad;
-        $this->stock_minimo = $stock_minimo; 
+        $this->stockMinimo = $stockMinimo; 
+        if (!$itemId == null) {
+            $this->itemId = $itemId;
+        }
     }
 
+    //Funcion get magico que devuelve la variable pasando el nombre de la variable
     public function __get($nombreVariable)
     {
-        switch($nombreVariable){
+        switch(strtolower($nombreVariable)){
             case "itemId":
             case "item":
-                $this->itemId;
+                return $this->itemId;
             case "nombre":
-                $this->nombre;
+            case "nom":
+                return $this->nombre;
             case "descripcion":
-                $this->descripcion;
+            case "des":
+                return $this->descripcion;
             case "cantidad":
-                $this->cantidad;
+            case "cant":
+                return $this->cantidad;
             case "stock minimo":
             case "stock":
-                $this->stock_minimo;
+                return $this->stock_minimo;
             default:
                 return null;
         }
     }
 
-    public function __set($nombreVariable, $value)
+    //Funcion set magico que modifica la variable pasando el nombre de la variable a modificar y el nuevo valor de la variable
+    public function __set($nombreVariable, $nuevaVariable)
     {
-        switch($nombreVariable){
-            case "itemId":
-                case "item":
-                    $this->itemId = $value;
+        switch(strtolower($nombreVariable)){
             case "nombre":
-                $this->nombre = $value;
+            case "nom":
+                $this->nombre = $nuevaVariable;
+                return true;
             case "descripcion":
-                $this->descripcion = $value;
+            case "des":
+                $this->descripcion = $nuevaVariable;
+                return true;
             case "cantidad":
-                $this->cantidad = $value;
+            case "cant":
+                $this->cantidad = $nuevaVariable;
+                return true;
             case "stock minimo":
             case "stock":
-                $this->stock_minimo = $value;
+                $this->stockMinimo = $nuevaVariable;
+                return true;
             default:
                 return null;
         }
