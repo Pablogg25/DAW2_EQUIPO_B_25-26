@@ -24,7 +24,7 @@ CREATE TABLE usuarios (
 CREATE TABLE prendas (
     prendaId INT AUTO_INCREMENT PRIMARY KEY,
     usuarioId INT NOT NULL,
-    tipo VARCHAR(50),
+    tipo VARCHAR(50) NOT NULL,
     descripcion TEXT,
     color VARCHAR(30),
     talla VARCHAR(10),

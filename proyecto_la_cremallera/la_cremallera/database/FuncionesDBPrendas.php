@@ -125,6 +125,11 @@ final class FuncionesDBPrendas
             throw new FuncionesDBException("ERROR FUNCIONES BD (PRENDAS): usuarioId no reconocido");
         }
 
+        if($tipo==''){
+            throw new FuncionesDBException("ERROR FUNCIONES BD (PRENDAS): el campo tipo es requerido");
+
+        }
+
         $conexion = ConexionDB::getConnection();
 
         if (!isset($conexion)) {

@@ -71,6 +71,7 @@ final class TestFuncionesDBUsuarios extends TestCase{
         $q_resultE=FuncionesDBUsuarios::getUsuarioById($argsE2);
     }
 
+    // test validate
     public function testCheckPassword(){
         $args1=[
             'username'=>'laura_adm',
@@ -103,7 +104,7 @@ final class TestFuncionesDBUsuarios extends TestCase{
         $q_resultE2=FuncionesDBUsuarios::checkPassword($argsE2);
     }
 
-    //tests WRITE
+    //tests CREATE
 
     //test insert parausuario phpunit
 
@@ -141,6 +142,7 @@ final class TestFuncionesDBUsuarios extends TestCase{
         $this->assertTrue($exito,"ERROR TEST (FuncionesDBUsuarios): ha surgido un error al intentar insertar un usuario válido");
     }
 
+    // test update
     public function testUpdateUsuario(){
 
         //update correcto
@@ -229,6 +231,7 @@ final class TestFuncionesDBUsuarios extends TestCase{
 
     }
 
+    // test DELETE
     public function testDeleteUsuario(){
         //testear que se deletea el usuario anterior
         $args1=[
