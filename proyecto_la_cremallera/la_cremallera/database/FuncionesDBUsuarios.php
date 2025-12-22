@@ -4,7 +4,7 @@ namespace la_cremallera\database;
 
 require_once __DIR__ . '/ConexionDB.php';
 
-use la_cremallera\database\ConexionBD;
+use la_cremallera\database\ConexionDB;
 use la_cremallera\err\FuncionesDBException;
 use PDO;
 
@@ -33,13 +33,13 @@ final class FuncionesDBUsuarios
     final public static function getUsuarios()
     {
         //obtener todos los usuarios de la base de datos
-        $conexion = ConexionBD::getConnection();
+        $conexion = ConexionDB::getConnection();
 
         if (!isset($conexion)) {
             throw new FuncionesDBException("ERROR FUNCIONES BD (USUARIOS): no se ha podido establecer conexion BBDD");
         }
 
-        $comandoSql = "SELECT usuarioId,nombre,telefono,email,direccion,username,rol,fecha_regitro FROM usuarios";
+        $comandoSql = "SELECT usuarioId,nombre,telefono,email,direccion,username,rol,fecha_registro FROM usuarios";
 
         $stmt = $conexion->prepare($comandoSql);
         $stmt->execute();
@@ -53,7 +53,6 @@ final class FuncionesDBUsuarios
      * 
      * $args:
      * - username (requerido)
-     * 
      * 
      * Columnas:
      * - usuarioId
@@ -79,13 +78,13 @@ final class FuncionesDBUsuarios
         }
 
 
-        $conexion = ConexionBD::getConnection();
+        $conexion = ConexionDB::getConnection();
 
         if (!isset($conexion)) {
             throw new FuncionesDBException("ERROR FUNCIONES BD (USUARIOS): no se ha podido establecer conexion BBDD");
         }
 
-        $comandoSql = "SELECT usuarioId,nombre,telefono,email,direccion,username,rol,fecha_regitro FROM usuarios WHERE username= :username";
+        $comandoSql = "SELECT usuarioId,nombre,telefono,email,direccion,username,rol,fecha_registro FROM usuarios WHERE username= :username";
 
         $stmt = $conexion->prepare($comandoSql);
         $stmt->execute([
@@ -121,18 +120,18 @@ final class FuncionesDBUsuarios
         //obtener todos los usuarios de la base de datos
 
         $usuarioId = $args['usuarioId'] ?? -1;
-        if ($usuarioId == '' || gettype($usuarioId) != 'integer') {
+        if ($usuarioId < 0 || gettype($usuarioId) != 'integer') {
             throw new FuncionesDBException("ERROR FUNCIONES BD (USUARIOS): se requiere rellenar el campo username");
         }
 
 
-        $conexion = ConexionBD::getConnection();
+        $conexion = ConexionDB::getConnection();
 
         if (!isset($conexion)) {
             throw new FuncionesDBException("ERROR FUNCIONES BD (USUARIOS): no se ha podido establecer conexion BBDD");
         }
 
-        $comandoSql = "SELECT nombre,telefono,email,direccion,username,rol,fecha_regitro FROM usuarios WHERE usuarioId= :id";
+        $comandoSql = "SELECT nombre,telefono,email,direccion,username,rol,fecha_registro FROM usuarios WHERE usuarioId= :id";
 
         $stmt = $conexion->prepare($comandoSql);
         $stmt->execute([
@@ -161,7 +160,7 @@ final class FuncionesDBUsuarios
      */
     final public static function checkPassword($args): bool
     {
-        $q_checkPassword = "SELECT count(*) as found FROM usuarios WHERE username == :username AND password_SHA2 == SHA2(:password_s,224)";
+        $q_checkPassword = "SELECT password_SHA2 as found FROM usuarios WHERE username = :username";
 
         $contrasena = $args['password'] ?? '';
         $username = $args['username'] ?? '';
@@ -176,7 +175,7 @@ final class FuncionesDBUsuarios
         }
 
 
-        $conexion = ConexionBD::getConnection();
+        $conexion = ConexionDB::getConnection();
 
         if (!isset($conexion)) {
             throw new FuncionesDBException("ERROR FUNCIONES BD (USUARIOS): no se ha podido establecer conexion BBDD");
@@ -184,13 +183,13 @@ final class FuncionesDBUsuarios
 
         $stmt = $conexion->prepare($q_checkPassword);
         $stmt->execute([
-            ":username" => $username,
-            ":password_s" => $contrasena
+            ":username" => $username
         ]);
 
-        $result = $stmt->fetch(PDO::FETCH_COLUMN);
+        $password_hash=hash("SHA224",$contrasena);
+        $password_db = $stmt->fetch(PDO::FETCH_COLUMN);
 
-        if ($result['found'] != 0) {
+        if ($password_hash===$password_db) {
             return true;
         } else {
             return false;
@@ -242,7 +241,7 @@ final class FuncionesDBUsuarios
             throw new FuncionesDBException("ERROR FUNCIONES DB (USUARIOS): valor incorrecto en campo enumerado rol");
         }
 
-        $conexion = ConexionBD::getConnection();
+        $conexion = ConexionDB::getConnection();
 
         if (!isset($conexion)) {
             throw new FuncionesDBException("ERROR FUNCIONES BD (USUARIOS): no se ha podido establecer conexion BBDD");
@@ -287,12 +286,9 @@ final class FuncionesDBUsuarios
     final public static function updateDatosUsuario($args): bool
     {
         $q_updateUsuario = "UPDATE usuarios SET nombre = :nombre" .
-            ",telefono = :telefono" .
-            ",email = :email" .
-            ",direccion = :direccion" .
-            ",username = :username" .
-            ",rol = :rol" .
-            "WHERE usuarioId = :id";
+            ",telefono = :telefono " .
+            ", email = :email, direccion = :direccion" .
+            ",username = :username, rol = :rol WHERE usuarioId = :id";
 
         //obligatorios: nombre, usuario, password, email
         $nombre = $args['nombre'] ?? '';
@@ -315,17 +311,17 @@ final class FuncionesDBUsuarios
         }
 
         //no required
-        $telefono = $args['telefono'] ?? '';
-        $direccion = $args['direccion'] ?? '';
+        $telefono = $args['telefono'] ?? 'none';
+        $direccion = $args['direccion'] ?? 'none';
 
-        $conexion = ConexionBD::getConnection();
+        $conexion = ConexionDB::getConnection();
 
         if (!isset($conexion)) {
             throw new FuncionesDBException("ERROR FUNCIONES DB (USUARIOS): no se ha podido establecer conexion BBDD");
         }
 
         $stmn = $conexion->prepare($q_updateUsuario);
-
+        //parameter not defined
         $exito = $stmn->execute([
             ':nombre' => $nombre,
             ':telefono' => $telefono,
@@ -368,7 +364,7 @@ final class FuncionesDBUsuarios
             throw new FuncionesDBException("ERROR FUNCIONES DB (USUARIOS): valor de usuario id no identificado");
         }
 
-        $conexion = ConexionBD::getConnection();
+        $conexion = ConexionDB::getConnection();
 
         if (!isset($conexion)) {
             throw new FuncionesDBException("ERROR FUNCIONES DB (USUARIOS): no se ha podido establecer conexion BBDD");
@@ -408,7 +404,7 @@ final class FuncionesDBUsuarios
             throw new FuncionesDBException("ERROR FUNCIONES DB (USUARIOS): usuario id no identificado");
         }
 
-        $conexion = ConexionBD::getConnection();
+        $conexion = ConexionDB::getConnection();
 
         if (!isset($conexion)) {
             throw new FuncionesDBException("ERROR FUNCIONES DB (USUARIOS): no se ha podido establecer conexion BBDD");

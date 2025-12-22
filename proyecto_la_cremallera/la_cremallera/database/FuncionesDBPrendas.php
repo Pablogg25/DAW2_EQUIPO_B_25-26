@@ -4,7 +4,7 @@ namespace la_cremallera\database;
 
 require_once __DIR__ . '/ConexionDB.php';
 
-use la_cremallera\database\ConexionBD;
+use la_cremallera\database\ConexionDB;
 use la_cremallera\err\FuncionesDBException;
 use PDO;
 
@@ -30,7 +30,7 @@ final class FuncionesDBPrendas
     final public static function getPrendas()
     {
         //obtener todas las prendas de la base de datos
-        $conexion = ConexionBD::getConnection();
+        $conexion = ConexionDB::getConnection();
 
         if (!isset($conexion)) {
             throw new FuncionesDBException("ERROR FUNCIONES BD (PRENDAS): no se ha podido establecer conexion BBDD");
@@ -74,7 +74,7 @@ final class FuncionesDBPrendas
             throw new FuncionesDBException("ERROR FUNCIONES BD (PRENDAS): usuarioId no reconocido");
         }
 
-        $conexion = ConexionBD::getConnection();
+        $conexion = ConexionDB::getConnection();
 
         if (!isset($conexion)) {
             throw new FuncionesDBException("ERROR FUNCIONES BD (PRENDAS): no se ha podido establecer conexion BBDD");
@@ -125,7 +125,7 @@ final class FuncionesDBPrendas
             throw new FuncionesDBException("ERROR FUNCIONES BD (PRENDAS): usuarioId no reconocido");
         }
 
-        $conexion = ConexionBD::getConnection();
+        $conexion = ConexionDB::getConnection();
 
         if (!isset($conexion)) {
             throw new FuncionesDBException("ERROR FUNCIONES BD (PRENDAS): no se ha podido establecer conexion BBDD");
@@ -187,7 +187,7 @@ final class FuncionesDBPrendas
 
         //prendaIdrequerido
 
-        $conexion = ConexionBD::getConnection();
+        $conexion = ConexionDB::getConnection();
 
         if (!isset($conexion)) {
             throw new FuncionesDBException("ERROR FUNCIONES BD (PRENDAS): no se ha podido establecer conexion BBDD");
@@ -229,7 +229,7 @@ final class FuncionesDBPrendas
             throw new FuncionesDBException("ERROR FUNCIONES BD (PRENDAS): valor de prendaId no reconocido");
         }
 
-        $conexion = ConexionBD::getConnection();
+        $conexion = ConexionDB::getConnection();
 
         if (!isset($conexion)) {
             throw new FuncionesDBException("ERROR FUNCIONES BD (PRENDAS): no se ha podido establecer conexion BBDD");

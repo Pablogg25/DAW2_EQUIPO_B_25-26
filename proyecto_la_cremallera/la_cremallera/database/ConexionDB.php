@@ -7,7 +7,7 @@ use Dotenv\Dotenv;
 
 //crear clase singleton con protección
 
-final class ConexionBD
+final class ConexionDB
 {
     //variable privada singleton
     private static ?PDO $connection = null;
@@ -31,7 +31,7 @@ final class ConexionBD
 
                 //cargar fichero de entorno,el fichero debe estar en la raiz, lejos de los archivos publicos
                 // la ruta apunta a la carpeta del fichero de entorno
-                $dotenv = Dotenv::createImmutable(ConexionBD::$envPath);
+                $dotenv = Dotenv::createImmutable(ConexionDB::$envPath);
                 $dotenv->load();
 
                 // Crear instancia

@@ -5,7 +5,7 @@ namespace la_cremallera\database;
 
 require_once __DIR__ . '/ConexionDB.php';
 
-use la_cremallera\database\ConexionBD;
+use la_cremallera\database\ConexionDB;
 use la_cremallera\err\FuncionesDBException;
 use PDO;
 
@@ -32,7 +32,7 @@ final class FuncionesDBFacturas
     {
         $q_selectFacturas = "SELECT * FROM facturas";
 
-        $conexion = ConexionBD::getConnection();
+        $conexion = ConexionDB::getConnection();
         if (!isset($conexion)) {
             throw new FuncionesDBException("ERROR FUNCIONES BD (FACTURAS): no se ha podido establecer conexion BBDD");
         }
@@ -71,7 +71,7 @@ final class FuncionesDBFacturas
             throw new FuncionesDBException("ERROR FUNCIONES BD (FACTURAS): valor de facturaId no reconocido");
         }
 
-        $conexion = ConexionBD::getConnection();
+        $conexion = ConexionDB::getConnection();
         if (!isset($conexion)) {
             throw new FuncionesDBException("ERROR FUNCIONES BD (FACTURAS): no se ha podido establecer conexion BBDD");
         }
@@ -110,7 +110,7 @@ final class FuncionesDBFacturas
             throw new FuncionesDBException("ERROR FUNCIONES BD (FACTURAS): valor de usuarioId no reconocido");
         }
 
-        $conexion = ConexionBD::getConnection();
+        $conexion = ConexionDB::getConnection();
         if (!isset($conexion)) {
             throw new FuncionesDBException("ERROR FUNCIONES BD (FACTURAS): no se ha podido establecer conexion BBDD");
         }
@@ -152,7 +152,7 @@ final class FuncionesDBFacturas
             throw new FuncionesDBException("ERROR FUNCIONES BD (FACTURAS): valor de facturaId no reconocido");
         }
 
-        $conexion = ConexionBD::getConnection();
+        $conexion = ConexionDB::getConnection();
         if (!isset($conexion)) {
             throw new FuncionesDBException("ERROR FUNCIONES BD (FACTURAS): no se ha podido establecer conexion BBDD");
         }
@@ -191,7 +191,7 @@ final class FuncionesDBFacturas
             throw new FuncionesDBException("ERROR FUNCIONES BD (FACTURAS): valor de trabajoId no reconocido");
         }
 
-        $conexion = ConexionBD::getConnection();
+        $conexion = ConexionDB::getConnection();
         if (!isset($conexion)) {
             throw new FuncionesDBException("ERROR FUNCIONES BD (FACTURAS): no se ha podido establecer conexion BBDD");
         }
@@ -225,7 +225,7 @@ final class FuncionesDBFacturas
             throw new FuncionesDBException("ERROR FUNCIONES BD (FACTURAS): valor de facturaId no reconocido");
         }
 
-        $conexion = ConexionBD::getConnection();
+        $conexion = ConexionDB::getConnection();
         if (!isset($conexion)) {
             throw new FuncionesDBException("ERROR FUNCIONES BD (FACTURAS): no se ha podido establecer conexion BBDD");
         }
@@ -269,7 +269,7 @@ final class FuncionesDBFacturas
             throw new FuncionesDBException("ERROR FUNCIONES BD (FACTURAS): el campo fecha es requerido");
         }
 
-        $conexion = ConexionBD::getConnection();
+        $conexion = ConexionDB::getConnection();
         if (!isset($conexion)) {
             throw new FuncionesDBException("ERROR FUNCIONES BD (FACTURAS): no se ha podido establecer conexion BBDD");
         }
@@ -311,7 +311,7 @@ final class FuncionesDBFacturas
             throw new FuncionesDBException("ERROR FUNCIONES BD (FACTURAS): valor de trabajoId no reconocido");
         }
 
-        $conexion = ConexionBD::getConnection();
+        $conexion = ConexionDB::getConnection();
         if (!isset($conexion)) {
             throw new FuncionesDBException("ERROR FUNCIONES BD (FACTURAS): no se ha podido establecer conexion BBDD");
         }
@@ -366,7 +366,7 @@ final class FuncionesDBFacturas
             throw new FuncionesDBException("ERROR FUNCIONES BD (FACTURAS): el campo fecha es requerido");
         }
 
-        $conexion = ConexionBD::getConnection();
+        $conexion = ConexionDB::getConnection();
         if (!isset($conexion)) {
             throw new FuncionesDBException("ERROR FUNCIONES BD (FACTURAS): no se ha podido establecer conexion BBDD");
         }
@@ -407,7 +407,7 @@ final class FuncionesDBFacturas
             throw new FuncionesDBException("ERROR FUNCIONES BD (FACTURAS): valor de facturaId no reconocido");
         }
 
-        $conexion = ConexionBD::getConnection();
+        $conexion = ConexionDB::getConnection();
         if (!isset($conexion)) {
             throw new FuncionesDBException("ERROR FUNCIONES BD (FACTURAS): no se ha podido establecer conexion BBDD");
         }
@@ -448,7 +448,7 @@ final class FuncionesDBFacturas
             throw new FuncionesDBException("ERROR FUNCIONES BD (FACTURAS): valor de trabajoId no reconocido");
         }
 
-        $conexion = ConexionBD::getConnection();
+        $conexion = ConexionDB::getConnection();
         if (!isset($conexion)) {
             throw new FuncionesDBException("ERROR FUNCIONES BD (FACTURAS): no se ha podido establecer conexion BBDD");
         }

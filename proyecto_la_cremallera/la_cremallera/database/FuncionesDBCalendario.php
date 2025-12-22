@@ -5,7 +5,7 @@ namespace la_cremallera\database;
 
 require_once __DIR__ . '/ConexionDB.php';
 
-use la_cremallera\database\ConexionBD;
+use la_cremallera\database\ConexionDB;
 use la_cremallera\err\FuncionesDBException;
 use PDO;
 
@@ -35,7 +35,7 @@ final class FuncionesDBCalendario
     {
         $q_selectEventos = "SELECT * FROM calendario";
 
-        $conexion = ConexionBD::getConnection();
+        $conexion = ConexionDB::getConnection();
 
         if (!isset($conexion)) {
             throw new FuncionesDBException("ERROR FUNCIONES BD (CALENDARIO): no se ha podido establecer conexion BBDD");
@@ -78,7 +78,7 @@ final class FuncionesDBCalendario
             throw new FuncionesDBException("ERROR FUNCIONES BD (CALENDARIO): valor de usuarioId no reconocido");
         }
 
-        $conexion = ConexionBD::getConnection();
+        $conexion = ConexionDB::getConnection();
 
         if (!isset($conexion)) {
             throw new FuncionesDBException("ERROR FUNCIONES BD (CALENDARIO): no se ha podido establecer conexion BBDD");
@@ -121,7 +121,7 @@ final class FuncionesDBCalendario
             throw new FuncionesDBException("ERROR FUNCIONES BD (CALENDARIO): valor de empleadoId no reconocido");
         }
 
-        $conexion = ConexionBD::getConnection();
+        $conexion = ConexionDB::getConnection();
 
         if (!isset($conexion)) {
             throw new FuncionesDBException("ERROR FUNCIONES BD (CALENDARIO): no se ha podido establecer conexion BBDD");
@@ -164,7 +164,7 @@ final class FuncionesDBCalendario
             throw new FuncionesDBException("ERROR FUNCIONES BD (CALENDARIO): valor de trabajoId no reconocido");
         }
 
-        $conexion = ConexionBD::getConnection();
+        $conexion = ConexionDB::getConnection();
 
         if (!isset($conexion)) {
             throw new FuncionesDBException("ERROR FUNCIONES BD (CALENDARIO): no se ha podido establecer conexion BBDD");
@@ -233,7 +233,7 @@ final class FuncionesDBCalendario
         }
 
 
-        $conexion = ConexionBD::getConnection();
+        $conexion = ConexionDB::getConnection();
 
         if (!isset($conexion)) {
             throw new FuncionesDBException("ERROR FUNCIONES BD (CALENDARIO): no se ha podido establecer conexion BBDD");
@@ -319,7 +319,7 @@ final class FuncionesDBCalendario
         }
 
 
-        $conexion = ConexionBD::getConnection();
+        $conexion = ConexionDB::getConnection();
 
         if (!isset($conexion)) {
             throw new FuncionesDBException("ERROR FUNCIONES BD (CALENDARIO): no se ha podido establecer conexion BBDD");
@@ -364,7 +364,7 @@ final class FuncionesDBCalendario
         }
 
         
-        $conexion = ConexionBD::getConnection();
+        $conexion = ConexionDB::getConnection();
 
         if (!isset($conexion)) {
             throw new FuncionesDBException("ERROR FUNCIONES BD (CALENDARIO): no se ha podido establecer conexion BBDD");
