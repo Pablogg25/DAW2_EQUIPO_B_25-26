@@ -186,10 +186,10 @@ final class FuncionesDBUsuarios
             ":username" => $username
         ]);
 
-        $password_hash=hash("SHA224",$contrasena);
+        $password_hash = hash("SHA224", $contrasena);
         $password_db = $stmt->fetch(PDO::FETCH_COLUMN);
 
-        if ($password_hash===$password_db) {
+        if ($password_hash === $password_db) {
             return true;
         } else {
             return false;
@@ -231,13 +231,13 @@ final class FuncionesDBUsuarios
         //no required
         $telefono = $args['telefono'] ?? '';
         $direccion = $args['direccion'] ?? '';
-        $rol=$args['rol']??'cliente';
+        $rol = $args['rol'] ?? 'cliente';
 
         if ($nombre == '' || $username == '' || $password == '' || $email == '') {
             throw new FuncionesDBException("ERROR FUNCIONES DB (USUARIOS): Se requiere nombre, nombre de usuario, contraseña y correo electrónico válidos");
         }
 
-        if($rol!='cliente'&&$rol!='empleado'&&$rol!='admin'){
+        if ($rol != 'cliente' && $rol != 'empleado' && $rol != 'admin') {
             throw new FuncionesDBException("ERROR FUNCIONES DB (USUARIOS): valor incorrecto en campo enumerado rol");
         }
 
@@ -256,7 +256,7 @@ final class FuncionesDBUsuarios
             ':direccion' => $direccion,
             ':username' => $username,
             ':password_s' => $password,
-            ':rol'=>$rol
+            ':rol' => $rol
         ]);
 
         return $success;
@@ -306,7 +306,7 @@ final class FuncionesDBUsuarios
             throw new FuncionesDBException("ERROR FUNCIONES DB (USUARIOS): no se han rellenado los campos requeridos");
         }
 
-        if($rol!='cliente'&&$rol!='empleado'&&$rol!='admin'){
+        if ($rol != 'cliente' && $rol != 'empleado' && $rol != 'admin') {
             throw new FuncionesDBException("ERROR FUNCIONES DB (USUARIOS): valor incorrecto en campo enumerado rol");
         }
 
