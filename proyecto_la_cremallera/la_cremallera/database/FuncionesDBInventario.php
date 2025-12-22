@@ -5,7 +5,7 @@ namespace la_cremallera\database;
 
 require_once __DIR__ . '/ConexionDB.php';
 
-use la_cremallera\database\ConexionBD;
+use la_cremallera\database\ConexionDB;
 use la_cremallera\err\FuncionesDBException;
 use PDO;
 
@@ -30,7 +30,7 @@ final class FuncionesDBInventario{
     final public static function getInventario(){
         $q_selectInventario="SELECT * FROM inventario";
 
-        $conexion = ConexionBD::getConnection();
+        $conexion = ConexionDB::getConnection();
         if (!isset($conexion)) {
             throw new FuncionesDBException("ERROR FUNCIONES BD (INVENTARIO): no se ha podido establecer conexion BBDD");
         }
@@ -68,7 +68,7 @@ final class FuncionesDBInventario{
             throw new FuncionesDBException("ERROR FUNCIONES BD (INVENTARIO): valor de itemId no reconocido");
         }
 
-        $conexion = ConexionBD::getConnection();
+        $conexion = ConexionDB::getConnection();
         if (!isset($conexion)) {
             throw new FuncionesDBException("ERROR FUNCIONES BD (INVENTARIO): no se ha podido establecer conexion BBDD");
         }
@@ -97,7 +97,7 @@ final class FuncionesDBInventario{
     final public static function getItemsBajoStock(){
         $q_selectLowStock="SELECT * FROM inventario WHERE cantidad =< stock_minimo";
 
-        $conexion = ConexionBD::getConnection();
+        $conexion = ConexionDB::getConnection();
         if (!isset($conexion)) {
             throw new FuncionesDBException("ERROR FUNCIONES BD (INVENTARIO): no se ha podido establecer conexion BBDD");
         }
@@ -137,7 +137,7 @@ final class FuncionesDBInventario{
             throw new FuncionesDBException("ERROR FUNCIONES BD (INVENTARIO): El campo nombre es requerido");
         }
 
-        $conexion = ConexionBD::getConnection();
+        $conexion = ConexionDB::getConnection();
         if (!isset($conexion)) {
             throw new FuncionesDBException("ERROR FUNCIONES BD (INVENTARIO): no se ha podido establecer conexion BBDD");
         }
@@ -188,7 +188,7 @@ final class FuncionesDBInventario{
             throw new FuncionesDBException("ERROR FUNCIONES BD (INVENTARIO): El campo nombre es requerido");
         }
 
-        $conexion = ConexionBD::getConnection();
+        $conexion = ConexionDB::getConnection();
         if (!isset($conexion)) {
             throw new FuncionesDBException("ERROR FUNCIONES BD (INVENTARIO): no se ha podido establecer conexion BBDD");
         }
@@ -226,7 +226,7 @@ final class FuncionesDBInventario{
             throw new FuncionesDBException("ERROR FUNCIONES BD (FACTURAS): valor de itemId no reconocido");
         }
 
-        $conexion = ConexionBD::getConnection();
+        $conexion = ConexionDB::getConnection();
         if (!isset($conexion)) {
             throw new FuncionesDBException("ERROR FUNCIONES BD (INVENTARIO): no se ha podido establecer conexion BBDD");
         }

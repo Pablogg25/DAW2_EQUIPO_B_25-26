@@ -5,7 +5,7 @@ namespace la_cremallera\database;
 
 require_once __DIR__ . '/ConexionDB.php';
 
-use la_cremallera\database\ConexionBD;
+use la_cremallera\database\ConexionDB;
 use la_cremallera\err\FuncionesDBException;
 use PDO;
 
@@ -36,7 +36,7 @@ final class FuncionesDBNotificaciones
     {
         $q_selectNotificaciones = "SELECT * FROM notificaciones";
 
-        $conexion = ConexionBD::getConnection();
+        $conexion = ConexionDB::getConnection();
 
         if (!isset($conexion)) {
             throw new FuncionesDBException("ERROR FUNCIONES BD (NOTIFICACIONES): no se ha podido establecer conexion BBDD");
@@ -80,7 +80,7 @@ final class FuncionesDBNotificaciones
             throw new FuncionesDBException("ERROR FUNCIONES BD (NOTIFICACIONES): valor de receptorId no reconocido");
         }
 
-        $conexion = ConexionBD::getConnection();
+        $conexion = ConexionDB::getConnection();
 
         if (!isset($conexion)) {
             throw new FuncionesDBException("ERROR FUNCIONES BD (NOTIFICACIONES): no se ha podido establecer conexion BBDD");
@@ -126,7 +126,7 @@ final class FuncionesDBNotificaciones
             throw new FuncionesDBException("ERROR FUNCIONES BD (NOTIFICACIONES): valor de remitenteId no reconocido");
         }
 
-        $conexion = ConexionBD::getConnection();
+        $conexion = ConexionDB::getConnection();
 
         if (!isset($conexion)) {
             throw new FuncionesDBException("ERROR FUNCIONES BD (NOTIFICACIONES): no se ha podido establecer conexion BBDD");
@@ -172,7 +172,7 @@ final class FuncionesDBNotificaciones
             throw new FuncionesDBException("ERROR FUNCIONES BD (NOTIFICACIONES): valor de trabajoId no reconocido");
         }
 
-        $conexion = ConexionBD::getConnection();
+        $conexion = ConexionDB::getConnection();
 
         if (!isset($conexion)) {
             throw new FuncionesDBException("ERROR FUNCIONES BD (NOTIFICACIONES): no se ha podido establecer conexion BBDD");
@@ -245,7 +245,7 @@ final class FuncionesDBNotificaciones
             throw new FuncionesDBException("ERROR FUNCIONES BD (NOTIFICACIONES): el campo mensaje es requerido");
         }
 
-        $conexion = ConexionBD::getConnection();
+        $conexion = ConexionDB::getConnection();
         if (!isset($conexion)) {
             throw new FuncionesDBException("ERROR FUNCIONES BD (FACTURAS): no se ha podido establecer conexion BBDD");
         }
@@ -333,7 +333,7 @@ final class FuncionesDBNotificaciones
             throw new FuncionesDBException("ERROR FUNCIONES BD (NOTIFICACIONES): el campo mensaje es requerido");
         }
 
-        $conexion = ConexionBD::getConnection();
+        $conexion = ConexionDB::getConnection();
         if (!isset($conexion)) {
             throw new FuncionesDBException("ERROR FUNCIONES BD (FACTURAS): no se ha podido establecer conexion BBDD");
         }
@@ -377,7 +377,7 @@ final class FuncionesDBNotificaciones
         }
 
         
-        $conexion = ConexionBD::getConnection();
+        $conexion = ConexionDB::getConnection();
         if (!isset($conexion)) {
             throw new FuncionesDBException("ERROR FUNCIONES BD (FACTURAS): no se ha podido establecer conexion BBDD");
         }
