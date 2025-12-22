@@ -1,9 +1,11 @@
+#reduce cantidad de archivos de vendor gaurdados, actualizar con comando "composer update"
 */vendor/nikic/
 */vendor/graham-campbell/
 */vendor/myclabs/
 */vendor/phar-io/
 */vendor/phpoption/
 */vendor/phpunit/
+
 */vendor/sebastian/
 */vendor/staabm/
 */vendor/symfony/

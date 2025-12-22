@@ -26,6 +26,7 @@ $listaUsuarios=FuncionesDBUsuarios::getUsuarios();
     <h1>Testeo de conexión SQL y Funciones DB</h1>
     <p>Prueba de conexion <?= ($conexionDB)? 'Conexion establecida':'Error de conexion' ?></p>
 
+    <p>Como usar phpunit: <a href="https://www.freecodecamp.org/news/test-php-code-with-phpunit/">pruebas phpunit</a></p>
     <p>Prueba de obtener usuarios</p>
     <?php if($listaUsuarios): ?>
         <p>Nombres de usuario: </p>
