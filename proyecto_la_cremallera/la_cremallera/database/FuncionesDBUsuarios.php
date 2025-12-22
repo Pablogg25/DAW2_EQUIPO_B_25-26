@@ -120,7 +120,7 @@ final class FuncionesDBUsuarios
         //obtener todos los usuarios de la base de datos
 
         $usuarioId = $args['usuarioId'] ?? -1;
-        if ($usuarioId == '' || gettype($usuarioId) != 'integer') {
+        if ($usuarioId < 0 || gettype($usuarioId) != 'integer') {
             throw new FuncionesDBException("ERROR FUNCIONES BD (USUARIOS): se requiere rellenar el campo username");
         }
 
@@ -160,7 +160,7 @@ final class FuncionesDBUsuarios
      */
     final public static function checkPassword($args): bool
     {
-        $q_checkPassword = "SELECT count(*) as found FROM usuarios WHERE username == :username AND password_SHA2 == SHA2(:password_s,224)";
+        $q_checkPassword = "SELECT password_SHA2 as found FROM usuarios WHERE username = :username";
 
         $contrasena = $args['password'] ?? '';
         $username = $args['username'] ?? '';
@@ -183,13 +183,13 @@ final class FuncionesDBUsuarios
 
         $stmt = $conexion->prepare($q_checkPassword);
         $stmt->execute([
-            ":username" => $username,
-            ":password_s" => $contrasena
+            ":username" => $username
         ]);
 
-        $result = $stmt->fetch(PDO::FETCH_COLUMN);
+        $password_hash=hash("SHA224",$contrasena);
+        $password_db = $stmt->fetch(PDO::FETCH_COLUMN);
 
-        if ($result['found'] != 0) {
+        if ($password_hash===$password_db) {
             return true;
         } else {
             return false;
@@ -286,12 +286,9 @@ final class FuncionesDBUsuarios
     final public static function updateDatosUsuario($args): bool
     {
         $q_updateUsuario = "UPDATE usuarios SET nombre = :nombre" .
-            ",telefono = :telefono" .
-            ",email = :email" .
-            ",direccion = :direccion" .
-            ",username = :username" .
-            ",rol = :rol" .
-            "WHERE usuarioId = :id";
+            ",telefono = :telefono " .
+            ", email = :email, direccion = :direccion" .
+            ",username = :username, rol = :rol WHERE usuarioId = :id";
 
         //obligatorios: nombre, usuario, password, email
         $nombre = $args['nombre'] ?? '';
@@ -314,8 +311,8 @@ final class FuncionesDBUsuarios
         }
 
         //no required
-        $telefono = $args['telefono'] ?? '';
-        $direccion = $args['direccion'] ?? '';
+        $telefono = $args['telefono'] ?? 'none';
+        $direccion = $args['direccion'] ?? 'none';
 
         $conexion = ConexionDB::getConnection();
 
@@ -324,7 +321,7 @@ final class FuncionesDBUsuarios
         }
 
         $stmn = $conexion->prepare($q_updateUsuario);
-
+        //parameter not defined
         $exito = $stmn->execute([
             ':nombre' => $nombre,
             ':telefono' => $telefono,
