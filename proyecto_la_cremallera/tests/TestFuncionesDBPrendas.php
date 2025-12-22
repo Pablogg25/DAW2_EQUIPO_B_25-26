@@ -74,8 +74,6 @@ final class TestFuncionesDBPrendas extends TestCase{
         $this->assertTrue($q_result1,"ERROR TEST (FuncionesDBPrendas): error al crear prenda nueva");
 
     }
-<<<<<<< HEAD
-=======
 
     //test UPDATE
     public function testUpdatePrenda(){
@@ -157,5 +155,4 @@ final class TestFuncionesDBPrendas extends TestCase{
         $this->assertTrue($q_result1,"ERROR TEST (FuncionesDBPrendas): error al eliminar prenda de prueba");
 
     }
->>>>>>> datosSQL-testeo-prendas
 }

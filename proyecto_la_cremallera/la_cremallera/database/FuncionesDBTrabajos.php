@@ -240,6 +240,11 @@ final class FuncionesDBTrabajos
             }
         }
 
+        //controla que el valor del precio sea correcto
+        if ($precio<0||(gettype($precio) != 'double' && gettype($precio) != 'integer')) {
+            throw new FuncionesDBException("ERROR FUNCIONES BD (TRABAJOS): valor de precio no válido: se espera numero decimal positivo");
+        }
+
         $conexion = ConexionDB::getConnection();
 
         if (!isset($conexion)) {
