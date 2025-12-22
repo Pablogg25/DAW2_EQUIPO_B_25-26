@@ -5,8 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>La Cremallera - "Nombre del Usuario"</title>
     <link rel="stylesheet" href="Estilos/estiloPrincipalEmpleado.css">
+    <script src="/proyecto_la_cremallera/la_cremallera/js/main.js"></script>
 </head>
 <body>
+    <!-- Crear paginas configuracion para empleado (idea crear una sola pagina de configuracion y mediante js añadir visualizacion para empleados)
+      crear notificacion para empleado (La idea es la misma que pagina configuracion)-->
     <div class="logos">
 
         <img src="Imagenes/Logo - Grupo B - Sin Fondo.png" alt="Logo del Grupo B">
@@ -20,11 +23,11 @@
     <div class="contenedor">
         <div class="botones">
 
-            <button name="tareasYcitas" id="tareasYcitas">Tareas y Citas</button>
-            <button name="inventario" id="inventario">Inventario</button>
-            <button name="notificaciones" id="notificaciones">Notificaciones</button>
-            <button name="mensajes" id="mensajes">Mensajes</button>
-            <button name="configuracion" id="configuracion">Configuración</button>
+            <button name="tareasYcitas" id="tareasYcitas" onclick="ir('ListaTareas.html')">Tareas y Citas</button>
+            <button name="inventario" id="inventario" onclick="ir('Inventario.html')">Inventario</button>
+            <button name="notificaciones" id="notificaciones" onclick="ir('')">Notificaciones</button>
+            <button name="mensajes" id="mensajes" onclick="ir('Mensajes.html')">Mensajes</button>
+            <button name="configuracion" id="configuracion" onclick="ir('')">Configuración</button>
             <button type="button" name="cerrarSesion" id="cerrarSesion">Cerrar Sesión</button>
 
         </div>

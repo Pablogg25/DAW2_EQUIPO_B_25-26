@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>La Cremallera - Calendario</title>
-    <link rel="stylesheet" href="/Estilos/estiloCalendario.css">
+    <link rel="stylesheet" href="/proyecto_la_cremallera/public/Paginas/Estilos/estiloCalendario.css">
 </head>
+
 <body>
-     <div class="logos"> 
+    <!-- Añadir botones -->
+    <div class="logos">
 
         <img src="Imagenes/Logo - Grupo B - Sin Fondo.png" alt="Logo del Grupo B">
         <div class="logo-cremallera">
@@ -17,10 +20,47 @@
 
         <div class="contenedor">
             <div class="calendario">
-                
+                <!-- Calendario prueba -->
+                <div class="calendar-container">
+                    <div class="calendar-header">
+                        <button id="prevMonth">←</button>
+                        <h2 id="monthName"></h2>
+                        <button id="nextMonth">→</button>
+                    </div>
+
+                    <div class="calendar-grid" id="calendarGrid">
+                        <!-- Aquí se generan los días con JS -->
+                    </div>
+                </div>
+
+                <!-- Modal para añadir eventos -->
+                <div id="eventModal" class="modal hidden">
+                    <div class="modal-content">
+                        <h3>Añadir evento</h3>
+                        <p id="selectedDate"></p>
+
+                        <label>Tipo de evento:</label>
+                        <select id="eventType">
+                            <option value="Pedido">Pedido</option>
+                            <option value="Revisión">Revisión</option>
+                            <option value="Cita">Cita</option>
+                            <option value="Recogida">Recogida</option>
+                            <option value="Entrega">Entrega</option>
+                        </select>
+
+                        <button id="saveEvent">Guardar</button>
+                        <button id="closeModal">Cancelar</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-    
+
+
+    <!-- Corregir el window load para que cargue el script de calendario correctamente -->
+    <script src="/proyecto_la_cremallera/la_cremallera/js/prueba.js"></script>
+
+
 </body>
-</html> 
+
+</html>

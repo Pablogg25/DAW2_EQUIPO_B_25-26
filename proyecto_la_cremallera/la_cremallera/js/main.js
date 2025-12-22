@@ -65,3 +65,13 @@ function mostrarInfo(seccion, panel) {
     panel.classList.add("activo");
 
 }
+
+//Navegacion general
+function ir(pagina) {
+    window.location.href = pagina;
+}
+
+// Botón volver (siempre vuelve al panel principal)
+function volver() {
+    window.history.back();
+}
