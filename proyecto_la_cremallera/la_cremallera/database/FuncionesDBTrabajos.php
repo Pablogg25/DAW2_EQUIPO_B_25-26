@@ -158,9 +158,10 @@ final class FuncionesDBTrabajos
      * - FuncionesDBException
      * - PDOException
      */
-    final public static function getConsumosTrabajo($args){
-        $q_selectConsumos="SELECT * FROM consumos_trabajo WHERE trabajoId = :id";
-        
+    final public static function getConsumosTrabajo($args)
+    {
+        $q_selectConsumos = "SELECT * FROM consumos_trabajo WHERE trabajoId = :id";
+
         //requerido usuarioId
         $trabajoId = $args['trabajoId'] ?? -1;
 
@@ -240,6 +241,11 @@ final class FuncionesDBTrabajos
             }
         }
 
+        //controla que el valor del precio sea correcto
+        if ($precio < 0 || (gettype($precio) != 'double' && gettype($precio) != 'integer')) {
+            throw new FuncionesDBException("ERROR FUNCIONES BD (TRABAJOS): valor de precio no válido: se espera numero decimal positivo");
+        }
+
         $conexion = ConexionDB::getConnection();
 
         if (!isset($conexion)) {
@@ -273,13 +279,14 @@ final class FuncionesDBTrabajos
      * - FuncionesDBException
      * - PDOException
      */
-    final public static function asociarConsumo($args){
-        $q_insertConsumo="INSERT INTO consumos_trabajo (trabajo_id,itemId,cantidad_usada) VALUES ".
-        "(:trabajo,:item,:cantidad)";
+    final public static function asociarConsumo($args)
+    {
+        $q_insertConsumo = "INSERT INTO consumos_trabajo (trabajo_id,itemId,cantidad_usada) VALUES " .
+            "(:trabajo,:item,:cantidad)";
 
-        $trabajoid=$args['trabajoId']??-1;
-        $itemId=$args['itemId']??-1;
-        $cantidad=$args['cantidad']??0;
+        $trabajoid = $args['trabajoId'] ?? -1;
+        $itemId = $args['itemId'] ?? -1;
+        $cantidad = $args['cantidad'] ?? 0;
 
         if ($trabajoid < 0 || gettype($trabajoid) != 'integer') {
             throw new FuncionesDBException("ERROR FUNCIONES BD (TRABAJOS): valor de trabajoid no reconocido");
@@ -287,6 +294,13 @@ final class FuncionesDBTrabajos
 
         if ($itemId < 0 || gettype($itemId) != 'integer') {
             throw new FuncionesDBException("ERROR FUNCIONES BD (TRABAJOS): valor de itemId no reconocido");
+        }
+
+        if ($cantidad != 0) {
+            //si no es default
+            if (gettype($cantidad) != 'integer') {
+                throw new FuncionesDBException("ERROR FUNCIONES BD (TRABAJOS): valor de cantidad no reconocido, se requiere integer");
+            }
         }
 
         $conexion = ConexionDB::getConnection();
@@ -351,7 +365,7 @@ final class FuncionesDBTrabajos
         $fecha_i = $args['fecha_inicio'] ?? '';
         $fecha_e = $args['fecha_entrega'] ?? '';
 
-        $empleadoId = $args['empleadoId'] ?? '';
+        $empleadoId = $args['empleadoId'] ?? 'null';
         $descripcion = $args['descripcion'] ?? '';
         $estado = $args['estado'] ?? 'pendiente';
         $precio = $args['precio'] ?? 0;
@@ -369,10 +383,17 @@ final class FuncionesDBTrabajos
             throw new FuncionesDBException("ERROR FUNCIONES BD (TRABAJOS): valor incorrecto en campo enumerado estado");
         }
 
-        if ($empleadoId != '') {
+        if ($empleadoId != 'null') {
             //controla que el valor del id sea correcto
             if (gettype($empleadoId) != 'integer' && $empleadoId < 0) {
                 throw new FuncionesDBException("ERROR FUNCIONES BD (TRABAJOS): empleadoId no reconocido");
+            }
+        }
+
+        if ($precio != 0) {
+            //si no es default
+            if (gettype($precio) != 'integer' && gettype($precio) != 'double') {
+                throw new FuncionesDBException("ERROR FUNCIONES BD (TRABAJOS): valor de precio no reconocido, se requiere integer o double");
             }
         }
 
@@ -410,12 +431,13 @@ final class FuncionesDBTrabajos
      * - FuncionesDBException
      * - PDOException
      */
-    final public static function updateConsumo($args){
-        $q_updateConsumo="UPDATE consumos_trabajo SET cantidad = :cantidad WHERE trabajoId = :trabajo AND itemId = :item";
+    final public static function updateConsumo($args)
+    {
+        $q_updateConsumo = "UPDATE consumos_trabajo SET cantidad = :cantidad WHERE trabajoId = :trabajo AND itemId = :item";
 
-        $trabajoid=$args['trabajoId']??-1;
-        $itemId=$args['itemId']??-1;
-        $cantidad=$args['cantidad']??0;
+        $trabajoid = $args['trabajoId'] ?? -1;
+        $itemId = $args['itemId'] ?? -1;
+        $cantidad = $args['cantidad'] ?? 0;
 
         if ($trabajoid < 0 || gettype($trabajoid) != 'integer') {
             throw new FuncionesDBException("ERROR FUNCIONES BD (TRABAJOS): valor de trabajoid no reconocido");
@@ -489,11 +511,12 @@ final class FuncionesDBTrabajos
      * - FuncionesDBException
      * - PDOException
      */
-    final public static function deleteConsumo($args){
-        $q_updateConsumo="DELETE FROM consumos_trabajo WHERE trabajoId = :trabajo AND itemId = :item";
+    final public static function deleteConsumo($args)
+    {
+        $q_updateConsumo = "DELETE FROM consumos_trabajo WHERE trabajoId = :trabajo AND itemId = :item";
 
-        $trabajoid=$args['trabajoId']??-1;
-        $itemId=$args['itemId']??-1;
+        $trabajoid = $args['trabajoId'] ?? -1;
+        $itemId = $args['itemId'] ?? -1;
 
         if ($trabajoid < 0 || gettype($trabajoid) != 'integer') {
             throw new FuncionesDBException("ERROR FUNCIONES BD (TRABAJOS): valor de trabajoid no reconocido");
