@@ -188,6 +188,11 @@ final class FuncionesDBInventario{
             throw new FuncionesDBException("ERROR FUNCIONES BD (INVENTARIO): El campo nombre es requerido");
         }
 
+        if($cantidad<0||$stock<0){
+            throw new FuncionesDBException("ERROR FUNCIONES BD (INVENTARIO): El campo cantidad y stock_minimo deben ser numeros no negativos");
+
+        }
+
         $conexion = ConexionDB::getConnection();
         if (!isset($conexion)) {
             throw new FuncionesDBException("ERROR FUNCIONES BD (INVENTARIO): no se ha podido establecer conexion BBDD");

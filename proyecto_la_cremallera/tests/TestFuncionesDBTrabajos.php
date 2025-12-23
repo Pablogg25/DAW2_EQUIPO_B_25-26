@@ -5,7 +5,6 @@ namespace test;
 require_once __DIR__ . "/../vendor/autoload.php";
 
 use la_cremallera\database\FuncionesDBTrabajos;
-use la_cremallera\database\FuncionesDBUsuarios;
 use la_cremallera\err\FuncionesDBException;
 use PDOException;
 use PHPUnit\Framework\TestCase;

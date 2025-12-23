@@ -174,7 +174,9 @@ INSERT INTO inventario (nombre, descripcion, cantidad, stock_minimo)
 VALUES
 ('Hilo azul', 'Carrete de hilo azul fuerte', 50, 10),
 ('Hilo rojo', 'Carrete de hilo rojo', 40, 10),
+('Hilo amarillo', 'Carrete de hilo amarillo fino', 40, 10),
 ('Cremallera metálica', 'Cremalleras de distintos tamaños', 30, 5),
+('Imperdibles', 'Caja de imperdibles de aluminio pequeños', 5, 5),
 ('Botones estándar', 'Pack de botones medianos', 100, 20),
 ('Forro interior', 'Material para interior de chaquetas', 15, 5);
 
