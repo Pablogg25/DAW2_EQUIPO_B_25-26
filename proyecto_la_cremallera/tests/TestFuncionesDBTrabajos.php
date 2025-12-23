@@ -133,7 +133,7 @@ final class TestFuncionesDBTrabajos extends TestCase{
         ];
 
         
-        $this->expectException(PDOException::class);
+        $this->expectException(FuncionesDBException::class);
         $q_resultE1=FuncionesDBTrabajos::getConsumosTrabajo($argsE1);
         
         $this->expectException(PDOException::class);
@@ -238,6 +238,81 @@ final class TestFuncionesDBTrabajos extends TestCase{
             'precio'=>'ton'
         ];
 
+        $this->expectException(FuncionesDBException::class);
+        $q_resultE1=FuncionesDBTrabajos::updateTrabajo($argsE1);
         
+        $this->expectException(PDOException::class);
+        $q_resultE2=FuncionesDBTrabajos::updateTrabajo($argsE2);
+        
+        $this->expectException(FuncionesDBException::class);
+        $q_resultE3=FuncionesDBTrabajos::updateTrabajo($argsE3);
+        
+        $this->expectException(FuncionesDBException::class);
+        $q_resultE4=FuncionesDBTrabajos::updateTrabajo($argsE4);
+
+        
+        $q_result1=FuncionesDBTrabajos::updateTrabajo($args1);
+        $this->assertTrue($q_result1,"ERROR TEST (FuncionesDBTrabajos): no se ha podido actualizar el trabajo correctamente");
+    }
+
+    public function testUpdateConsumo(){
+        $args1=['trabajoId'=>9,'itemId'=>1,'cantidad'=>4];
+        
+        $argsE1=['trabajoId'=>"9",'itemId'=>1,'cantidad'=>2];
+        $argsE2=['trabajoId'=>9,'cantidad'=>2];
+        $argsE3=['trabajoId'=>9,'itemId'=>1,'cantidad'=>"1"];
+
+        $this->expectException(FuncionesDBException::class);
+        // tipo de argumento erroneo
+        $q_resultE1=FuncionesDBTrabajos::updateConsumo($argsE1);
+
+        $this->expectException(FuncionesDBException::class);
+        // falta de argumento
+        $q_resultE2=FuncionesDBTrabajos::updateConsumo($argsE2);
+
+        
+        $this->expectException(FuncionesDBException::class);
+        // tipo de argumento opcional erroneo
+        $q_resultE3=FuncionesDBTrabajos::updateConsumo($argsE3);
+
+        //inserción correcta
+        $q_result1=FuncionesDBTrabajos::updateConsumo($args1);
+        $this->assertTrue($q_result1,"ERROR TEST (FuncionesDBTrabajos): no se ha podido actualizar la asociación de prueba");
+    }
+
+    // test DELETE
+    public function testDeleteConsumo(){
+        $args1=['trabajoId'=>9,'itemId'=>1];
+
+        $argsE1=['trabajoId'=>"9",'itemId'=>1];
+        $argsE2=['trabajoId'=>9];
+
+        $this->expectException(FuncionesDBException::class);
+        $q_resultE1=FuncionesDBTrabajos::deleteConsumo($argsE1);
+
+        $this->expectException(FuncionesDBException::class);
+        $q_resultE2=FuncionesDBTrabajos::deleteConsumo($argsE2);
+
+        
+        $q_result1=FuncionesDBTrabajos::deleteConsumo($args1);
+        $this->assertTrue($q_result1,"ERROR TEST (FuncionesDBTrabajos): no se ha podido eliminar la asociación de prueba");
+
+    }
+
+    public function testDeleteTrabajo(){
+        $args1=["trabajoId"=>9];
+
+        $argsE1=["trabajoId"=>"9"];
+        $argsE2=[];
+
+        $this->expectException(FuncionesDBException::class);
+        $q_resultE1=FuncionesDBTrabajos::deleteTrabajo($argsE1);
+
+        $this->expectException(FuncionesDBException::class);
+        $q_resultE1=FuncionesDBTrabajos::deleteTrabajo($argsE2);
+
+        $q_result1=FuncionesDBTrabajos::deleteTrabajo($args1);
+        $this->assertTrue($q_result1,"ERROR TEST (FuncionesDBTrabajos): no se ha podido eliminar el trabajo de prueba");
+
     }
 }
