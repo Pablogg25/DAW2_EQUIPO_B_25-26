@@ -41,8 +41,7 @@ body {
     margin-top: 5px;
 }
 
-/* Formulario */
-.formulario-login {
+.contenedor{
     width: 450px;
     background: rgba(180, 180, 180, 0.5);
     padding: 30px 40px;
@@ -50,47 +49,6 @@ body {
     box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
     margin: 0 auto;
 }
-
-/* Contenido del formulario */
-.formulario-login form {
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
-}
-
-/* Enlace */
-.enlace {
-    display: flex;
-    justify-content: center;
-    gap: 90px;
-    /* espacio entre enlaces */
-}
-
-.botonSinDiseño {
-    background-color: transparent;
-    border: none;
-    outline: none;
-    padding: 0;
-    cursor: pointer;
-    color: #003d80;
-    text-decoration: none;
-}
-
-.botonSinDiseño:hover{
-    color: black;
-}
-/*
-.formulario-login label {
-    font-size: 15px;
-    font-weight: bold;
-}
-
-.formulario-login input {
-    padding: 8px 10px;
-    font-size: 14px;
-    border: 1px solid #aaa;
-    border-radius: 6px;
-}*/
 
 .orden {
     display: flex;
@@ -135,6 +93,20 @@ body {
 
 .botones button:hover {
     background: #003d80;
+}
+
+.botonSinDiseño {
+    background-color: transparent;
+    border: none;
+    outline: none;
+    padding: 0;
+    cursor: pointer;
+    color: #003d80;
+    text-decoration: none;
+}
+
+.botonSinDiseño:hover{
+    color: black;
 }
 
 @font-face {

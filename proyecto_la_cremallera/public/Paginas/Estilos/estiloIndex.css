@@ -64,7 +64,6 @@ html, body {
 }
 
 /* Mismo estilo para todos en el menu */
-.menu a,
 .menu button {
     display: inline-flex;
     justify-content: center;

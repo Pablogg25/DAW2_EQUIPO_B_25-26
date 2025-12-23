@@ -6,19 +6,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>La Cremallera-Login</title>
     <link rel="stylesheet" href="/proyecto_la_cremallera/public/Paginas/Estilos/estiloLogin.css">
-    <script src="/proyecto_la_cremallera/la_cremallera/js/LaCremallera.js"></script>
     <script src="/proyecto_la_cremallera/la_cremallera/js/main.js"></script>
-    
 </head>
 
 <body>
-    <!-- Agregar el script volver -->
+
     <div class="login">
         <div class="logos">
 
-            <img src="/proyecto_la_cremallera/public/Paginas/Imagenes/Logo - Grupo B - Sin Fondo.png" alt="Logo del Grupo B">
+            <img src="/proyecto_la_cremallera/public/Paginas/Imagenes/Logo - Grupo B - Sin Fondo.png"
+                alt="Logo del Grupo B">
             <div class="logo-cremallera">
-                <img src="/proyecto_la_cremallera/public/Paginas/Imagenes/Logo - La Cremallera - Sin Fondo.png" alt="Logo de la empresa La Cremallera">
+                <img src="/proyecto_la_cremallera/public/Paginas/Imagenes/Logo - La Cremallera - Sin Fondo.png"
+                    alt="Logo de la empresa La Cremallera">
                 <p>La Cremallera</p>
             </div>
 
@@ -33,15 +33,16 @@
                 <div class="orden">
                     <label for="contraseña">Contraseña: </label>
                     <input type="password" name="contraseña" id="contraseña">
-                </div>  
+                </div>
                 <div class="botones">
-                    <button type="button" id="registrarse">Regitrarse</button>
+                    <button type="button" id="registrarse" onclick="ir('Registrar.html')">Regitrarse</button>
                     <button type="submit" name="iniciarSesion" id="iniciarSesion">Iniciar sesión</button>
                 </div>
                 <div class="enlace">
-                    <a href="/proyecto_la_cremallera/public/index.html">← Volver </a>
-                    <a href="recuperarContraseña.html">¿has olvidado tu contraseña?</a>
-                </div>   
+                    <button type="button" class="botonSinDiseño" onclick="volver()">← Volver</button>
+                    <button type="button" class="botonSinDiseño" onclick="ir('recuperarContraseña.html')">¿has olvidado
+                        tu contraseña?</button>
+                </div>
             </form>
 
         </div>

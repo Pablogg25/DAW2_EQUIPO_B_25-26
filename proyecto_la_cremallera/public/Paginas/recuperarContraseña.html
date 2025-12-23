@@ -1,13 +1,47 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>La Cremallera - Recuperarar Contraseña</title>
+    <link rel="stylesheet" href="/proyecto_la_cremallera/public/Paginas/Estilos/estiloRecuperarContraseña.css">
+    <script src="/proyecto_la_cremallera/la_cremallera/js/main.js"></script>
 </head>
+
 <body>
-    <!-- Crear css de estilos, añadir logos, hacer pruebas del correo -->
-    <p>Introduce el correo electronico de tu cuenta<input type="email" name="correo" id="corrreo"></p>
-    <button type="submit">Enviar</button>
+
+    <div class="recuperarContraseña">
+
+        <div class="logos">
+
+            <img src="/proyecto_la_cremallera/public/Paginas/Imagenes/Logo - Grupo B - Sin Fondo.png"
+                alt="Logo del Grupo B">
+            <div class="logo-cremallera">
+                <img src="/proyecto_la_cremallera/public/Paginas/Imagenes/Logo - La Cremallera - Sin Fondo.png"
+                    alt="Logo de la empresa La Cremallera">
+                <p>La Cremallera</p>
+            </div>
+
+        </div>
+        <!-- Crear css de estilos, añadir logos, hacer pruebas del correo -->
+        <div class="contenedor">
+            <div class="orden">
+                <label for="ingresar">Introduce el correo electronico:</label>
+                <input type="email" name="correo" id="corrreo">
+            </div>
+            <div class="orden">
+                <label for="ingresar">Introduce nombre usuario:</label>
+                <input type="text" name="nombreUsuario" id="nombreUsuario">
+            </div>
+            <div class="botones">
+                <button type="button" class="botonSinDiseño" onclick="volver()">← Volver</button>
+                <button type="submit">Enviar</button>
+            </div>
+        </div>
+
+    </div>
+
 </body>
+
 </html>
