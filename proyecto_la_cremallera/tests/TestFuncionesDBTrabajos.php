@@ -151,7 +151,93 @@ final class TestFuncionesDBTrabajos extends TestCase{
 
     public function testAsociarConsumo(){
         $args1=['trabajoId'=>9,'itemId'=>1,'cantidad'=>2];
+        $args2=['trabajoId'=>9,'itemId'=>1,'cantidad'=>4];
         
-        $argsE1=['trabajoId'=>9,'itemId'=>1,'cantidad'=>2];
+        $argsE1=['trabajoId'=>"9",'itemId'=>1,'cantidad'=>2];
+        $argsE2=['trabajoId'=>9,'cantidad'=>2];
+        $argsE3=['trabajoId'=>9,'itemId'=>1,'cantidad'=>"1"];
+
+        $this->expectException(FuncionesDBException::class);
+        // tipo de argumento erroneo
+        $q_resultE1=FuncionesDBTrabajos::asociarConsumo($argsE1);
+
+        $this->expectException(FuncionesDBException::class);
+        // falta de argumento
+        $q_resultE2=FuncionesDBTrabajos::asociarConsumo($argsE2);
+
+        
+        $this->expectException(FuncionesDBException::class);
+        // tipo de argumento opcional erroneo
+        $q_resultE3=FuncionesDBTrabajos::asociarConsumo($argsE3);
+
+        //inserción correcta
+        $q_result1=FuncionesDBTrabajos::asociarConsumo($args1);
+        $this->assertTrue($q_result1,"ERROR TEST (FuncionesDBTrabajos): no se ha podido crear la asociación de prueba");
+
+        //error de clave primaria doble duplicada
+        $this->expectException(PDOException::class);
+        $q_resultE4=FuncionesDBTrabajos::asociarConsumo($args2);
+    }
+
+    //test UPDATE
+    public function testUpdateTrabajo(){
+        $args1=[
+            'trabajoId'=>9,
+            "prendaId"=>1,
+            'empleadoId'=>1,
+            'descripción'=>'Actualizado por phpunit',
+            'fecha_inicio'=>'2025-12-22',
+            'fecha_entrega'=>'2026-03-12',
+            'estado'=>'en_proceso',
+            'precio'=>12.5
+        ];
+
+        //mal id trabajo
+        $argsE1=[
+            'trabajoId'=>"9",
+            "prendaId"=>1,
+            'empleadoId'=>1,
+            'descripción'=>'Actualizado por phpunit',
+            'fecha_inicio'=>'2025-12-22',
+            'fecha_entrega'=>'2026-03-12',
+            'estado'=>'en_proceso',
+            'precio'=>12.5
+        ];
+
+        //FK inexistente
+        $argsE2=[
+            'trabajoId'=>9,
+            "prendaId"=>100,
+            'empleadoId'=>1,
+            'descripción'=>'Actualizado por phpunit',
+            'fecha_inicio'=>'2025-12-22',
+            'fecha_entrega'=>'2026-03-12',
+            'estado'=>'en_proceso',
+            'precio'=>12.5
+        ];
+
+        //falta de argumento
+        $argsE3=[
+            'trabajoId'=>9,
+            "prendaId"=>1,
+            'empleadoId'=>1,
+            'descripción'=>'Actualizado por phpunit',
+            'fecha_inicio'=>'2025-12-22',
+            'estado'=>'en_proceso',
+            'precio'=>12.5
+        ];
+        //mal tipo de argumento opcional
+        $argsE4=[
+            'trabajoId'=>9,
+            "prendaId"=>1,
+            'empleadoId'=>1,
+            'descripción'=>'Actualizado por phpunit',
+            'fecha_inicio'=>'2025-12-22',
+            'fecha_entrega'=>'2026-03-12',
+            'estado'=>'en_proceso',
+            'precio'=>'ton'
+        ];
+
+        
     }
 }
