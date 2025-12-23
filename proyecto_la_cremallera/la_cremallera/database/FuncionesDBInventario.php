@@ -95,7 +95,7 @@ final class FuncionesDBInventario{
      * - PDOException
      */
     final public static function getItemsBajoStock(){
-        $q_selectLowStock="SELECT * FROM inventario WHERE cantidad =< stock_minimo";
+        $q_selectLowStock="SELECT * FROM inventario WHERE cantidad <= stock_minimo";
 
         $conexion = ConexionDB::getConnection();
         if (!isset($conexion)) {
