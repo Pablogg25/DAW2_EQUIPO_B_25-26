@@ -127,10 +127,6 @@ final class FuncionesDBPrendas
 
         if($tipo==''){
             throw new FuncionesDBException("ERROR FUNCIONES BD (PRENDAS): el campo tipo es requerido");
-<<<<<<< HEAD
-
-=======
->>>>>>> datosSQL-testeo-prendas
         }
 
         $conexion = ConexionDB::getConnection();
