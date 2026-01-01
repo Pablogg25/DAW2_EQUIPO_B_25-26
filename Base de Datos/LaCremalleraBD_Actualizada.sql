@@ -1,6 +1,6 @@
 -- Creación de la base de datos
 CREATE DATABASE la_cremallera CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-CREATE USER 'admin'@'%' IDENTIFIED BY '123456789';
+CREATE USER 'admin'@'%' IDENTIFIED BY 'admin';
 GRANT ALL PRIVILEGES ON la_cremallera.* TO 'admin'@'%';
 FLUSH PRIVILEGES;
 
