@@ -106,12 +106,21 @@ final class TestFuncionesDBFacturas extends TestCase
 
         $argsE1 = [];
         $argsE2 = ['usuarioId' => '1'];
+        $argsE3 = [
+            'usuarioId' => 1
+        ];
 
+        //argumentos vacios
         $this->expectException(FuncionesDBException::class);
         FuncionesDBFacturas::insertFactura($argsE1);
 
+        //argumento de tipo erroneo
         $this->expectException(FuncionesDBException::class);
         FuncionesDBFacturas::insertFactura($argsE2);
+
+        //argumento faltante
+        $this->expectException(FuncionesDBException::class);
+        FuncionesDBFacturas::insertFactura($argsE3);
 
         $qResult = FuncionesDBFacturas::insertFactura($argsOk);
         $this->assertTrue($qResult,"ERROR TEST (FuncionesDBFacturas): insertFactura() no inserta correctamente!");
@@ -126,12 +135,19 @@ final class TestFuncionesDBFacturas extends TestCase
 
         $argsE1 = [];
         $argsE2 = ['facturaId' => '1'];
+        $argsE3 = ['facturaId' => 1];
 
+        //argumentos vacios
         $this->expectException(FuncionesDBException::class);
         FuncionesDBFacturas::asociarFacturaTrabajo($argsE1);
 
+        //argumento de tipo erroneo
         $this->expectException(FuncionesDBException::class);
         FuncionesDBFacturas::asociarFacturaTrabajo($argsE2);
+
+        //argumento faltante
+        $this->expectException(FuncionesDBException::class);
+        FuncionesDBFacturas::asociarFacturaTrabajo($argsE3);
 
         $qResult = FuncionesDBFacturas::asociarFacturaTrabajo($argsOk);
         $this->assertTrue($qResult,"ERROR TEST (FuncionesDBFacturas): asociarFacturaTrabajo() no funciona!");
@@ -149,12 +165,19 @@ final class TestFuncionesDBFacturas extends TestCase
 
         $argsE1 = [];
         $argsE2 = ['facturaId' => '1'];
+        $argsE3 = ['facturaId' => 1];
 
+        //argumentos vacios
         $this->expectException(FuncionesDBException::class);
         FuncionesDBFacturas::updateFactura($argsE1);
 
+        //argumento de tipo erroneo
         $this->expectException(FuncionesDBException::class);
         FuncionesDBFacturas::updateFactura($argsE2);
+
+        //argumento faltante
+        $this->expectException(FuncionesDBException::class);
+        FuncionesDBFacturas::updateFactura($argsE3);
 
         $qResult = FuncionesDBFacturas::updateFactura($argsOk);
         $this->assertTrue($qResult,"ERROR TEST (FuncionesDBFacturas): updateFactura() no actualiza correctamente!");
@@ -185,12 +208,19 @@ final class TestFuncionesDBFacturas extends TestCase
 
         $argsE1 = [];
         $argsE2 = ['facturaId' => '1'];
+        $argsE3 = ['facturaId' => 1];
 
+        //argumentos vacíos
         $this->expectException(FuncionesDBException::class);
         FuncionesDBFacturas::desasociarFacturaTrabajo($argsE1);
 
+        //argumento de tipo erroneo
         $this->expectException(FuncionesDBException::class);
         FuncionesDBFacturas::desasociarFacturaTrabajo($argsE2);
+
+        //argumento faltante
+        $this->expectException(FuncionesDBException::class);
+        FuncionesDBFacturas::desasociarFacturaTrabajo($argsE3);
 
         $qResult = FuncionesDBFacturas::desasociarFacturaTrabajo($argsOk);
         $this->assertTrue($qResult,"ERROR TEST (FuncionesDBFacturas): desasociarFacturaTrabajo() no funciona!");
