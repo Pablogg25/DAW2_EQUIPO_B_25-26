@@ -78,12 +78,37 @@ final class TestFuncionesDBNotificaciones extends TestCase
 
         $argsE1 = [];
         $argsE2 = ['receptorId' => '1'];
+        $argsE3 = [
+            'receptorId' => 1,
+            'remitenteId' => 1,
+            'trabajoId' => 1,
+            'tipo' => 'some other type',
+            'asunto' => 'es un recordatorio',
+            'mensaje' => 'que funciones el test'
+        ];
+        $argsE4 = [
+            'receptorId' => 1,
+            'trabajoId' => 1,
+            'tipo' => 'recordatorio_entrega',
+            'asunto' => 'es un recordatorio',
+            'mensaje' => 'que funciones el test'
+        ];
 
+        //argumentos vacios
         $this->expectException(FuncionesDBException::class);
         FuncionesDBNotificaciones::insertNotificacion($argsE1);
 
+        //tipo de argumento erroneo
         $this->expectException(FuncionesDBException::class);
         FuncionesDBNotificaciones::insertNotificacion($argsE2);
+
+        //tipo enumerado erroneo
+        $this->expectException(FuncionesDBException::class);
+        FuncionesDBNotificaciones::insertNotificacion($argsE3);
+
+        //argumento faltante
+        $this->expectException(FuncionesDBException::class);
+        FuncionesDBNotificaciones::insertNotificacion($argsE4);
 
         $qResult = FuncionesDBNotificaciones::insertNotificacion($argsOk);
         $this->assertTrue($qResult,"ERROR TEST (FuncionesDBNotificaciones): insertNotificacion() no inserta correctamente!");
@@ -103,15 +128,42 @@ final class TestFuncionesDBNotificaciones extends TestCase
 
         $argsE1 = [];
         $argsE2 = ['notificacionId' => '1'];
+        $argsE3 = [
+            'notificacionId' => 1,
+            'trabajoId' => 1,
+            'tipo' => 'recordatorio_entrega',
+            'asunto' => 'msunto modificado',
+            'mensaje' => 'mensaje modificado'
+        ];
+        $argsOk2 = [
+            'notificacionId' => 1,
+            'receptorId' => 1,
+            'remitenteId' => 1,
+            'trabajoId' => null,
+            'tipo' => 'recordatorio_entrega',
+            'asunto' => 'msunto modificado',
+            'mensaje' => 'mensaje modificado'
+        ];
 
+        //argumentos vacíos
         $this->expectException(FuncionesDBException::class);
         FuncionesDBNotificaciones::updateMensaje($argsE1);
 
+        //tipo de argumento erroneo
         $this->expectException(FuncionesDBException::class);
         FuncionesDBNotificaciones::updateMensaje($argsE2);
 
+        //argumento faltante
+        $this->expectException(FuncionesDBException::class);
+        FuncionesDBNotificaciones::updateMensaje($argsE3);
+
+        //argumentos correctos
         $qResult = FuncionesDBNotificaciones::updateMensaje($argsOk);
         $this->assertTrue($qResult,"ERROR TEST (FuncionesDBNotificaciones): updateMensaje() no actualiza correctamente!");
+
+        //test de argumento opcional
+        $qResult2 = FuncionesDBNotificaciones::updateMensaje($argsOk2);
+        $this->assertTrue($qResult2,"ERROR TEST (FuncionesDBNotificaciones): updateMensaje() no actualiza correctamente!");
     }
 
     public function testDeleteNotificacion()

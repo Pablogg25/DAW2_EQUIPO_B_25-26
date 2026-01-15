@@ -101,12 +101,26 @@ final class TestFuncionesDBCalendario extends TestCase{
 
         $argsE1 = [];
         $argsE2 = ['eventoId' => '1'];
+        $argsE3 = [
+            'eventoId' => 1,
+            'descripcion' => 'Cliente Ana',
+            'fecha_inicio' => '2025-11-25 10:00',
+            'fecha_fin' => '2025-11-25 10:30',
+            'usuarioId' => 6,
+            'empleadoId' => 3
+        ];
 
+        //argumento vacío
         $this->expectException(FuncionesDBException::class);
         FuncionesDBCalendario::updateEvento($argsE1);
 
+        //tipo erroneo de argumento
         $this->expectException(FuncionesDBException::class);
         FuncionesDBCalendario::updateEvento($argsE2);
+
+        //argumentos faltantes
+        $this->expectException(FuncionesDBException::class);
+        FuncionesDBCalendario::updateEvento($argsE3);
 
         $qResult = FuncionesDBCalendario::updateEvento($argsOk);
         $this->assertTrue($qResult,"ERROR TEST (FuncionesDBCalendario): updateEvento() no actualiza correctamente!");
