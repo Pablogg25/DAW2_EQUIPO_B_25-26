@@ -11,18 +11,23 @@ class UserApiController extends Controller
 
     protected $apiService;
 
-    public function __construct(UserService $service) {
+    public function __construct(UserService $service)
+    {
         $this->apiService = $service;
     }
 
     //vista index
-    public function index(){
+    public function index()
+    {
+        $usuariosRequest = $this->apiService->getUsers();
 
-        $usuarios=$this->apiService->getUsers();
-
-        return view('usuarios.index',compact('usuarios'));
-
+        if ($usuariosRequest["success"]) {
+            $usuarios = $usuariosRequest["data"];
+            return view('usuarios.index', compact('usuarios'));
+        } else {
+            //ha habido un error
+            $errorResult = $usuariosRequest["data"];
+            return view('error.index', compact('errorResult'));
+        }
     }
-
-
 }
