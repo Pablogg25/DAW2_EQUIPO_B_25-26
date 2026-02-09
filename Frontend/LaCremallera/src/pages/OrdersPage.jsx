@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
-import ordersController from "../core/OrdersController";
+import $ordersController from "../core/TestController/TestOrdersController";
 
 function OrdersPage() {
 
   const [orders, setOrders] = useState([]);
 
   async function cargarDatos() {
-    let datos = await ordersController.getOrders();
+    let datos = await $ordersController.getOrders();
 
     if (datos) {
       console.log("DATOS RECIVIDOS");
@@ -22,20 +22,24 @@ function OrdersPage() {
   }, []);
 
   return (
-    <>
+    <div>
       <div>OrdersPage (trabajos)</div>
 
       <div>
         {/* lista */}
+        <div>
+          {/* headers */}
+        </div>
         {
           orders.map((elemento) => {
             return (
-              <div key={elemento["id"]}>{elemento["descripcion"]} - {elemento["empleado"]}</div>
+              <div key={elemento["trabajoId"]}>{elemento["descripcion"]} - {elemento["empleado"]}</div>
             );
           })
         }
       </div>
-    </>
+    </div>
+      
 
   );
 }

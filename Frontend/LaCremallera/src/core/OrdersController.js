@@ -1,19 +1,18 @@
 
-import { useEffect } from "react";
 import apiController from "./ApiController";
 
-const ordersController=(function(){
+const $ordersController=(function(){
     console.log("Inicializando ordersController");
 
     async function getOrders(){
         console.log("ordersController: getOrders");
 
-        const requestUrl=apiController.getBaseUrl()+'/orders';
+        const requestUrl=apiController.getBaseUrl()+'/trabajos';
 
         //TODO: gestionar errores y códigos de error
 
         try{
-            console.log("Realizando petición a: "+request);
+            console.log("Realizando petición a: "+requestUrl);
             const request=await fetch(requestUrl);
 
             const respuesta=await request.json();
@@ -37,4 +36,5 @@ const ordersController=(function(){
     };
 })();
 
-export default ordersController;
+window.$ordersController=$ordersController;
+export default $ordersController;
