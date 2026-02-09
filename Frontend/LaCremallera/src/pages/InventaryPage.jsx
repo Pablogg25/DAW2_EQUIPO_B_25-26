@@ -1,6 +1,15 @@
-import React from "react";
-
+import React, { useEffect, useState } from "react";
+import apiController from "../core/ApiController";
 function InventaryPage() {
+  const [inventario, setInventario] = useState([]);
+  useEffect(() => {
+    async function cargarInventario() {
+      const lista = await apiController.obtenerInventario();
+      console.log(lista);
+      setInventario(lista);
+    }
+    cargarInventario();
+  }, []);
   return (
     <div className="container mt-4">
       <h2 className="mb-3">Inventario</h2>

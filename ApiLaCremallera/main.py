@@ -3,6 +3,9 @@ from flasgger import Swagger
 import os
 import sys
 import sqlite3
+from flask_cors import CORS
+
+
 
 if getattr(sys, 'frozen', False):
     base_path = sys._MEIPASS
@@ -10,6 +13,7 @@ else:
     base_path = os.path.dirname(__file__)
 
 app = Flask(__name__)
+CORS(app)
 
 swagger = Swagger(app)
 
