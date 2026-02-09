@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><project name="Untitled Gantt Project" company="" webLink="http://" view-date="2025-12-13" view-index="0" gantt-divider-location="351" resource-divider-location="300" version="3.3.3322" locale="es_ES">
+<?xml version="1.0" encoding="UTF-8"?><project name="Untitled Gantt Project" company="" webLink="http://" view-date="2026-02-03" view-index="0" gantt-divider-location="351" resource-divider-location="300" version="3.3.3322" locale="es_ES">
     <description/>
     <view zooming-state="default:2" id="gantt-chart">
         <field id="tpd3" name="Nombre" width="200" order="0"/>
@@ -60,14 +60,15 @@
             <task id="16" uid="d9884022e9ed49c6b19b657580e4a6d4" name="Documentacion Proyecto" color="#6633ff" meeting="false" start="2025-12-22" duration="2" complete="0" expand="true"/>
             <task id="17" uid="c5736d6981e1457f8b7847f56beaa3f6" name="Documentacion IPII" color="#6633ff" meeting="false" start="2025-12-23" duration="1" complete="0" expand="true"/>
         </task>
-        <task id="21" uid="b935695def304eb0986b4fdf47cbaef5" name="API - Laravel" color="#cccccc" shape="1,0,1,0,0,1,0,1,1,0,1,0,0,1,0,1" meeting="false" start="2026-02-02" duration="5" complete="0" expand="true"/>
-        <task id="22" uid="ff4307cd95f5412f97c934096617a95e" name="API" color="#3333ff" meeting="false" start="2026-02-02" duration="2" complete="0" expand="true">
-            <task id="23" uid="8ea223cd90c7402795f4df4cb06a1226" name="Creacion API" color="#6633ff" meeting="false" start="2026-02-02" duration="1" complete="0" expand="true"/>
-            <task id="24" uid="d6c350d325b744d6abcd7ddfc4314fe1" name="Probrar API" color="#6633ff" meeting="false" start="2026-02-02" duration="2" complete="0" expand="true"/>
+        <task id="21" uid="b935695def304eb0986b4fdf47cbaef5" name="API - Laravel" color="#cccccc" shape="1,0,1,0,0,1,0,1,1,0,1,0,0,1,0,1" meeting="false" start="2026-02-09" duration="5" complete="0" expand="true"/>
+        <task id="22" uid="ff4307cd95f5412f97c934096617a95e" name="API" color="#3333ff" meeting="false" start="2026-02-09" duration="2" complete="0" expand="true">
+            <task id="23" uid="8ea223cd90c7402795f4df4cb06a1226" name="Creacion API" color="#6633ff" meeting="false" start="2026-02-09" duration="1" complete="0" expand="true"/>
+            <task id="28" uid="1cc64451a4934b3caf4c406264658df7" name="SWAGGER de la API" color="#6633ff" meeting="false" start="2026-02-09" duration="1" complete="0" expand="true"/>
+            <task id="24" uid="d6c350d325b744d6abcd7ddfc4314fe1" name="Comprobacion API" color="#6633ff" meeting="false" start="2026-02-09" duration="2" complete="0" expand="true"/>
         </task>
-        <task id="25" uid="5b0205574f2c4c7ea6673beb9b5121e1" name="Laravel" color="#3333ff" meeting="false" start="2026-02-03" duration="4" complete="0" expand="true">
-            <task id="26" uid="41a70335f08146369b5cd89b40b4aebe" name="Reestructuracion del Proyecto" color="#6633ff" meeting="false" start="2026-02-03" duration="2" complete="0" expand="true"/>
-            <task id="27" uid="d6b6425397d946e9aa087812b941ce00" name="Funcionamiento del proyecto" color="#6633ff" meeting="false" start="2026-02-04" duration="3" complete="0" expand="true"/>
+        <task id="25" uid="5b0205574f2c4c7ea6673beb9b5121e1" name="Laravel" color="#3333ff" meeting="false" start="2026-02-09" duration="5" complete="0" expand="true">
+            <task id="26" uid="41a70335f08146369b5cd89b40b4aebe" name="Reestructuracion del Proyecto" color="#6633ff" meeting="false" start="2026-02-09" duration="2" complete="0" expand="true"/>
+            <task id="27" uid="d6b6425397d946e9aa087812b941ce00" name="Funcionamiento del proyecto" color="#6633ff" meeting="false" start="2026-02-09" duration="5" complete="0" expand="true"/>
         </task>
     </tasks>
     <resources/>
