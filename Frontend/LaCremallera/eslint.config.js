@@ -24,7 +24,8 @@ export default defineConfig([
     },
     rules: {
       'no-unused-vars': 'off',
-      'reacto/prop-types':'off',
+      'react/prop-types':'off',
+      'react-hooks/set-state-in-effect':'off',
     },
   },
 ])
