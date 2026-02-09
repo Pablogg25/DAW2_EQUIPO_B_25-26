@@ -1,10 +1,13 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App.jsx'
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
 
-createRoot(document.getElementById('root')).render(
+import AppEnrutador from "./router/AppEnrutador";
+// import { SeguridadProvider } from "./context/SeguridadProvider.jsx";
+
+createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <App />
+    {/* <SeguridadProvider> */}
+    <AppEnrutador />
+    {/* </SeguridadProvider> */}
   </StrictMode>,
-)
+);
