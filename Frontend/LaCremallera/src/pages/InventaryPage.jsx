@@ -1,72 +1,145 @@
 import React, { useEffect, useState } from "react";
 import apiController from "../core/ApiController";
+import { useNavigate } from "react-router-dom";
+
 function InventaryPage() {
   const [inventario, setInventario] = useState([]);
+  const navigate = useNavigate();
+
   useEffect(() => {
     async function cargarInventario() {
       const lista = await apiController.obtenerInventario();
-      console.log(lista);
       setInventario(lista);
     }
     cargarInventario();
   }, []);
+
   return (
     <div className="container mt-4">
       <h2 className="mb-3">Inventario</h2>
 
-      {/* Botones superiores */}
       <div className="d-flex gap-2 mb-3">
         <button className="btn btn-secondary btn-sm">Volver</button>
         <button className="btn btn-primary btn-sm">Realizar pedido</button>
         <button className="btn btn-success btn-sm">Crear</button>
       </div>
 
-      {/* Tabla */}
-      <table className="table table-bordered table-sm">
-        <thead>
-          <tr>
-            <th>Nombre</th>
-            <th>Tipo</th>
-            <th>Cantidad</th>
-            <th>Medida</th>
-            <th>Descripción</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Botón metálico</td>
-            <td>Accesorio</td>
-            <td>120</td>
-            <td>Unidades</td>
-            <td>Botón plateado</td>
-            <td>
-              <button className="btn btn-outline-secondary btn-sm me-1">
-                Editar
-              </button>
-              <button className="btn btn-outline-danger btn-sm">
-                Eliminar
-              </button>
-            </td>
-          </tr>
+      <div className="tabla-div">
+        {/* Cabecera */}
+        <div className="fila cabecera">
+          <div className="col">Nombre</div>
+          <div className="col">Cantidad</div>
+          <div className="col">Stock Mínimo</div>
+          <div className="col descripcion-col">Descripción</div>
+          <div className="col">Acciones</div>
+        </div>
 
-          <tr>
-            <td>Cremallera negra</td>
-            <td>Cierre</td>
-            <td>45</td>
-            <td>Metros</td>
-            <td>Cremallera resistente</td>
-            <td>
-              <button className="btn btn-outline-secondary btn-sm me-1">
-                Editar
+        {/* Filas dinámicas */}
+        {inventario.map((item) => (
+          <div className="fila" key={item.itemId}>
+            <div className="col">{item.nombre}</div>
+            <div className="col">{item.cantidad}</div>
+            <div className="col">{item.stock_minimo}</div>
+
+            <div className="col descripcion-col">
+              <span className="descripcion-texto">{item.descripcion}</span>
+            </div>
+
+            <div className="col acciones">
+              <button
+                onClick={() => navigate(`/inventory/${item.itemId}`)}
+                className="btn btn-outline-secondary btn-sm me-1"
+              >
+                Ver
               </button>
               <button className="btn btn-outline-danger btn-sm">
                 Eliminar
               </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <style>{`
+        /* CONTENEDOR GENERAL */
+        .tabla-div {
+          display: flex;
+          flex-direction: column;
+          border: 1px solid #ccc;
+          border-radius: 6px;
+          overflow: hidden;
+        }
+
+        /* FILA EN ESCRITORIO */
+        .fila {
+          display: grid;
+          grid-template-columns: 2fr 1fr 1fr 3fr 1fr;
+          padding: 10px;
+          border-bottom: 1px solid #ddd;
+          align-items: center;
+          height: 48px;
+        }
+
+        .cabecera {
+          background: #f5f5f5;
+          font-weight: bold;
+        }
+
+        .fila:last-child {
+          border-bottom: none;
+        }
+
+        /* COLUMNAS */
+        .col {
+          padding: 4px 8px;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+        }
+
+        .descripcion-col {
+          overflow: hidden;
+        }
+
+        .descripcion-texto {
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .acciones {
+          display: flex;
+          gap: 6px;
+        }
+
+        /* 🔥 RESPONSIVE: EN MÓVIL LA TABLA SE VUELVE LISTA */
+        @media (max-width: 768px) {
+          .fila {
+            grid-template-columns: 1fr;
+            height: auto;
+            padding: 12px;
+          }
+
+          .cabecera {
+            display: none; /* ocultamos cabecera en móvil */
+          }
+
+          .col {
+            white-space: normal; /* permitimos varias líneas en móvil */
+            text-overflow: initial;
+            overflow: visible;
+            padding: 6px 0;
+          }
+
+          .fila .col::before {
+            content: attr(data-label);
+            font-weight: bold;
+            display: block;
+            margin-bottom: 2px;
+            color: #555;
+          }
+        }
+      `}</style>
     </div>
   );
 }

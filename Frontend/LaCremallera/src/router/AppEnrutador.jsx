@@ -4,13 +4,18 @@ import HomePage from "../pages/HomePage";
 
 import ErrorPage from "../pages/ErrorPage.jsx";
 import InventaryPage from "../pages/InventaryPage.jsx";
+import PropsElementoInventoryPage from "../pages/Props/PropsElementoInventoryPage.jsx";
 function AppEnrutador() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<AppLayout />}>
           <Route index element={<HomePage />} />
-          <Route path="/inventary" element={<InventaryPage />} />
+          <Route path="/inventory" element={<InventaryPage />} />
+          <Route
+            path="/inventory/:id"
+            element={<PropsElementoInventoryPage />}
+          />
           <Route path="*" element={<ErrorPage />} />
         </Route>
       </Routes>
