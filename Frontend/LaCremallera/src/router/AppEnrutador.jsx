@@ -3,13 +3,14 @@ import AppLayout from "../components/AppLayout";
 import HomePage from "../pages/HomePage";
 
 import ErrorPage from "../pages/ErrorPage.jsx";
+import InventaryPage from "../pages/InventaryPage.jsx";
 function AppEnrutador() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<AppLayout />}>
           <Route index element={<HomePage />} />
-
+          <Route path="/inventary" element={<InventaryPage />} />
           <Route path="*" element={<ErrorPage />} />
         </Route>
       </Routes>
