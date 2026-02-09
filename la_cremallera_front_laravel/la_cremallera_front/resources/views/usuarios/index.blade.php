@@ -11,11 +11,15 @@
     <title>Document</title>
 </head>
 <body>
+{{-- 
+    <div>
+        {{$usuarios}}
+    </div> --}}
 
     <ul>
         @foreach ($usuarios as $u)
-        <li>{{$u->nombre}} - {{$u->email}}</li>
-    @endforeach
+            <li>{{$u['nombre']}} - {{$u['email']}}</li>
+        @endforeach
     </ul>
     
     
