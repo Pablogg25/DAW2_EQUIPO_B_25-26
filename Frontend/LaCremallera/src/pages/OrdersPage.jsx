@@ -27,13 +27,42 @@ function OrdersPage() {
 
       <div>
         {/* lista */}
-        <div>
+        <div className="tableRow">
           {/* headers */}
+          <div>
+            <strong>Descripción</strong>
+          </div>
+          <div>
+            <strong>Prenda</strong>
+          </div>
+          <div>
+            <strong>Empleado</strong>
+          </div>
+          <div>
+            <strong>Fecha de inicio</strong>
+          </div>
+          <div>
+            <strong>Fecha de entrega</strong>
+          </div>
+          <div>
+            <strong>Precio</strong>
+          </div>
+          <div>
+            <strong>estado</strong>
+          </div>
         </div>
         {
           orders.map((elemento) => {
             return (
-              <div key={elemento["trabajoId"]}>{elemento["descripcion"]} - {elemento["empleado"]}</div>
+              <div key={elemento["trabajoId"]} className="tableRow">
+                <div>{elemento["descripcion"]}</div>
+                <div>{elemento["prenda"]}</div>
+                <div>{elemento["empleado"]}</div>
+                <div>{elemento["fecha_inicio"]}</div>
+                <div>{elemento["fecha_entrega"]}</div>
+                <div>{elemento["precio"]}</div>
+                <div>{elemento["estado"]}</div>
+              </div>
             );
           })
         }
