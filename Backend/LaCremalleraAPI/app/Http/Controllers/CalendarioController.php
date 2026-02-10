@@ -11,6 +11,8 @@ use OpenApi\Annotations as OA;
  *     name="Calendario",
  *     description="Operaciones relacionadas con el calendario"
  * )
+ * 
+ * @OA\PathItem:"/api/calendarios"
  */
 class CalendarioController extends Controller
 {

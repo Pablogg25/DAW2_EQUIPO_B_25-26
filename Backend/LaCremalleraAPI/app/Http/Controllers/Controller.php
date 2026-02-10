@@ -2,6 +2,11 @@
 
 namespace App\Http\Controllers;
 
+/**
+ * @OA\Info(title="API La cremallera", version="0.1")
+ * 
+ * @OA\PathItem:"/api"
+ */
 abstract class Controller
 {
     //
