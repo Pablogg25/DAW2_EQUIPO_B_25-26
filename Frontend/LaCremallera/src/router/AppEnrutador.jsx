@@ -6,6 +6,8 @@ import OrdersPage from "../pages/Orders/OrdersPage.jsx";
 import ErrorPage from "../pages/ErrorPage.jsx";
 import InventaryPage from "../pages/InventaryPage.jsx";
 import PropsElementoInventoryPage from "../pages/Props/PropsElementoInventoryPage.jsx";
+import OrderFormPage from "../pages/Orders/OrderFormPage.jsx";
+
 function AppEnrutador() {
   return (
     <BrowserRouter>
@@ -13,8 +15,14 @@ function AppEnrutador() {
         <Route path="/" element={<AppLayout />}>
           <Route index element={<HomePage />} />
           <Route path="/inventory" element={<InventaryPage />} />
-          <Route path="/inventory/:id" element={<PropsElementoInventoryPage />} />
+          <Route
+            path="/inventory/:id"
+            element={<PropsElementoInventoryPage />}
+          />
+
+          
           <Route path="orders" element={<OrdersPage />} />
+          <Route path="/orders/:id" element={<OrderFormPage />} />
 
           <Route path="*" element={<ErrorPage />} />
         </Route>

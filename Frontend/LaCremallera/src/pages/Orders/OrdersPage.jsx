@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import $ordersController from "../../core/TestController/TestOrdersController";
 import "./OrdersPage.css";
 
 function OrdersPage() {
-
   const [orders, setOrders] = useState([]);
 
-  async function cargarDatos() {
+  const navegar=useNavigate();
+
+  const cargarDatos=async ()=> {
     let datos = await $ordersController.getOrders();
 
     if (datos) {
@@ -18,6 +20,11 @@ function OrdersPage() {
     }
   };
 
+  const onCreateOrder= ()=>{
+    console.log("on create order");
+    navegar("/orders/0");
+  }
+
   useEffect(() => {
     cargarDatos();
   }, []);
@@ -25,6 +32,10 @@ function OrdersPage() {
   return (
     <div>
       <div>OrdersPage (trabajos)</div>
+
+      <div>
+        <button onClick={onCreateOrder}>Crear order</button>
+      </div>
 
       <div>
         {/* lista */}

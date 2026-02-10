@@ -1,30 +1,43 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import $ordersController from "../../core/TestController/TestOrdersController";
 
 function OrderFormPage() {
-    const [orderData,setOrderData]=useState({
-        descripcion:"",empleado:0,estado:"",
-        fecha_entrega:"",fecha_inicio:"",
-        precio:0,prenda:"",trabajo_id:0
+    const [orderData, setOrderData] = useState({
+        descripcion: "", empleado: 0, estado: "",
+        fecha_entrega: "", fecha_inicio: "",
+        precio: 0, prenda: "", trabajo_id: 0
     });
 
-    const navegar=useNavigate;
+    const { id } = useParams();
 
-    const handleOnSubmit=(evento)=>{
+    const navegar = useNavigate();
+
+    const handleOnSubmit = (evento) => {
         evento.preventDefault();
+        console.log("OrdersFormPage: onsubmit")
 
-        const response=$ordersController.createOrder(orderData);
+        enviarDatos();
     }
 
-    const handleOnCancel=()=>{
+    const enviarDatos = async () => {
+        if (id != 0) {
+            //update
+            const response = $ordersController.updateOrder(orderData);
+        } else {
+            const response = $ordersController.createOrder(orderData);
+        }
+    }
+
+    const handleOnCancel = (evento) => {
+        evento.preventDefault();
         navegar("/orders");
     }
 
     //metodo para adaptar formulario
-    const handleOnChange=(evento)=>{
-        const {name,value}=evento.target;
-        let actualizar={...orderData,[name]:value};
+    const handleOnChange = (evento) => {
+        const { name, value } = evento.target;
+        let actualizar = { ...orderData, [name]: value };
         setOrderData(actualizar);
     }
 
@@ -32,14 +45,14 @@ function OrderFormPage() {
         <div>
             <div>Formulario create</div>
 
-            <form>
+            <form onSubmit={handleOnSubmit}>
                 <div>
                     Formulario de datos Order
                 </div>
                 {/* formulario */}
                 <div>
                     <div> Descripción: </div>
-                    <input type="text" name="descripcion" id="descripcion" onChange={handleOnChange}/>
+                    <input type="text" name="descripcion" id="descripcion" onChange={handleOnChange} />
                 </div>
                 <div>
                     <div> Prenda: </div>
@@ -78,7 +91,7 @@ function OrderFormPage() {
 
                 <div>
                     <button type="submit">Enviar datos</button>
-                    <button>Cancelar</button>
+                    <button onClick={handleOnCancel}>Cancelar</button>
                 </div>
             </form>
         </div>
