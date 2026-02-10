@@ -25,14 +25,27 @@ function OrdersPage() {
     navegar("/orders/0");
   }
 
+  //se ejecuta sin darle
   const onEditOrder = (orderId) => {
-    console.log("OnEditOrder id:" + orderId);
-    navegar("/orders/" + orderId);
+      console.log("OnEditOrder id:" + orderId);
+    if (orderId) {
+      navegar("/orders/" + orderId);
+
+    }
   }
 
-  const onDeleteOrder=(orderId)=>{
-    console.log("OnDeleteOrder: "+orderId);
-    //añadrid diálogo de confirmación antes de borrar
+  const onDeleteOrder = async (orderId) => {
+    console.log("OnDeleteOrder: " + orderId);
+    //añadir diálogo de confirmación antes de borrar
+    if (orderId) {
+      if (confirm("¿Desea borrar el trabajo?")) {
+        console.log("Eliminando trabajo")
+        let response= await $ordersController.deleteOrder(orderId);
+        await cargarDatos();
+
+      }
+    }
+
   }
 
   useEffect(() => {
@@ -44,13 +57,16 @@ function OrdersPage() {
       <div>OrdersPage (trabajos)</div>
 
       <div>
-        <button onClick={onCreateOrder}>Crear order</button>
+        <button onClick={()=>{onCreateOrder()}}>Crear order</button>
       </div>
 
       <div>
         {/* lista */}
         <div className="tableRow">
           {/* headers */}
+          <div>
+            <strong>Id</strong>
+          </div>
           <div>
             <strong>Descripción</strong>
           </div>
@@ -80,6 +96,7 @@ function OrdersPage() {
           orders.map((elemento) => {
             return (
               <div key={elemento["trabajoId"]} className="tableRow">
+                <div>{elemento["trabajoId"]}</div>
                 <div>{elemento["descripcion"]}</div>
                 <div>{elemento["prenda"]}</div>
                 <div>{elemento["empleado"]}</div>
@@ -88,8 +105,8 @@ function OrdersPage() {
                 <div>{elemento["precio"]}</div>
                 <div>{elemento["estado"]}</div>
                 <div>
-                  <button onClick={onEditOrder(elemento["trabajoId"])}>Ver/Editar</button>
-                  <button onClick={onDeleteOrder(elemento["trabajoId"])}>Eliminar</button>
+                  <button onClick={()=>{onEditOrder(elemento["trabajoId"])}}>Ver/Editar</button>
+                  <button onClick={()=>{onDeleteOrder(elemento["trabajoId"])}}>Eliminar</button>
                 </div>
               </div>
             );
