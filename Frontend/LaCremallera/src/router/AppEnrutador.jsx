@@ -13,10 +13,7 @@ function AppEnrutador() {
         <Route path="/" element={<AppLayout />}>
           <Route index element={<HomePage />} />
           <Route path="/inventory" element={<InventaryPage />} />
-          <Route
-            path="/inventory/:id"
-            element={<PropsElementoInventoryPage />}
-          />
+          <Route path="/inventory/:id" element={<PropsElementoInventoryPage />} />
           <Route path="orders" element={<OrdersPage />} />
 
           <Route path="*" element={<ErrorPage />} />

@@ -10,4 +10,6 @@
 */vendor/staabm/
 */vendor/symfony/
 */vendor/theseer/
-*/vendor/
+/vendor
+/storage
+/bootstrap
