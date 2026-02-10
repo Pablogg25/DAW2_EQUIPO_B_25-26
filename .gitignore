@@ -11,3 +11,12 @@
 */vendor/symfony/
 */vendor/theseer/
 */vendor/
+
+/node_modules/
+/bootstrap/cache/
+.phpstorm.meta.php
+/storage/logs/*
+/public/storage/
+Thumbs.db
+.phpunit.result.cache
+public/mix-manifest.json
