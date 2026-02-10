@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import apiController from "../core/ApiController";
+import apiController from "../../core/ApiController.js";
 import { useNavigate } from "react-router-dom";
 
 function InventaryPage() {
