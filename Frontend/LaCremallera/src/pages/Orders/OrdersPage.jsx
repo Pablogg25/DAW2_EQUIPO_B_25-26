@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import $ordersController from "../../core/TestController/TestOrdersController";
+// import $ordersController from "../../core/TestController/TestOrdersController";
+import $ordersController from "../../core/OrdersController";
 import "./OrdersPage.css";
 
 function OrdersPage() {
