@@ -26,14 +26,14 @@ const $ordersController = (function () {
 
             //else error
             console.log("error al obtener datos");
-            return { "data": respuesta, "status": request.status, "success": false };
+            return { "data": null, "status": request.status, "success": false };
  
 
         } catch (e) {
             console.log("Excepción en petición:");
             console.log(e);
 
-            return {"data":e.getMessage(),"success":false};
+            return {"data":e,"success":false};
         }
     };
 
@@ -59,14 +59,14 @@ const $ordersController = (function () {
 
             //else error
             console.log("error al obtener datos");
-            return { "data": respuesta, "status": request.status, "success": false };
+            return { "data": null, "status": request.status, "success": false };
  
 
         } catch (e) {
             console.log("Excepción en petición:");
             console.log(e);
 
-            return {"data":e.getMessage(),"success":false};
+            return {"data":e,"success":false};
         }
     };
 
@@ -88,23 +88,23 @@ const $ordersController = (function () {
 
             const datos=await request.json();
 
-            if(respuesta.status==201){
+            if(request.status==201){
                 console.log("Respuesta 201: CREATED");
                 return {estado:201,data:datos,"success":true};
             }
-            if(respuesta.status==400){
+            if(request.status==400){
                 console.log("Respuesta 400: VALIDATION ERROR");
                 // console.log(datos);
                 return {estado:400,data:datos,"success":false};
             }
 
+            return {estado:request.status,data:datos,"success":false};
         }catch (e) {
             console.log("Excepción en petición:");
             console.log(e);
 
-            return {"data":e.getMessage(),"success":false};
+            return {"data":e,"success":false};
         }
-        return null;
     }
 
     async function updateOrder(objOrder){
@@ -125,28 +125,29 @@ const $ordersController = (function () {
 
             const datos=await request.json();
 
-            if(respuesta.status==200){
+            if(request.status==200){
                 console.log("Respuesta 200: OK");
                 return {estado:200,data:datos,"success":true};
             }
-            if(respuesta.status==404){
+            if(request.status==404){
                 console.log("Respuesta 404: NOT FOUND");
                 // console.log(datos);
                 return {estado:404,data:datos,"success":false};
             }
-            if(respuesta.status==400){
+            if(request.status==400){
                 console.log("Respuesta 400: VALIDATION ERROR");
                 // console.log(datos);
                 return {estado:400,data:datos,"success":false};
             }
 
+            return {estado:request.status,data:datos,"success":false};
+
         }catch (e) {
             console.log("Excepción en petición:");
             console.log(e);
 
-            return {"data":e.getMessage(),"success":false};
+            return {"data":e,"success":false};
         }
-        return null;
     }
 
     async function deleteOrder(trabajoId) {
@@ -159,23 +160,25 @@ const $ordersController = (function () {
                     "Content-type":"application/json; charset=UTF-8",
                 },
             };
-            const respuesta= await fetch(apiBaseUrl+"/coches/"+trabajoId,requestBody);
+            const respuesta= await fetch(apiController.getBaseUrl()+"/trabajos/"+trabajoId,requestBody);
 
             const datos=await respuesta.json();
 
             if(respuesta.status==200){
                 console.log("Respuesta 200: OK");
-                return {estado:200,data:datos};
+                return {estado:200,data:datos,success:true};
             }
             if(respuesta.status==404){
                 console.log("Respuesta 404: NOT FOUND");
-                return {estado:404,data:datos};
+                return {estado:404,data:datos,success:false};
             }
+            return {estado:respuesta.status,data:datos,success:false};
+
         }catch(e){
             console.log("$negocioApi: Resultado error");
             console.log(e);
+            return {"data":e,"success":false};
         }
-        return null;
     }
 
     return {
