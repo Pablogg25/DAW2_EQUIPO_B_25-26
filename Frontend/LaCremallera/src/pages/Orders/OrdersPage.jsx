@@ -6,9 +6,9 @@ import "./OrdersPage.css";
 function OrdersPage() {
   const [orders, setOrders] = useState([]);
 
-  const navegar=useNavigate();
+  const navegar = useNavigate();
 
-  const cargarDatos=async ()=> {
+  const cargarDatos = async () => {
     let datos = await $ordersController.getOrders();
 
     if (datos) {
@@ -20,9 +20,19 @@ function OrdersPage() {
     }
   };
 
-  const onCreateOrder= ()=>{
+  const onCreateOrder = () => {
     console.log("on create order");
     navegar("/orders/0");
+  }
+
+  const onEditOrder = (orderId) => {
+    console.log("OnEditOrder id:" + orderId);
+    navegar("/orders/" + orderId);
+  }
+
+  const onDeleteOrder=(orderId)=>{
+    console.log("OnDeleteOrder: "+orderId);
+    //añadrid diálogo de confirmación antes de borrar
   }
 
   useEffect(() => {
@@ -62,6 +72,9 @@ function OrdersPage() {
           <div>
             <strong>estado</strong>
           </div>
+          <div>
+            <strong>operaciones</strong>
+          </div>
         </div>
         {
           orders.map((elemento) => {
@@ -74,13 +87,17 @@ function OrdersPage() {
                 <div>{elemento["fecha_entrega"]}</div>
                 <div>{elemento["precio"]}</div>
                 <div>{elemento["estado"]}</div>
+                <div>
+                  <button onClick={onEditOrder(elemento["trabajoId"])}>Ver/Editar</button>
+                  <button onClick={onDeleteOrder(elemento["trabajoId"])}>Eliminar</button>
+                </div>
               </div>
             );
           })
         }
       </div>
     </div>
-      
+
 
   );
 }
