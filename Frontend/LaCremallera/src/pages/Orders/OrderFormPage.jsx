@@ -51,19 +51,22 @@ function OrderFormPage() {
 
     const enviarDatos = async () => {
         let success;
+        let statusCode=0;
         if (id != 0) {
             //update
             const response = await $ordersController.updateOrder(orderData);
             success = response.success;
+            statusCode=response.estado;
         } else {
             const response = await $ordersController.createOrder(orderData);
             success = response.success;
+            statusCode=response.estado;
         }
         //TODO: comprobar resultado correcto
         if (success) {
             navegar("/orders");
         } else {
-            alert("Error, ha surgido un error al procesar su petición");
+            alert("Error, ha surgido un error al procesar su petición.\nCodigo de error: "+statusCode);
         }
 
     }
