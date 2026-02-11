@@ -184,4 +184,135 @@ Licencia a definir por el equipo (probablemente MIT).
 
 ---
 
-© 2025 — Proyecto DAW2 — Equipo B — **La Cremallera**
+# Despliegue de API Laravel en EC2 con Nginx, PHP y MySQL
+
+Este README describe los pasos para crear un servidor EC2 en AWS y desplegar la API **LaCremalleraAPI** usando **Nginx, PHP 8.3 y MySQL**.
+
+---
+
+## Creacion de la EC2
+
+- Datos de la EC2:
+
+| Propiedad         | Valor                                          |
+| ----------------- | ---------------------------------------------- |
+| AMI utilizada     | Ubuntu Server 24.04 LTS (HVM), SSD Volume Type |
+| Tipo de instancia | t3.micro                                       |
+| IP Elástica       | 3.229.92.23                                    |
+| Puertos abiertos  | 22, 80, 443                                    |
+
+## Actualización del sistema
+
+```bash
+sudo apt update && sudo apt upgrade -y
+```
+
+## Instalacion de PHP y extensiones necesarias
+
+```bash
+sudo apt install php php-cli php-fpm php-mysql php-xml php-mbstring php-curl php-zip unzip curl -y
+
+php -v
+```
+
+## Instalacion de Composer
+
+```bash
+curl -sS https://getcomposer.org/installer -o composer-setup.php
+
+sudo php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+
+composer --version
+```
+
+## Intalcion del MySQL
+
+```bash
+sudo apt install mysql-server -y
+
+sudo mysql -u root -p
+
+CREATE DATABASE la_cremallera CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER 'admin'@'%' IDENTIFIED BY 'admin';
+GRANT ALL PRIVILEGES ON la_cremallera.* TO 'admin'@'%';
+FLUSH PRIVILEGES;
+EXIT;
+```
+
+## Clonacion del proyecto y permisos
+
+```bash
+cd /var/www
+
+sudo git clone https://github.com/Pablogg25/DAW2_EQUIPO_B_25-26.git
+
+cd DAW2_EQUIPO_B_25-26/Backend/LaCremalleraAPI
+
+sudo chown -R www-data:www-data .
+
+```
+
+## Instalacion de dependencias y configuracion de la API
+
+```bash
+sudo apt update && sudo apt upgrade -y
+
+composer install
+
+php artisan migrate
+
+php artisan migrate --seed
+```
+
+## Instalacion y configuracion de Nginx
+
+```bash
+sudo apt install nginx -y
+
+sudo nano /etc/nginx/sites-available/lacremallera.com
+
+server {
+    listen 80;
+    server_name 44.223.237.222;
+
+    root /var/www/DAW2_EQUIPO_B_25-26/Backend/LaCremalleraAPI/public;
+
+    index index.php index.html index.htm;
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/var/run/php/php8.3-fpm.sock;
+    }
+
+    location ~ /\.ht {
+        deny all;
+    }
+
+    error_log /var/log/nginx/lacremallera_error.log;
+    access_log /var/log/nginx/lacremallera_access.log;
+}
+```
+
+## Activar el sitio y reiniciar Nginx
+
+```bash
+sudo ln -s /etc/nginx/sites-available/lacremallera /etc/nginx/sites-enabled/
+
+sudo nginx -t
+
+sudo systemctl restart nginx
+```
+
+## Nginx y php8.3-fpm se inician automaticamente cuando arranque el EC2
+
+```bash
+sudo systemctl enable nginx
+sudo systemctl enable php8.3-fpm
+
+```
+
+© 2025/26 — Proyecto DAW2 — Equipo B — **La Cremallera**

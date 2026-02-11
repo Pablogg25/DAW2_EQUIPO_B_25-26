@@ -8,9 +8,9 @@ use App\Http\Controllers\NotificacionesController;
 use App\Http\Controllers\InventarioController;
 use App\Http\Controllers\FacturasController;
 use App\Http\Controllers\CalendarioController;
+use App\Http\Middleware\Cors;
 
-
-Route::prefix('api')->group(function () {
+Route::prefix('api')->middleware(Cors::class)->group(function () {
 
     // Usuarios
     // Obtener todo los usuarios
@@ -122,18 +122,25 @@ Route::prefix('api')->group(function () {
     // Listar todos los eventos
     Route::get('/eventos', [CalendarioController::class, 'index']);
     // Ver evento por ID                
-    Route::get('/eventos/{id}', [CalendarioController::class, 'show']);          
+    Route::get('/eventos/{id}', [CalendarioController::class, 'show']);
     // Eventos por usuario  
-    Route::get('/eventos/usuario/{usuarioId}', [CalendarioController::class, 'byUsuario']);  
+    Route::get('/eventos/usuario/{usuarioId}', [CalendarioController::class, 'byUsuario']);
     // Eventos por empleado
-    Route::get('/eventos/empleado/{empleadoId}', [CalendarioController::class, 'byEmpleado']); 
+    Route::get('/eventos/empleado/{empleadoId}', [CalendarioController::class, 'byEmpleado']);
     // Eventos por trabajo
-    Route::get('/eventos/trabajo/{trabajoId}', [CalendarioController::class, 'byTrabajo']);   
+    Route::get('/eventos/trabajo/{trabajoId}', [CalendarioController::class, 'byTrabajo']);
     // Crear evento
-    Route::post('/eventos', [CalendarioController::class, 'store']);   
+    Route::post('/eventos', [CalendarioController::class, 'store']);
     // Actualizar evento            
-    Route::put('/eventos/{id}', [CalendarioController::class, 'update']);   
+    Route::put('/eventos/{id}', [CalendarioController::class, 'update']);
     // Eliminar evento       
-    Route::delete('/eventos/{id}', [CalendarioController::class, 'destroy']);      
+    Route::delete('/eventos/{id}', [CalendarioController::class, 'destroy']);
+
+    // Manejo de preflight CORS para permitir solicitudes desde el frontend React
+    Route::options('{any}', function () {
+        return response()->json([], 200);
+    })->where('any', '.*');
 
 });
+
+
