@@ -27,17 +27,18 @@ function UsersPage() {
   const onCreateUser = () => {
     console.log("On create user");
     //TODO: crear formulario de propiedades
-    //navegar("/users/0");
+    navegar("/users/0");
   }
 
   const onEditUser = (userId) => {
     console.log("On edit user id: " + userId);
     if (userId) {
       //navegar al formulario
+      navegar("/users/"+userId);
     }
   }
 
-  const onDeleteUser = (userId) => {
+  const onDeleteUser = async (userId) => {
     console.log("on delete user: " + userId);
 
     if (userId) {
@@ -45,7 +46,14 @@ function UsersPage() {
         console.log("Eliminando usuario");
         //realizar petición de borrado
 
+        let result=await $usersController.deleteUser(userId);
+
         //if success
+        if(!result.success){
+          alert("ERROR, no se ha podido procesar su petición");
+        }else{
+          cargarDatos();
+        }
       }
     }
   }
@@ -63,7 +71,7 @@ function UsersPage() {
 
       <div>
         <button onClick={() => {
-          // onCreateOrder()
+          onCreateUser();
         }}>Crear Usuario</button>
       </div>
 
@@ -114,7 +122,7 @@ function UsersPage() {
                 <div>{elemento["fecha_registro"]}</div>
                 <div>
                   <button onClick={() => { onEditUser(elemento["usuarioId"]); }}>Ver/editar</button>
-                  <button onClick={() => { onDeleteUser(elemento["usuarioId"]); }}>Elimiar</button>
+                  <button onClick={() => { onDeleteUser(elemento["usuarioId"]); }}>Eliminar</button>
                 </div>
               </div>
             );

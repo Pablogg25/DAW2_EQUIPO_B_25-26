@@ -5,6 +5,7 @@ import OrdersPage from "../pages/Orders/OrdersPage.jsx";
 
 import ErrorPage from "../pages/ErrorPage.jsx";
 import UsersPage from "../pages/Users/UsersPage.jsx";
+import UserFormPage from "../pages/Users/UserFormPage.jsx";
 import InventaryPage from "../pages/Inventory/InventaryPage.jsx";
 import PropsElementoInventoryPage from "../pages/Props/PropsElementoInventoryPage.jsx";
 import OrderFormPage from "../pages/Orders/OrderFormPage.jsx";
@@ -24,6 +25,7 @@ function AppEnrutador() {
           <Route path="/orders/:id" element={<OrderFormPage />} />
 
           <Route path="users" element={<UsersPage/>}/>
+          <Route path="/users/:id" element={<UserFormPage/>}/>
 
           <Route path="*" element={<ErrorPage />} />
         </Route>

@@ -28,7 +28,7 @@ function OrderFormPage() {
                 setOrderData(datos.data);
             } else {
                 alert("Error, no se ha podido procesar su petición");
-                navegar("/trabajos");
+                navegar("/orders");
             }
 
         }
@@ -61,7 +61,7 @@ function OrderFormPage() {
             success = response.success;
             statusCode=response.estado;
         }
-        //TODO: comprobar resultado correcto
+        
         if (success) {
             navegar("/orders");
         } else {
