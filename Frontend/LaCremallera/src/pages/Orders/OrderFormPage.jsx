@@ -6,7 +6,6 @@ import $usuariosController from "../../core/TestController/TestUsersController";
 import $prendasController from "../../core/TestController/TestPrendasController";
 
 
-
 function OrderFormPage() {
     const [orderData, setOrderData] = useState({
         descripcion: "", empleado: 0, estado: "",
@@ -54,7 +53,7 @@ function OrderFormPage() {
         let statusCode=0;
         if (id != 0) {
             //update
-            const response = await $ordersController.updateOrder(orderData);
+            const response = await $ordersController.updateOrder(orderData,id);
             success = response.success;
             statusCode=response.estado;
         } else {
