@@ -97,10 +97,10 @@ Route::prefix('api')->middleware(Cors::class)->group(function () {
     Route::get('/facturas', [FacturasController::class, 'index']);
     // Obtener una factura específica por su ID, incluyendo los trabajos asociados
     Route::get('/facturas/{id}', [FacturasController::class, 'show']);
-    // Obtener todas las facturas de un usuario específico por su usuarioId
-    Route::get('/facturas/usuario/{usuarioId}', [FacturasController::class, 'byUsuario']);
-    // Obtener todas las facturas asociadas a un trabajo específico por su trabajoId
-    Route::get('/facturas/trabajo/{trabajoId}', [FacturasController::class, 'byTrabajo']);
+    // // Obtener todas las facturas de un usuario específico por su usuarioId
+    // Route::get('/facturas/usuario/{usuarioId}', [FacturasController::class, 'byUsuario']);
+    // // Obtener todas las facturas asociadas a un trabajo específico por su trabajoId
+    // Route::get('/facturas/trabajo/{trabajoId}', [FacturasController::class, 'byTrabajo']);
     // Crear una nueva factura (requiere usuarioId y fecha)
     Route::post('/facturas', [FacturasController::class, 'store']);
     // Actualizar una factura existente por su ID (usuarioId, fecha, pagado, total_calculado)
