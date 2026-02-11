@@ -2,7 +2,7 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-import $usersController from "../../core/UsersController";
+import $usersController from "../core/UsersController";
 
 
 function LoginPage() {
@@ -60,7 +60,7 @@ function LoginPage() {
       Página Login
     </div>
 
-    <form onSubmit={()=>{handleOnSubmit();}}>
+    <form onSubmit={handleOnSubmit}>
       <div>
         <div>
           Nombre de usuario:
