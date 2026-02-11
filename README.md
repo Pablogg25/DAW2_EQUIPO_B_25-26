@@ -186,11 +186,11 @@ Licencia a definir por el equipo (probablemente MIT).
 
 # Despliegue de API Laravel en EC2 con Nginx, PHP y MySQL
 
-Este README describe los pasos para crear un servidor EC2 en AWS y desplegar la API **LaCremalleraAPI** usando **Nginx, PHP 8.3 y MySQL**.
+Descripción de los pasos para crear un servidor EC2 en AWS y desplegar la API **LaCremalleraAPI** usando **Nginx, PHP 8.3 y MySQL**.
 
 ---
 
-## Creacion de la EC2
+## Creación de la EC2
 
 - Datos de la EC2:
 
@@ -207,7 +207,7 @@ Este README describe los pasos para crear un servidor EC2 en AWS y desplegar la 
 sudo apt update && sudo apt upgrade -y
 ```
 
-## Instalacion de PHP y extensiones necesarias
+## Instalación de PHP y extensiones necesarias
 
 ```bash
 sudo apt install php php-cli php-fpm php-mysql php-xml php-mbstring php-curl php-zip unzip curl -y
@@ -215,7 +215,7 @@ sudo apt install php php-cli php-fpm php-mysql php-xml php-mbstring php-curl php
 php -v
 ```
 
-## Instalacion de Composer
+## Instalación de Composer
 
 ```bash
 curl -sS https://getcomposer.org/installer -o composer-setup.php
@@ -225,7 +225,7 @@ sudo php composer-setup.php --install-dir=/usr/local/bin --filename=composer
 composer --version
 ```
 
-## Intalcion del MySQL
+## Instalación del MySQL
 
 ```bash
 sudo apt install mysql-server -y
@@ -239,7 +239,7 @@ FLUSH PRIVILEGES;
 EXIT;
 ```
 
-## Clonacion del proyecto y permisos
+## Clonación del proyecto y permisos
 
 ```bash
 cd /var/www
@@ -252,7 +252,7 @@ sudo chown -R www-data:www-data .
 
 ```
 
-## Instalacion de dependencias y configuracion de la API
+## Instalación de dependencias y configuración de la API
 
 ```bash
 sudo apt update && sudo apt upgrade -y
@@ -264,7 +264,7 @@ php artisan migrate
 php artisan migrate --seed
 ```
 
-## Instalacion y configuracion de Nginx
+## Instalación y configuración de Nginx
 
 ```bash
 sudo apt install nginx -y
