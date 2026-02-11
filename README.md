@@ -182,6 +182,14 @@ Licencia a definir por el equipo (probablemente MIT).
   Pablo González García — Pgonzalezg12@educantabria.es  
   GitHub: https://github.com/Pablogg25
 
+- **Equipo:**
+  Gustavo Rodrigo Bautista Pocuhuanca - gbautistap01@educantabria.es
+  GitHub: https://github.com/Hansdreams
+  Pablo Nuñez -
+  GitHub: 
+  Sergio Lopez -
+  GitHub: 
+
 ---
 
 # Despliegue de API Laravel en EC2 con Nginx, PHP y MySQL
