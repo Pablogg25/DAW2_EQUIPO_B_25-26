@@ -250,9 +250,10 @@ class UsuariosController extends Controller
      *         @OA\JsonContent(type="boolean")
      *     ),
      *     @OA\Response(
-     *         response=404,
-     *         description="Usuario no encontrado",
-     *         @OA\JsonContent
+     *         response=400,
+     *         description="Error de validación",
+     *         @OA\JsonContent(type="boolean")
+     *     )
      *     @OA\Response(
      *         response=404,
      *         description="Usuario no encontrado",

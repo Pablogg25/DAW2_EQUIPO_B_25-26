@@ -6,7 +6,6 @@ import $usuariosController from "../../core/TestController/TestUsersController";
 import $prendasController from "../../core/TestController/TestPrendasController";
 
 
-
 function OrderFormPage() {
     const [orderData, setOrderData] = useState({
         descripcion: "", empleado: 0, estado: "",
@@ -29,7 +28,7 @@ function OrderFormPage() {
                 setOrderData(datos.data);
             } else {
                 alert("Error, no se ha podido procesar su petición");
-                navegar("/trabajos");
+                navegar("/orders");
             }
 
         }
@@ -54,7 +53,7 @@ function OrderFormPage() {
         let statusCode=0;
         if (id != 0) {
             //update
-            const response = await $ordersController.updateOrder(orderData);
+            const response = await $ordersController.updateOrder(orderData,id);
             success = response.success;
             statusCode=response.estado;
         } else {
@@ -62,7 +61,7 @@ function OrderFormPage() {
             success = response.success;
             statusCode=response.estado;
         }
-        //TODO: comprobar resultado correcto
+        
         if (success) {
             navegar("/orders");
         } else {

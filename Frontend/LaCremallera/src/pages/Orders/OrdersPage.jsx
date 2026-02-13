@@ -38,7 +38,6 @@ function OrdersPage() {
     navegar("/orders/0");
   }
 
-  //se ejecuta sin darle
   const onEditOrder = (orderId) => {
     console.log("OnEditOrder id:" + orderId);
     if (orderId) {
@@ -75,7 +74,7 @@ function OrdersPage() {
     return "n/a";
   }
 
-  function getPrendaName(prendaId){
+  function getPrendaName(prendaId) {
     let index = prendasData.findIndex(p => p.prendaId == prendaId);
 
     if (index !== -1) {
@@ -128,26 +127,30 @@ function OrdersPage() {
             <strong>operaciones</strong>
           </div>
         </div>
-        {
-          orders.map((elemento) => {
-            return (
-              <div key={elemento["trabajoId"]} className="tableRow">
-                <div>{elemento["trabajoId"]}</div>
-                <div>{elemento["descripcion"]}</div>
-                <div>{getPrendaName(elemento["prendaId"])}</div>
-                <div>{getEmpleadoName(elemento["empleadoId"])}</div>
-                <div>{elemento["fecha_inicio"]}</div>
-                <div>{elemento["fecha_entrega"]}</div>
-                <div>{elemento["precio"]}</div>
-                <div>{elemento["estado"]}</div>
-                <div>
-                  <button onClick={() => { onEditOrder(elemento["trabajoId"]) }}>Ver/Editar</button>
-                  <button onClick={() => { onDeleteOrder(elemento["trabajoId"]) }}>Eliminar</button>
+
+        <div>
+          {
+            orders.map((elemento) => {
+              return (
+                <div key={elemento["trabajoId"]} className="tableRow">
+                  <div>{elemento["trabajoId"]}</div>
+                  <div>{elemento["descripcion"]}</div>
+                  <div>{getPrendaName(elemento["prendaId"])}</div>
+                  <div>{getEmpleadoName(elemento["empleadoId"])}</div>
+                  <div>{elemento["fecha_inicio"]}</div>
+                  <div>{elemento["fecha_entrega"]}</div>
+                  <div>{elemento["precio"]}</div>
+                  <div>{elemento["estado"]}</div>
+                  <div>
+                    <button onClick={() => { onEditOrder(elemento["trabajoId"]) }}>Ver/Editar</button>
+                    <button onClick={() => { onDeleteOrder(elemento["trabajoId"]) }}>Eliminar</button>
+                  </div>
                 </div>
-              </div>
-            );
-          })
-        }
+              );
+            })
+          }
+        </div>
+
       </div>
     </div>
 
