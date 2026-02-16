@@ -13,6 +13,9 @@ import InventaryPage from "../pages/Inventory/InventaryPage.jsx";
 import PropsElementoInventoryPage from "../pages/Props/PropsElementoInventoryPage.jsx";
 import OrderFormPage from "../pages/Orders/OrderFormPage.jsx";
 
+//prendas
+import PrendasPage from "../pages/Prendas/PrendasPage.jsx";
+
 function AppEnrutador() {
   return (
     <BrowserRouter>
@@ -26,6 +29,8 @@ function AppEnrutador() {
           />
           <Route path="orders" element={<OrdersPage />} />
           <Route path="/orders/:id" element={<OrderFormPage />} />
+
+          <Route path="prendas" element={<PrendasPage/>}/>
 
           <Route path="users" element={<UsersPage/>}/>
           <Route path="/users/:id" element={<UserFormPage/>}/>
