@@ -1,6 +1,6 @@
 import datos from "./DatosPrendas";
 
-const $prendasController=(function (){
+const $prendasController = (function () {
     console.log("TestPrendasController inicializando");
 
     console.log("inicializar $ordersController test");
@@ -23,7 +23,7 @@ const $prendasController=(function (){
         return [...prendas];
     }
 
-    function getPrenda(prendaId){
+    function getPrenda(prendaId) {
         let index = prendas.findIndex(p => p.prendaId == prendaId);
 
         if (index !== -1) {
@@ -31,9 +31,49 @@ const $prendasController=(function (){
         }
     }
 
+    async function createPrenda(prendaObj) {
+        prendaObj.prendaId = siguientePrendaId();
+        prendas.push(prendaObj);
+        localStorage.setItem('prendas', JSON.stringify(datos));
+
+        return prendaObj.prendaId;
+    }
+
+    async function updatePrenda(prendaObj) {
+        let index = prendas.findIndex(u => u.prendaId == prendaObj.prendaId);
+
+        if (index !== -1) {
+            prendas[index] = prendaObj;
+            localStorage.setItem('prendas', JSON.stringify(datos));
+            return true;
+
+        }
+        return false
+    }
+
+    async function deletePrenda(prendaId) {
+        let index = prendas.findIndex(u => u.prendaId == prendaId);
+
+        if (index !== -1) {
+            prendas.splice(index,1);
+            localStorage.setItem('prendas', JSON.stringify(datos));
+            return true;
+
+        }
+        return false
+    }
+
+    function limpiarLocalStorage(){
+        localStorage.removeItem('prendas');
+    }
+
     return {
         getPrendas,
-        getPrenda
+        getPrenda,
+        createPrenda,
+        updatePrenda,
+        deletePrenda,
+        limpiarLocalStorage
     }
 })();
 export default $prendasController;

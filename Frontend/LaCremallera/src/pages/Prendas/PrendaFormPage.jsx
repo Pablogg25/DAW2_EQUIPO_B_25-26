@@ -43,8 +43,14 @@ function PrendaFormPage(){
 
         if(id!=0){
             console.log("actualizar");
+            prendaData.prendaId=id;
+            let result= await $prendasController.updatePrenda(prendaData);
+            navegar("/prendas");
         }else{
             console.log("crear");
+            let result=await $prendasController.createPrenda(prendaData);
+
+            navegar("/prendas");
         }
 
         //todo: implementar operaciones
