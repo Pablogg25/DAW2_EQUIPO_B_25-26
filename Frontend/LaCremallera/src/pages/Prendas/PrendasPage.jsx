@@ -15,10 +15,14 @@ function PrendasPage() {
         console.log("Cargando datos");
 
         //obtener datos de controlador
-        let datos = await $prendasController.getPrendas();
-        let datosUsuario=await $usuariosController.getUsuarios();
 
-        setUsuarios(datosUsuario);
+        //si datos de usuario no estan inicializados cargar:
+        if(usuarios.length==0){
+            let datosUsuario=await $usuariosController.getUsuarios();
+            setUsuarios(datosUsuario);
+
+        }
+        let datos = await $prendasController.getPrendas();
         setPrendas(datos);
 
         //si success guardar, sino dar aviso
