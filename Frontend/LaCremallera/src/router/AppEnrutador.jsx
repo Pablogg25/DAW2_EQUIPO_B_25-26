@@ -15,6 +15,7 @@ import OrderFormPage from "../pages/Orders/OrderFormPage.jsx";
 
 //prendas
 import PrendasPage from "../pages/Prendas/PrendasPage.jsx";
+import PrendaFormPage from "../pages/Prendas/PrendaFormPage.jsx";
 
 function AppEnrutador() {
   return (
@@ -31,6 +32,7 @@ function AppEnrutador() {
           <Route path="/orders/:id" element={<OrderFormPage />} />
 
           <Route path="prendas" element={<PrendasPage/>}/>
+          <Route path="/prendas/:id" element={<PrendaFormPage/>}/>
 
           <Route path="users" element={<UsersPage/>}/>
           <Route path="/users/:id" element={<UserFormPage/>}/>

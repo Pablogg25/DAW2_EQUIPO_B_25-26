@@ -3,9 +3,11 @@ import { useNavigate } from "react-router-dom";
 
 import "./PrendasPage.css";
 import $prendasController from "../../core/TestController/TestPrendasController";
+import $usuariosController from "../../core/TestController/TestUsersController";
 
 function PrendasPage() {
     const [prendas, setPrendas] = useState([]);
+    const [usuarios,setUsuarios]=useState([]);
 
     const navegar = useNavigate();
 
@@ -14,7 +16,9 @@ function PrendasPage() {
 
         //obtener datos de controlador
         let datos = await $prendasController.getPrendas();
+        let datosUsuario=await $usuariosController.getUsuarios();
 
+        setUsuarios(datosUsuario);
         setPrendas(datos);
 
         //si success guardar, sino dar aviso
@@ -24,12 +28,15 @@ function PrendasPage() {
         console.log("On create Prenda");
 
         //navegar a formulario
+        navegar("/prendas/0");
     }
 
     const onEditPrenda = (prendaId) => {
         console.log("On edit prenda id: " + prendaId);
 
         //navegar al id
+        navegar("/prendas/"+prendaId);
+
     }
 
     const onDeletePrenda = async (prendaId) => {
@@ -37,6 +44,12 @@ function PrendasPage() {
 
         if (prendaId) {
             //hacer confirm para borrar el usuario y luego recargar datos
+            let result=await $prendasController.deletePrenda(prendaId);
+
+            if(result){
+                cargarDatos();
+                navegar("/prendas");
+            }
         }
     }
 
@@ -44,6 +57,13 @@ function PrendasPage() {
         cargarDatos();
     }, [])
 
+    function getUsername(userId){
+        let index=usuarios.findIndex(u=>u.usuarioId==userId);
+        if(index!=-1){
+            return usuarios[index].nombre;
+        }
+        return "not found";
+    }
 
 
     return (
@@ -89,7 +109,7 @@ function PrendasPage() {
                         return (
                             <div key={elemento["prendaId"]} className="tableRow">
                                 <div>{elemento["prendaId"]}</div>
-                                <div>{elemento["usuarioId"]}</div>
+                                <div>{getUsername(elemento["usuarioId"])}</div>
                                 <div>{elemento["tipo"]}</div>
                                 <div>{elemento["descripcion"]}</div>
                                 <div>{elemento["color"]}</div>
