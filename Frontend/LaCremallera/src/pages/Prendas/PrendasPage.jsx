@@ -2,8 +2,10 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import "./PrendasPage.css";
-import $prendasController from "../../core/TestController/TestPrendasController";
-import $usuariosController from "../../core/TestController/TestUsersController";
+// import $prendasController from "../../core/TestController/TestPrendasController";
+import $prendasController from "../../core/PrendasController";
+// import $usuariosController from "../../core/TestController/TestUsersController";
+import $usersController from "../../core/UsersController";
 
 function PrendasPage() {
     const [prendas, setPrendas] = useState([]);
@@ -16,14 +18,16 @@ function PrendasPage() {
 
         //obtener datos de controlador
 
-        //si datos de usuario no estan inicializados cargar:
+        //si datos de usuario no estan inicializados cargar y cachear:
         if(usuarios.length==0){
-            let datosUsuario=await $usuariosController.getUsuarios();
-            setUsuarios(datosUsuario);
+            console.log("Cargando datos de usuarios");
+            let datosUsuario=await $usersController.getUsers();
+            setUsuarios(datosUsuario.data);
 
         }
+        console.log("Cargando datos de prendas")
         let datos = await $prendasController.getPrendas();
-        setPrendas(datos);
+        setPrendas(datos.data);
 
         //si success guardar, sino dar aviso
     }

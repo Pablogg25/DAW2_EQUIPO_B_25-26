@@ -4,8 +4,10 @@ import { useNavigate } from "react-router-dom";
 import $ordersController from "../../core/OrdersController";
 import "./OrdersPage.css";
 
-import $usuariosController from "../../core/TestController/TestUsersController";
-import $prendasController from "../../core/TestController/TestPrendasController";
+// import $usuariosController from "../../core/TestController/TestUsersController";
+import $usersController from "../../core/UsersController";
+// import $prendasController from "../../core/TestController/TestPrendasController";
+import $prendasController from "../../core/PrendasController";
 
 function OrdersPage() {
   const [orders, setOrders] = useState([]);
@@ -24,8 +26,18 @@ function OrdersPage() {
 
       //TODO: cargar datos de usuarios y prendas
 
-      setUsuarioData(await $usuariosController.getUsuarios());
-      setPrendasData(await $prendasController.getPrendas());
+      if (usuariosData.length == 0) {
+        console.log("Cargando datos de usuario");
+        let datosUsuario = await $usersController.getUsers();
+        setUsuarioData(datosUsuario.data);
+
+      }
+      if (prendasData.length == 0) {
+        console.log("Cargando datos de prendas");
+        let prendas=await $prendasController.getPrendas()
+        setPrendasData(prendas.data);
+      }
+
 
     } else {
       console.log("ERROR: un error inesperado surgió al cargar datos");
