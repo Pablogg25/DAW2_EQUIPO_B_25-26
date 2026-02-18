@@ -9,7 +9,7 @@ import $usersController from "../../core/UsersController";
 
 function PrendasPage() {
     const [prendas, setPrendas] = useState([]);
-    const [usuarios,setUsuarios]=useState([]);
+    const [usuarios, setUsuarios] = useState([]);
 
     const navegar = useNavigate();
 
@@ -19,9 +19,9 @@ function PrendasPage() {
         //obtener datos de controlador
 
         //si datos de usuario no estan inicializados cargar y cachear:
-        if(usuarios.length==0){
+        if (usuarios.length == 0) {
             console.log("Cargando datos de usuarios");
-            let datosUsuario=await $usersController.getUsers();
+            let datosUsuario = await $usersController.getUsers();
             setUsuarios(datosUsuario.data);
 
         }
@@ -43,7 +43,7 @@ function PrendasPage() {
         console.log("On edit prenda id: " + prendaId);
 
         //navegar al id
-        navegar("/prendas/"+prendaId);
+        navegar("/prendas/" + prendaId);
 
     }
 
@@ -52,12 +52,18 @@ function PrendasPage() {
 
         if (prendaId) {
             //hacer confirm para borrar el usuario y luego recargar datos
-            let result=await $prendasController.deletePrenda(prendaId);
 
-            if(result){
-                cargarDatos();
-                navegar("/prendas");
+            if (confirm("¿Seguro que desea eliminar la prenda?")) {
+                let result = await $prendasController.deletePrenda(prendaId);
+
+                if (result) {
+                    cargarDatos();
+                    navegar("/prendas");
+                }else{
+                    alert("Ha surgido un error al eliminar la prenda")
+                }
             }
+
         }
     }
 
@@ -65,9 +71,9 @@ function PrendasPage() {
         cargarDatos();
     }, [])
 
-    function getUsername(userId){
-        let index=usuarios.findIndex(u=>u.usuarioId==userId);
-        if(index!=-1){
+    function getUsername(userId) {
+        let index = usuarios.findIndex(u => u.usuarioId == userId);
+        if (index != -1) {
             return usuarios[index].nombre;
         }
         return "not found";
