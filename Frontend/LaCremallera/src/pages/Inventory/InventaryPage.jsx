@@ -1,20 +1,35 @@
 import React, { useEffect, useState } from "react";
-import apiController from "../../core/ApiController.js";
+import $inventarioController from "../../core/InventoryController.js";
 import { useNavigate } from "react-router-dom";
 
 function InventaryPage() {
   const [inventario, setInventario] = useState([]);
   const navigate = useNavigate();
 
+  // Cargar inventario al iniciar
   useEffect(() => {
     async function cargarInventario() {
-      const lista = await apiController.obtenerInventario();
+      const lista = await $inventarioController.obtenerInventario();
       setInventario(lista);
     }
+
     cargarInventario();
   }, []);
 
-  
+  // Eliminar con confirm
+  async function eliminarItem(id) {
+    const seguro = window.confirm(
+      "¿Seguro que quieres eliminar este elemento?",
+    );
+
+    if (!seguro) return;
+
+    await $inventarioController.eliminarItemInventario(id);
+
+    // Recargar inventario
+    const lista = await $inventarioController.obtenerInventario();
+    setInventario(lista);
+  }
 
   return (
     <div className="container mt-4">
@@ -23,7 +38,13 @@ function InventaryPage() {
       <div className="d-flex gap-2 mb-3">
         <button className="btn btn-secondary btn-sm">Volver</button>
         <button className="btn btn-primary btn-sm">Realizar pedido</button>
-        <button className="btn btn-success btn-sm">Crear</button>
+
+        <button
+          className="btn btn-success btn-sm"
+          onClick={() => navigate("/inventory/new")}
+        >
+          Crear
+        </button>
       </div>
 
       <div className="tabla-div">
@@ -54,7 +75,11 @@ function InventaryPage() {
               >
                 Ver
               </button>
-              <button className="btn btn-outline-danger btn-sm">
+
+              <button
+                className="btn btn-outline-danger btn-sm"
+                onClick={() => eliminarItem(item.itemId)}
+              >
                 Eliminar
               </button>
             </div>
@@ -62,8 +87,8 @@ function InventaryPage() {
         ))}
       </div>
 
+      {/* Estilos */}
       <style>{`
-        /* CONTENEDOR GENERAL */
         .tabla-div {
           display: flex;
           flex-direction: column;
@@ -72,7 +97,6 @@ function InventaryPage() {
           overflow: hidden;
         }
 
-        /* FILA EN ESCRITORIO */
         .fila {
           display: grid;
           grid-template-columns: 2fr 1fr 1fr 3fr 1fr;
@@ -91,7 +115,6 @@ function InventaryPage() {
           border-bottom: none;
         }
 
-        /* COLUMNAS */
         .col {
           padding: 4px 8px;
           overflow: hidden;
@@ -122,11 +145,11 @@ function InventaryPage() {
           }
 
           .cabecera {
-            display: none; /* ocultamos cabecera en móvil */
+            display: none;
           }
 
           .col {
-            white-space: normal; /* permitimos varias líneas en móvil */
+            white-space: normal;
             text-overflow: initial;
             overflow: visible;
             padding: 6px 0;
