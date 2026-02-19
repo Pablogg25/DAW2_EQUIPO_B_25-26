@@ -3,7 +3,8 @@ import apiController from "./ApiController";
 const $inventarioController = (function () {
   async function obtenerInventario() {
     const response = await fetch(apiController.getBaseUrl() + "/inventario");
-    return await response.json(); // ← React espera esto
+    console.log("Inventario:", response);
+    return await response.json();
   }
 
   async function obtenerItemInventario(id) {

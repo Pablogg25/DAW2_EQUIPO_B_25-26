@@ -10,7 +10,8 @@ function InventaryPage() {
   useEffect(() => {
     async function cargarInventario() {
       const lista = await $inventarioController.obtenerInventario();
-      setInventario(lista);
+      console.log("LISTA->" + lista);
+      setInventario(lista.data);
     }
 
     cargarInventario();
