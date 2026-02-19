@@ -34,7 +34,7 @@ function OrdersPage() {
       }
       if (prendasData.length == 0) {
         console.log("Cargando datos de prendas");
-        let prendas=await $prendasController.getPrendas()
+        let prendas = await $prendasController.getPrendas()
         setPrendasData(prendas.data);
       }
 
@@ -69,7 +69,13 @@ function OrdersPage() {
           await cargarDatos();
 
         } else {
-          alert("Error, ha surgido un error a la hora de cargar datos");
+          if (response.estado == 409) {
+            alert("Error 409: No se puede eliminar el trabajo debido a que depende de otro elemento");
+          } else {
+            alert("Error, ha surgido un error al procesar su petición.\nCodigo de error: " + response.estado);
+
+          }
+
         }
 
       }

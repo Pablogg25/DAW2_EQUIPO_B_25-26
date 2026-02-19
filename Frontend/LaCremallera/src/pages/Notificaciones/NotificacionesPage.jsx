@@ -21,12 +21,12 @@ function NotificacionesPage() {
         console.log("Cargando datos");
 
         let datos = await $notificacionesController.getNotificaciones();
-        if(datos.success){
+        if (datos.success) {
             setNotificaciones(datos.data);
-        }else{
+        } else {
             alert("Ha surgido un error al cargar los datos de notificaciones");
         }
-        
+
 
         if (usuarios.length == 0) {
             console.log("Cargando datos de usuario");
@@ -63,7 +63,13 @@ function NotificacionesPage() {
                     cargarDatos();
                     navegar("/notificaciones");
                 } else {
-                    alert("Ha surgido un error al eliminar la notificación");
+                    if (result.estado == 409) {
+                        alert("Error 409: no se puede eliminar la notificación porque es dependiente de otro elemento en la base de datos")
+                    } else {
+                        alert("Error, ha surgido un error al procesar su petición.\nCodigo de error: " + result.estado);
+
+                    }
+
                 }
             }
         }

@@ -35,7 +35,7 @@ class TrabajosController extends Controller
                 'success' => false,
                 'message' => 'No se encontraron trabajos por ningun filtro.'
             ], 404);
-            
+
         }
 
         return response()->json([
