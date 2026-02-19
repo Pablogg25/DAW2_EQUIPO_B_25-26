@@ -108,10 +108,10 @@ const $notificacionesController = (function () {
             if (request.status == 400) {
                 console.log("Respuesta 400: VALIDATION ERROR");
                 // console.log(datos);
-                return { estado: 400, data: datos.data, "success": false };
+                return { estado: 400, data: datos.message, "success": false };
             }
 
-            return { estado: request.status, data: datos.data, "success": false };
+            return { estado: request.status, data: datos.message, "success": false };
         } catch (e) {
             console.log("Excepción en petición:");
             console.log(e);
@@ -140,15 +140,15 @@ const $notificacionesController = (function () {
 
             if (request.status == 201) {
                 console.log("Respuesta 201: CREATED");
-                return { estado: 201, data: datos, "success": true };
+                return { estado: 201, data: datos.data, "success": true };
             }
             if (request.status == 400) {
                 console.log("Respuesta 400: VALIDATION ERROR");
                 // console.log(datos);
-                return { estado: 400, data: datos, "success": false };
+                return { estado: 400, data: datos.message, "success": false };
             }
 
-            return { estado: request.status, data: datos, "success": false };
+            return { estado: request.status, data: datos.message, "success": false };
         } catch (e) {
             console.log("Excepción en petición:");
             console.log(e);

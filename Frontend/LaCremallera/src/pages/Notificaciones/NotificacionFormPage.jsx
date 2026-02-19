@@ -94,12 +94,13 @@ function NotificacionFormPage() {
             alert("Datos enviados correctamente");
             navegar("/notificaciones");
         } else {
-            if(result.estado==404){
+            if (result.estado == 404) {
                 alert("Error 404, no se ha podido encontrar la notificación")
             }
-            if(result.estado==409){
-                alert("Error 409: no se puede eliminar la notificación porque es dependiente de otro elemento en la base de datos")
+            if(result.estado==400){
+                alert("Error 400: error de validación: compruebe que los campos están correctamente rellenados");
             }
+
             alert("Ha surgido un error al enviar datos");
         }
 

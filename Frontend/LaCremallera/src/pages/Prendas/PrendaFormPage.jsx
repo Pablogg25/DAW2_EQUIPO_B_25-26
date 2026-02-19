@@ -78,7 +78,12 @@ function PrendaFormPage(){
             alert("Datos enviados con éxito");
             navegar("/prendas");
         }else{
-            alert("Ha surgido un error al enviar los datos, compruebe los logs");
+            if(result.estado==400){
+                alert("Error de validación, compruebe que los campos están correctamente formateados");
+            }else{
+                alert("Ha surgido un error al enviar los datos, compruebe los logs");
+            }
+            
         }
     }
 
