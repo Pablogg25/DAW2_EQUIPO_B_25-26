@@ -19,7 +19,7 @@ function UsersPage() {
       setUsers(datos.data);
     } else {
       console.log("ERROR: un error inesperado surgió al cargar datos");
-      alert("Ha surgido un error al cargar datos. Compruebe logs.");
+      alert("Ha surgido un error al cargar datos. "+datos.data);
 
     }
   }
@@ -51,6 +51,7 @@ function UsersPage() {
         //if success
         if(!result.success){
           alert("ERROR, no se ha podido procesar su petición");
+          alert("ERROR: "+result.data);
         }else{
           cargarDatos();
         }

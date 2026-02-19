@@ -11,19 +11,23 @@ const $usersController = (function () {
         try{
             console.log("Realizando petición a: " + requestUrl);
             const request = await fetch(requestUrl);
+                const respuesta = await request.json();
 
             if (request.status == 200) {
-                const respuesta = await request.json();
 
                 console.log("usersController respuesta OK 200");
                 // console.log(respuesta);
 
-                return { "data": respuesta, "status": 200, "success": true };
+                return { "data": respuesta.data, "status": 200, "success": true };
+            }
+
+            if(request.status==404){
+                console.log("respuesta 404 NOT FOUND");
             }
 
             //else error
             console.log("error al obtener datos");
-            return { "data": null, "status": request.status, "success": false };
+            return { "data": respuesta.message, "status": request.status, "success": false };
  
         }catch (e) {
             console.log("Excepción en petición:");
@@ -41,14 +45,14 @@ const $usersController = (function () {
         try{
             console.log("Realizando petición a: " + requestUrl);
             const request = await fetch(requestUrl);
+                const respuesta = await request.json();
 
             if (request.status == 200) {
-                const respuesta = await request.json();
 
                 console.log("usersController respuesta OK 200");
                 // console.log(respuesta);
 
-                return { "data": respuesta, "status": 200, "success": true };
+                return { "data": respuesta.data, "status": 200, "success": true };
             }
 
             if(request.status==404){
@@ -56,7 +60,7 @@ const $usersController = (function () {
             }
             //else error
             console.log("error al obtener datos");
-            return { "data": null, "status": request.status, "success": false };
+            return { "data": respuesta.message, "status": request.status, "success": false };
  
         }catch (e) {
             console.log("Excepción en petición:");
@@ -86,15 +90,15 @@ const $usersController = (function () {
 
             if(request.status==201){
                 console.log("Respuesta 201: CREATED");
-                return {estado:201,data:datos,"success":true};
+                return {estado:201,data:datos.data,"success":true};
             }
             if(request.status==400){
                 console.log("Respuesta 400: VALIDATION ERROR");
                 // console.log(datos);
-                return {estado:400,data:datos,"success":false};
+                // return {estado:400,data:datos,"success":false};
             }
 
-            return {estado:request.status,data:datos,"success":false};
+            return {estado:request.status,data:datos.message,"success":false};
         }catch (e) {
             console.log("Excepción en petición:");
             console.log(e);
@@ -118,23 +122,23 @@ const $usersController = (function () {
                 },
             }
             const request = await fetch(requestUrl,requestBody);
+                const respuesta = await request.json();
 
             if (request.status == 200) {
-                const respuesta = await request.json();
 
                 console.log("usersController respuesta OK 200");
                 // console.log(respuesta);
 
-                return { "data": respuesta, "status": 200, "success": true };
+                return { "data": respuesta.valid, "status": 200, "success": true };
             }
 
-            if(request.status==401){
-                console.log("usersController respuesta WRONG CREDENTIALS 401");
-                return { "data": null, "status": 401, "success": false };
-            }
+            // if(request.status==401){
+            //     console.log("usersController respuesta WRONG CREDENTIALS 401");
+            //     // return { "data": respuesta.message, "status": 401, "success": false };
+            // }
             //else error
             console.log("error al obtener datos");
-            return { "data": null, "status": request.status, "success": false };
+            return { "data": respuesta.message, "status": request.status, "success": false };
  
         }catch (e) {
             console.log("Excepción en petición:");
@@ -164,15 +168,15 @@ const $usersController = (function () {
 
             if(request.status==200){
                 console.log("Respuesta 200: OK");
-                return {estado:201,data:datos,"success":true};
+                return {estado:201,data:datos.data,"success":true};
             }
             if(request.status==400){
                 console.log("Respuesta 400: VALIDATION ERROR");
                 // console.log(datos);
-                return {estado:400,data:datos,"success":false};
+                // return {estado:400,data:datos,"success":false};
             }
 
-            return {estado:request.status,data:datos,"success":false};
+            return {estado:request.status,data:datos.message,"success":false};
         }catch (e) {
             console.log("Excepción en petición:");
             console.log(e);
@@ -206,10 +210,10 @@ const $usersController = (function () {
             if(request.status==400){
                 console.log("Respuesta 400: VALIDATION ERROR");
                 // console.log(datos);
-                return {estado:400,data:datos,"success":false};
+                // return {estado:400,data:datos,"success":false};
             }
 
-            return {estado:request.status,data:datos,"success":false};
+            return {estado:request.status,data:datos.message,"success":false};
         }catch (e) {
             console.log("Excepción en petición:");
             console.log(e);
@@ -234,13 +238,17 @@ const $usersController = (function () {
 
             if(respuesta.status==200){
                 console.log("Respuesta 200: OK");
-                return {estado:200,data:datos,success:true};
+                return {estado:200,data:datos.data,success:true};
             }
             if(respuesta.status==404){
                 console.log("Respuesta 404: NOT FOUND");
-                return {estado:404,data:datos,success:false};
+                // return {estado:404,data:datos,success:false};
             }
-            return {estado:respuesta.status,data:datos,success:false};
+            if(respuesta.status==409){
+                console.log("Respuesta 404: CONSTRAINT");
+                // return {estado:404,data:datos,success:false};
+            }
+            return {estado:respuesta.status,data:datos.message,success:false};
 
         }catch(e){
             console.log("$negocioApi: Resultado error");

@@ -26,7 +26,7 @@ function UserFormPage() {
                 console.log(datos);
                 setUserData(datos.data[0]);
             } else {
-                alert("ERROR, no se ha podido procesar su petición");
+                alert("ERROR, "+datos);
                 navegar("/users");
             }
         }

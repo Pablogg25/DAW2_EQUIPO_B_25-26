@@ -27,7 +27,8 @@ function OrderFormPage() {
             if (datos.success) {
                 setOrderData(datos.data);
             } else {
-                alert("Error, no se ha podido procesar su petición");
+                alert("Error, ha surgido un error al procesar su petición.\nCodigo de error: " + datos.status);
+
                 navegar("/orders");
             }
 
@@ -50,22 +51,27 @@ function OrderFormPage() {
 
     const enviarDatos = async () => {
         let success;
-        let statusCode=0;
+        let statusCode = 0;
         if (id != 0) {
             //update
-            const response = await $ordersController.updateOrder(orderData,id);
+            const response = await $ordersController.updateOrder(orderData, id);
             success = response.success;
-            statusCode=response.estado;
+            statusCode = response.estado;
         } else {
             const response = await $ordersController.createOrder(orderData);
             success = response.success;
-            statusCode=response.estado;
+            statusCode = response.estado;
         }
-        
+
         if (success) {
             navegar("/orders");
         } else {
-            alert("Error, ha surgido un error al procesar su petición.\nCodigo de error: "+statusCode);
+            if (statusCode == 400) {
+                alert("Error de validación: compruebe que ha rellenado correctamente los campos");
+            } else {
+                alert("Error, ha surgido un error al procesar su petición.\nCodigo de error: " + statusCode);
+
+            }
         }
 
     }
@@ -103,8 +109,8 @@ function OrderFormPage() {
                 <div>
                     <div> Prenda: </div>
                     <select type="text" name="prendaId" id="prendaId" onChange={handleOnChange} >
-                        {prendasData.map((elemento)=>{
-                            return(
+                        {prendasData.map((elemento) => {
+                            return (
                                 <option key={elemento.prendaId} value={elemento.prendaId} selected={orderData.prenda == elemento.prendaId}>{elemento.tipo}</option>
                             );
                         })}
@@ -114,8 +120,8 @@ function OrderFormPage() {
                     <div> Empleado: </div>
                     {/* drop down con los empleados disponibles */}
                     <select name="empleadoId" id="empleadoId" onChange={handleOnChange}>
-                        {usuariosData.map((elemento)=>{
-                            return(
+                        {usuariosData.map((elemento) => {
+                            return (
                                 <option key={elemento.usuarioId} value={elemento.usuarioId} selected={orderData.empleado == elemento.usuarioId}>{elemento.nombre}</option>
                             );
                         })}
