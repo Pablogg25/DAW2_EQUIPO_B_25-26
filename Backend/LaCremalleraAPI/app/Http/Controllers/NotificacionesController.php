@@ -43,6 +43,23 @@ class NotificacionesController extends Controller
         ]);
     }
 
+    public function show($id)
+    {
+        $notificacion = Notificaciones::find($id);
+
+        if (!$notificacion) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Notificación no encontrada'
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $notificacion
+        ]);
+    }
+
     public function store(Request $request)
     {
         $data = $request->validate([

@@ -35,14 +35,12 @@ class UsuariosController extends Controller
                 'success' => false,
                 'message' => 'Usuario no encontrado'
             ], 404);
-
         }
 
         return response()->json([
             'success' => true,
             'data' => $usuarios
         ]);
-
     }
 
     public function show($id)
@@ -64,36 +62,34 @@ class UsuariosController extends Controller
                 'success' => false,
                 'message' => 'Usuario no encontrado'
             ], 404);
-
         }
 
         return response()->json([
             'success' => true,
             'data' => $usuario
         ]);
-
     }
 
     public function store(Request $request)
     {
         $request->validate([
             'nombre' => 'required|string|max:255',
-            'username' => 'required|string|max:255|unique:usuarios',
-            'email' => 'required|email|max:255|unique:usuarios',
+            'username' => 'required|string|unique:usuarios,username',
+            'email' => 'required|email|unique:usuarios,email',
             'password' => 'required|string|min:6',
-            'rol' => 'in:cliente,empleado,admin'
+            'rol' => 'nullable|in:cliente,empleado,admin'
         ]);
 
         try {
-
             $usuario = new Usuarios();
             $usuario->nombre = $request->nombre;
             $usuario->telefono = $request->telefono;
             $usuario->email = $request->email;
             $usuario->direccion = $request->direccion;
             $usuario->username = $request->username;
-            $usuario->password = Hash::make($request->password);
             $usuario->rol = $request->rol ?? 'cliente';
+            // Guardamos la contraseña hasheada en password_SHA2
+            $usuario->password_SHA2 = hash('sha224', $request->password);
             $usuario->save();
 
             return response()->json([
@@ -101,17 +97,13 @@ class UsuariosController extends Controller
                 'message' => 'Usuario creado correctamente',
                 'data' => $usuario
             ], 201);
-
         } catch (\Exception $e) {
-
             return response()->json([
                 'success' => false,
                 'message' => 'Ocurrió un error al crear el usuario',
                 'detalle' => $e->getMessage()
             ], 500);
-
         }
-        
     }
 
     public function update(Request $request, $id)
@@ -141,7 +133,6 @@ class UsuariosController extends Controller
                 'message' => 'Usuario actualizado correctamente',
                 'data' => $usuario
             ]);
-
         } catch (\Exception $e) {
 
             return response()->json([
@@ -149,7 +140,6 @@ class UsuariosController extends Controller
                 'message' => 'Ocurrió un error al actualizar el usuario',
                 'detalle' => $e->getMessage()
             ], 500);
-
         }
     }
 
@@ -169,7 +159,6 @@ class UsuariosController extends Controller
                 'success' => true,
                 'message' => 'Contraseña actualizada correctamente'
             ]);
-
         } catch (\Exception $e) {
 
             return response()->json([
@@ -177,9 +166,7 @@ class UsuariosController extends Controller
                 'message' => 'Ocurrió un error al actualizar la contraseña',
                 'detalle' => $e->getMessage()
             ], 500);
-
         }
-
     }
 
     public function destroy($id)
@@ -202,7 +189,6 @@ class UsuariosController extends Controller
                 'success' => true,
                 'message' => 'Usuario eliminado correctamente'
             ]);
-
         } catch (QueryException $e) {
 
             return response()->json([
@@ -210,7 +196,6 @@ class UsuariosController extends Controller
                 'message' => 'No se puede eliminar el usuario debido a un conflicto de base de datos',
                 'detalle' => $e->getMessage()
             ], 409);
-
         } catch (\Exception $e) {
 
             return response()->json([
@@ -218,11 +203,10 @@ class UsuariosController extends Controller
                 'message' => 'Ocurrió un error al eliminar el usuario',
                 'detalle' => $e->getMessage()
             ], 500);
-
         }
     }
-    
-        public function checkPassword(Request $request)
+
+    public function checkPassword(Request $request)
     {
         $request->validate([
             'username' => 'required|string',
@@ -237,7 +221,6 @@ class UsuariosController extends Controller
                 'success' => false,
                 'message' => 'Usuario no encontrado'
             ], 404);
-
         }
 
         $match = Hash::check($request->password, $usuario->password);
@@ -246,7 +229,5 @@ class UsuariosController extends Controller
             'success' => true,
             'valid' => $match
         ]);
-        
     }
-
 }

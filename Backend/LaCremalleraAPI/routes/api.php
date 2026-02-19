@@ -68,6 +68,8 @@ Route::prefix('api')->middleware(Cors::class)->group(function () {
     Route::prefix('notificaciones')->group(function () {
         // Listar todas las notificaciones
         Route::get('/', [NotificacionesController::class, 'index']); // filtrar ?receptorId=&remitenteId=&trabajoId=
+        // Obtener notificacion por Id
+        Route::get('/{id}', [NotificacionesController::class, 'show']);
         // Crear notificación
         Route::post('/', [NotificacionesController::class, 'store']);
         // Actualizar notificación
@@ -134,4 +136,5 @@ Route::prefix('api')->middleware(Cors::class)->group(function () {
     Route::options('{any}', function () {
         return response()->json([], 200);
     })->where('any', '.*');
+
 });
