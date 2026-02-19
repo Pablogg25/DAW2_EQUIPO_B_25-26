@@ -5,6 +5,8 @@ const apiController = (function () {
     return api_base_url;
   };
 
+  
+
   async function obtenerInventario() {
     const response = await fetch(api_base_url + `/inventario`);
     if (!response.ok) {

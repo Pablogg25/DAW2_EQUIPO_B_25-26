@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import apiController from "../../core/ApiController.js";
+import $inventarioController from "../../core/InventoryController.js";
 
 function PropsElementoInventoryPage() {
   const { id } = useParams();
@@ -16,14 +16,12 @@ function PropsElementoInventoryPage() {
   // Cargar datos si NO es creación
   useEffect(() => {
     async function cargarItem() {
-      try {
-        const datos = await apiController.obtenerItemInventario(id);
-        console.log(datos);
-        setItem(datos);
-      } catch (e) {
-        console.error(e);
-      }
+      if (id === "new") return; // modo creación → no cargar nada
+
+      const datos = await $inventarioController.obtenerItemInventario(id);
+      setItem(datos);
     }
+
     cargarItem();
   }, [id]);
 
@@ -35,16 +33,13 @@ function PropsElementoInventoryPage() {
 
   // Guardar cambios (crear o actualizar)
   async function guardar() {
-    try {
-      if (id === "new") {
-        await apiController.crearItemInventario(item);
-      } else {
-        await apiController.actualizarItemInventario(id, item);
-      }
-      navigate("/"); // vuelve al inicio o donde quieras
-    } catch (e) {
-      console.error(e);
+    if (id === "new") {
+      await $inventarioController.crearItemInventario(item);
+    } else {
+      await $inventarioController.actualizarItemInventario(id, item);
     }
+
+    navigate("/inventory"); // volver al inventario
   }
 
   return (
@@ -57,6 +52,7 @@ function PropsElementoInventoryPage() {
         name="nombre"
         value={item.nombre}
         onChange={handleChange}
+        className="form-control mb-2"
       />
 
       <label>Cantidad</label>
@@ -65,6 +61,7 @@ function PropsElementoInventoryPage() {
         name="cantidad"
         value={item.cantidad}
         onChange={handleChange}
+        className="form-control mb-2"
       />
 
       <label>Stock mínimo</label>
@@ -73,6 +70,7 @@ function PropsElementoInventoryPage() {
         name="stock_minimo"
         value={item.stock_minimo}
         onChange={handleChange}
+        className="form-control mb-2"
       />
 
       <label>Descripción</label>
@@ -80,13 +78,13 @@ function PropsElementoInventoryPage() {
         name="descripcion"
         value={item.descripcion}
         onChange={handleChange}
+        className="form-control mb-3"
       />
-
-      <br />
 
       <button className="btn btn-success" onClick={guardar}>
         Guardar
       </button>
+
       <button className="btn btn-secondary ms-2" onClick={() => navigate(-1)}>
         Volver
       </button>
