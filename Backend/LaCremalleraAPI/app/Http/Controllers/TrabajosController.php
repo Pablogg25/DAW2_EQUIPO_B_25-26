@@ -3,263 +3,233 @@
 namespace App\Http\Controllers;
 
 use App\Models\Trabajos;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
-use OpenApi\Annotations as OA;
 
-/**
- * @OA\Tag(
- *     name="Trabajos",
- *     description="Operaciones relacionadas con trabajos"
- * )
- */
+
 class TrabajosController extends Controller
 {
-    /**
-     * @OA\Get(
-     *     path="/api/trabajos",
-     *     summary="Obtener todos los trabajos",
-     *     tags={"Trabajos"},
-     *     @OA\Response(
-     *         response=200,
-     *         description="Listado de trabajos",
-     *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/Trabajo"))
-     *     )
-     * )
-     */
-    public function index()
+
+    public function index(Request $request)
     {
-        return response()->json(Trabajos::all());
+        $query = Trabajos::query();
+
+        if ($request->has('empleadoId')) {
+            $query->where('empleadoId', $request->empleadoId);
+        }
+
+        if ($request->has('estado')) {
+            $query->where('estado', $request->estado);
+        }
+
+        if ($request->has('prendaId')) {
+            $query->where('prendaId', $request->prendaId);
+        }
+
+        $trabajos = $query->get();
+
+        // Si se aplicó cualquier filtro y no hay resultados
+        if (($request->has('empleadoId') || $request->has('estado') || $request->has('prendaId')) && $trabajos->isEmpty()) {
+
+            return response()->json([
+                'success' => false,
+                'message' => 'No se encontraron trabajos por ningun filtro.'
+            ], 404);
+            
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $trabajos
+        ]);
     }
 
-    /**
-     * @OA\Get(
-     *     path="/api/trabajos/{id}",
-     *     summary="Obtener un trabajo por id",
-     *     tags={"Trabajos"},
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="ID del trabajo",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Trabajo encontrado",
-     *         @OA\JsonContent(ref="#/components/schemas/Trabajo")
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Trabajo no encontrado",
-     *         @OA\JsonContent(type="object", @OA\Property(property="error", type="string"))
-     *     )
-     * )
-     */
     public function show($id)
     {
         $trabajo = Trabajos::find($id);
-        if (!$trabajo) return response()->json(['error' => 'Trabajo no encontrado'], 404);
-        return response()->json($trabajo);
+
+        if (!$trabajo) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Trabajo no encontrado'
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $trabajo
+        ]);
     }
 
-    /**
-     * @OA\Post(
-     *     path="/api/trabajos",
-     *     summary="Crear un trabajo",
-     *     tags={"Trabajos"},
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/Trabajo")
-     *     ),
-     *     @OA\Response(
-     *         response=201,
-     *         description="Trabajo creado",
-     *         @OA\JsonContent(ref="#/components/schemas/Trabajo")
-     *     ),
-     *     @OA\Response(
-     *         response=400,
-     *         description="Datos no válidos",
-     *         @OA\JsonContent(type="object", @OA\Property(property="error", type="string"))
-     *     )
-     * )
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
             'prendaId' => 'required|integer',
             'empleadoId' => 'nullable|integer',
-            'descripcion' => 'nullable|string',
+            'descripcion' => 'nullable|string|max:500',
             'fecha_inicio' => 'required|date',
-            'fecha_entrega' => 'required|date',
+            'fecha_entrega' => 'required|date|after_or_equal:fecha_inicio',
             'estado' => 'nullable|in:pendiente,en_proceso,listo,entregado',
             'precio' => 'nullable|numeric|min:0',
         ]);
 
-        $trabajo = Trabajos::create($validated);
-        return response()->json($trabajo, 201);
+        try {
+
+            $trabajo = Trabajos::create($validated);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Trabajo creado correctamente',
+                'data' => $trabajo
+            ], 201);
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Ocurrió un error al crear el trabajo',
+                'detalle' => $e->getMessage()
+            ], 500);
+        }
     }
 
-    /**
-     * @OA\Put(
-     *     path="/api/trabajos/{id}",
-     *     summary="Actualizar un trabajo",
-     *     tags={"Trabajos"},
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="ID del trabajo",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/Trabajo")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Trabajo actualizado",
-     *         @OA\JsonContent(ref="#/components/schemas/Trabajo")
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Trabajo no encontrado",
-     *         @OA\JsonContent(type="object", @OA\Property(property="error", type="string"))
-     *     ),
-     *     @OA\Response(
-     *         response=400,
-     *         description="Datos no válidos",
-     *         @OA\JsonContent(type="object", @OA\Property(property="error", type="string"))
-     *     )
-     * )
-     */
     public function update(Request $request, $id)
     {
         $trabajo = Trabajos::find($id);
-        if (!$trabajo) return response()->json(['error' => 'Trabajo no encontrado'], 404);
+
+        if (!$trabajo) {
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Trabajo no encontrado'
+            ], 404);
+        }
 
         $validated = $request->validate([
             'prendaId' => 'required|integer',
             'empleadoId' => 'nullable|integer',
-            'descripcion' => 'nullable|string',
+            'descripcion' => 'nullable|string|max:500',
             'fecha_inicio' => 'required|date',
-            'fecha_entrega' => 'required|date',
+            'fecha_entrega' => 'required|date|after_or_equal:fecha_inicio',
             'estado' => 'nullable|in:pendiente,en_proceso,listo,entregado',
             'precio' => 'nullable|numeric|min:0',
         ]);
 
-        $trabajo->update($validated);
-        return response()->json($trabajo);
+        try {
+
+            $trabajo->update($validated);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Trabajo actualizado correctamente',
+                'data' => $trabajo
+            ]);
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Ocurrió un error al actualizar el trabajo',
+                'detalle' => $e->getMessage()
+            ], 500);
+        }
     }
 
-    /**
-     * @OA\Delete(
-     *     path="/api/trabajos/{id}",
-     *     summary="Eliminar un trabajo",
-     *     tags={"Trabajos"},
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="ID del trabajo",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Trabajo eliminado",
-     *         @OA\JsonContent(type="object", @OA\Property(property="message", type="string"))
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Trabajo no encontrado",
-     *         @OA\JsonContent(type="object", @OA\Property(property="error", type="string"))
-     *     )
-     * )
-     */
     public function destroy($id)
     {
         $trabajo = Trabajos::find($id);
-        if (!$trabajo) return response()->json(['error' => 'Trabajo no encontrado'], 404);
 
-        $trabajo->delete();
-        return response()->json(['message' => 'Trabajo eliminado']);
+        if (!$trabajo) {
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Trabajo no encontrado'
+            ], 404);
+        }
+
+        try {
+
+            // Verificar relaciones antes de borrar
+            if ($trabajo->consumos()->exists()) {
+
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No se puede eliminar el trabajo porque tiene consumos asociados'
+                ], 409);
+            }
+
+            $trabajo->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Trabajo eliminado correctamente'
+            ]);
+        } catch (QueryException $e) {
+
+            return response()->json([
+                'success' => false,
+                'message' => 'No se puede eliminar el trabajo debido a un conflicto en la base de datos',
+                'detalle' => $e->getMessage()
+            ], 409);
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Ocurrió un error al eliminar el trabajo',
+                'detalle' => $e->getMessage()
+            ], 500);
+        }
     }
 
-    /**
-     * @OA\Get(
-     *     path="/api/trabajos/{id}/consumos",
-     *     summary="Obtener consumos de un trabajo",
-     *     tags={"Trabajos"},
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="ID del trabajo",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Consumables del trabajo",
-     *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/ConsumosTrabajo"))
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Trabajo no encontrado",
-     *         @OA\JsonContent(type="object", @OA\Property(property="error", type="string"))
-     *     )
-     * )
-     */
     public function consumos($id)
     {
         $trabajo = Trabajos::find($id);
-        if (!$trabajo) return response()->json(['error' => 'Trabajo no encontrado'], 404);
 
-        return response()->json($trabajo->consumos);
+        if (!$trabajo) {
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Trabajo no encontrado'
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $trabajo->consumos
+        ]);
     }
 
-    /**
-     * @OA\Post(
-     *     path="/api/trabajos/{id}/consumos",
-     *     summary="Asociar consumo a un trabajo",
-     *     tags={"Trabajos"},
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="ID del trabajo",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/ConsumosTrabajo")
-     *     ),
-     *     @OA\Response(
-     *         response=201,
-     *         description="Consumo asociado",
-     *         @OA\JsonContent(ref="#/components/schemas/ConsumosTrabajo")
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Trabajo no encontrado",
-     *         @OA\JsonContent(type="object", @OA\Property(property="error", type="string"))
-     *     ),
-     *     @OA\Response(
-     *         response=400,
-     *         description="Datos no válidos",
-     *         @OA\JsonContent(type="object", @OA\Property(property="error", type="string"))
-     *     )
-     * )
-     */
     public function asociarConsumo(Request $request, $id)
     {
         $trabajo = Trabajos::find($id);
-        if (!$trabajo) return response()->json(['error' => 'Trabajo no encontrado'], 404);
+
+        if (!$trabajo) {
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Trabajo no encontrado'
+            ], 404);
+        }
 
         $validated = $request->validate([
             'itemId' => 'required|integer',
             'cantidad_usada' => 'nullable|integer|min:0',
         ]);
 
-        $consumo = $trabajo->consumos()->create($validated);
-        return response()->json($consumo, 201);
+        try {
+
+            $consumo = $trabajo->consumos()->create($validated);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Consumo asociado correctamente',
+                'data' => $consumo
+            ], 201);
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Ocurrió un error al asociar el consumo',
+                'detalle' => $e->getMessage()
+            ], 500);
+        }
     }
 }

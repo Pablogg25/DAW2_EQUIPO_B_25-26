@@ -4,122 +4,61 @@ namespace App\Http\Controllers;
 
 use App\Models\Facturas;
 use App\Models\Trabajos;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
-use OpenApi\Annotations as OA;
 
-/**
- * @OA\Tag(
- *     name="Facturas",
- *     description="Operaciones relacionadas con facturas"
- * )
- */
 class FacturasController extends Controller
 {
-    /**
-     * @OA\Get(
-     *     path="/api/facturas",
-     *     summary="Obtener facturas, opcionalmente filtradas por usuario o trabajo",
-     *     tags={"Facturas"},
-     *     @OA\Parameter(
-     *         name="usuarioId",
-     *         in="query",
-     *         required=false,
-     *         description="Filtrar facturas por ID de usuario",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Parameter(
-     *         name="trabajoId",
-     *         in="query",
-     *         required=false,
-     *         description="Filtrar facturas por ID de trabajo",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Lista de facturas",
-     *         @OA\JsonContent(
-     *             type="array",
-     *             @OA\Items(ref="#/components/schemas/Factura")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=400,
-     *         description="Error en la solicitud"
-     *     )
-     * )
-     */
     public function index(Request $request)
     {
-        // Si se proporciona trabajoId, devolvemos facturas asociadas al trabajo
-        if ($request->has('trabajoId')) {
-            $trabajo = Trabajos::findOrFail($request->trabajoId);
-            return response()->json($trabajo->facturas);
-        }
 
         $query = Facturas::with('trabajos');
 
-        // Filtrar por usuarioId si se pasa
+        if ($request->has('trabajoId')) {
+            $query->whereHas('trabajos', function ($q) use ($request) {
+                $q->where('trabajoId', $request->trabajoId);
+            });
+        }
+
         if ($request->has('usuarioId')) {
             $query->where('usuarioId', $request->usuarioId);
         }
 
         $facturas = $query->get();
 
-        return response()->json($facturas);
+        if (($request->has('usuarioId') || $request->has('trabajoId'))
+            && $facturas->isEmpty()
+        ) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No se encontraron facturas con los filtros aplicados.'
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $facturas
+        ]);
     }
 
-    /**
-     * @OA\Get(
-     *     path="/api/facturas/{id}",
-     *     summary="Obtener una factura por ID",
-     *     tags={"Facturas"},
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="ID de la factura",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Factura encontrada",
-     *         @OA\JsonContent(ref="#/components/schemas/Factura")
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Factura no encontrada"
-     *     )
-     * )
-     */
     public function show($id)
     {
-        $factura = Facturas::with('trabajos')->findOrFail($id);
+        $factura = Facturas::with('trabajos')->find($id);
+
         if (!$factura) {
-            return response()->json(['error' => 'Factura no encontrada'], 404);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Factura no encontrada.'
+            ], 404);
         }
-        return response()->json($factura);
+
+        return response()->json([
+            'success' => true,
+            'data' => $factura
+        ]);
     }
 
-    /**
-     * @OA\Post(
-     *     path="/api/facturas",
-     *     summary="Crear una nueva factura",
-     *     tags={"Facturas"},
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/Factura")
-     *     ),
-     *     @OA\Response(
-     *         response=201,
-     *         description="Factura creada",
-     *         @OA\JsonContent(ref="#/components/schemas/Factura")
-     *     ),
-     *     @OA\Response(
-     *         response=400,
-     *         description="Datos inválidos"
-     *     )
-     * )
-     */
     public function store(Request $request)
     {
         $data = $request->validate([
@@ -127,41 +66,35 @@ class FacturasController extends Controller
             'fecha' => 'required|date',
         ]);
 
-        $factura = Facturas::create($data);
+        try {
 
-        return response()->json($factura, 201);
+            $factura = Facturas::create($data);
+
+            return response()->json([
+                'success' => true,
+                'data' => $factura
+            ], 201);
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al crear la factura.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
-    /**
-     * @OA\Put(
-     *     path="/api/facturas/{id}",
-     *     summary="Actualizar una factura existente",
-     *     tags={"Facturas"},
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="ID de la factura",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/Factura")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Factura actualizada",
-     *         @OA\JsonContent(ref="#/components/schemas/Factura")
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Factura no encontrada"
-     *     )
-     * )
-     */
     public function update(Request $request, $id)
     {
         $factura = Facturas::findOrFail($id);
+
+        if (!$factura) {
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Factura no encontrado'
+            ], 404);
+        }
 
         $data = $request->validate([
             'usuarioId' => 'required|integer|min:1',
@@ -170,153 +103,162 @@ class FacturasController extends Controller
             'total_calculado' => 'nullable|numeric',
         ]);
 
-        $factura->update($data);
+        try {
+            $factura->update($data);
 
-        return response()->json($factura);
+            return response()->json([
+                'success' => true,
+                'data' => $factura
+            ]);
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Ocurrió un error al actualizar la Factura',
+                'detalle' => $e->getMessage()
+            ], 500);
+        }
     }
 
-    /**
-     * @OA\Delete(
-     *     path="/api/facturas/{id}",
-     *     summary="Eliminar una factura",
-     *     tags={"Facturas"},
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="ID de la factura",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Factura eliminada",
-     *         @OA\JsonContent(type="object", @OA\Property(property="message", type="string"))
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Factura no encontrada"
-     *     )
-     * )
-     */
     public function destroy($id)
     {
-        $factura = Facturas::findOrFail($id);
-        $factura->trabajos()->detach();
-        $factura->delete();
 
-        return response()->json(['message' => 'Factura eliminada correctamente']);
+        $factura = Facturas::findOrFail($id);
+
+        if (!$factura) {
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Inventario no encontrado'
+            ], 404);
+        }
+
+        try {
+            $factura->trabajos()->detach();
+            $factura->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Factura eliminada correctamente.'
+            ]);
+        } catch (QueryException $e) {
+
+            return response()->json([
+                'success' => false,
+                'message' => 'No se puede eliminar la factura esta asociada.',
+                'detalle' => $e->getMessage()
+            ], 409);
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Ocurrió un error al eliminar la Factura',
+                'detalle' => $e->getMessage()
+            ], 500);
+        }
     }
 
-    /**
-     * @OA\Post(
-     *     path="/api/facturas/{facturaId}/trabajo",
-     *     summary="Asociar un trabajo a una factura",
-     *     tags={"Facturas"},
-     *     @OA\Parameter(
-     *         name="facturaId",
-     *         in="path",
-     *         required=true,
-     *         description="ID de la factura",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(
-     *             type="object",
-     *             required={"trabajoId"},
-     *             @OA\Property(property="trabajoId", type="integer", example=1)
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Trabajo asociado correctamente",
-     *         @OA\JsonContent(type="object", @OA\Property(property="message", type="string"))
-     *     )
-     * )
-     */
     public function asociarTrabajo(Request $request, $facturaId)
     {
-        $factura = Facturas::findOrFail($facturaId);
+        try {
+            $factura = Facturas::findOrFail($facturaId);
 
-        $request->validate([
-            'trabajoId' => 'required|integer|exists:trabajos,trabajoId',
-        ]);
+            $request->validate([
+                'trabajoId' => 'required|integer|exists:trabajos,trabajoId',
+            ]);
 
-        $factura->trabajos()->attach($request->trabajoId);
+            $factura->trabajos()->attach($request->trabajoId);
 
-        return response()->json(['message' => 'Trabajo asociado correctamente']);
+            return response()->json([
+                'success' => true,
+                'message' => 'Trabajo asociado correctamente.'
+            ]);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Factura no encontrada.'
+            ], 404);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Error de validación.',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'success' => false,
+                'message' => 'No se pudo asociar el trabajo.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
-    /**
-     * @OA\Post(
-     *     path="/api/facturas/{facturaId}/trabajo/desasociar",
-     *     summary="Desasociar un trabajo de una factura",
-     *     tags={"Facturas"},
-     *     @OA\Parameter(
-     *         name="facturaId",
-     *         in="path",
-     *         required=true,
-     *         description="ID de la factura",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(
-     *             type="object",
-     *             required={"trabajoId"},
-     *             @OA\Property(property="trabajoId", type="integer", example=1)
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Trabajo desasociado correctamente",
-     *         @OA\JsonContent(type="object", @OA\Property(property="message", type="string"))
-     *     )
-     * )
-     */
     public function desasociarTrabajo(Request $request, $facturaId)
     {
-        $factura = Facturas::findOrFail($facturaId);
+        try {
+            $factura = Facturas::findOrFail($facturaId);
 
-        $request->validate([
-            'trabajoId' => 'required|integer|exists:trabajos,trabajoId',
-        ]);
+            $request->validate([
+                'trabajoId' => 'required|integer|exists:trabajos,trabajoId',
+            ]);
 
-        $factura->trabajos()->detach($request->trabajoId);
+            $factura->trabajos()->detach($request->trabajoId);
 
-        return response()->json(['message' => 'Trabajo desasociado correctamente']);
+            return response()->json([
+                'success' => true,
+                'message' => 'Trabajo desasociado correctamente.'
+            ]);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Factura no encontrada.'
+            ], 404);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Error de validación.',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'success' => false,
+                'message' => 'No se pudo desasociar el trabajo.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
-    /**
-     * @OA\Get(
-     *     path="/api/facturas/{id}/calcular-total",
-     *     summary="Calcular el total de una factura a partir de los trabajos asociados",
-     *     tags={"Facturas"},
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="ID de la factura",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Total calculado de la factura",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="total", type="number", format="float", example=100.50)
-     *         )
-     *     )
-     * )
-     */
     public function calcularTotal($id)
     {
-        $factura = Facturas::findOrFail($id);
-        $total = $factura->trabajos()->sum('precio');
+        try {
 
-        $factura->total_calculado = $total;
-        $factura->save();
+            $factura = Facturas::findOrFail($id);
+            $total = $factura->trabajos()->sum('precio');
 
-        return response()->json(['total' => $total]);
+            $factura->total_calculado = $total;
+            $factura->save();
+
+            return response()->json([
+                'success' => true,
+                'total' => $total
+            ]);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Factura no encontrada.'
+            ], 404);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al calcular el total.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 }

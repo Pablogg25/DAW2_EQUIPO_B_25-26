@@ -5,210 +5,179 @@ namespace App\Http\Controllers;
 use App\Models\Inventario;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
-use OpenApi\Annotations as OA;
 
-/**
- * @OA\Tag(
- *     name="Inventarios",
- *     description="Operaciones relacionadas con inventarios"
- * )
- */
 class InventarioController extends Controller
 {
-    /**
-     * @OA\Get(
-     *     path="/api/inventarios",
-     *     summary="Listar todos los inventarios",
-     *     tags={"Inventarios"},
-     *     @OA\Response(
-     *         response=200,
-     *         description="Listado de inventarios",
-     *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/Inventario"))
-     *     )
-     * )
-     */
-    public function index()
+    public function index(Request $request)
     {
-        return response()->json(Inventario::all());
+        $query = Inventario::query();
+
+        // Filtro opcional por nombre
+        if ($request->has('nombre')) {
+            $query->where('nombre', 'like', '%' . $request->nombre . '%');
+        }
+
+        $inventarios = $query->get();
+
+        if ($request->has('nombre') && $inventarios->isEmpty()) {
+
+            return response()->json([
+                'success' => false,
+                'message' => 'No se encontro el nombre del producto en el inventario.'
+            ], 404);
+
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $inventarios
+        ]);
+
     }
 
-    /**
-     * @OA\Get(
-     *     path="/api/inventarios/{id}",
-     *     summary="Obtener un inventario por ID",
-     *     tags={"Inventarios"},
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="ID del inventario",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Inventario encontrado",
-     *         @OA\JsonContent(ref="#/components/schemas/Inventario")
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Inventario no encontrado",
-     *         @OA\JsonContent(type="object", @OA\Property(property="error", type="string"))
-     *     )
-     * )
-     */
     public function show($id)
     {
-        $Inventario = Inventario::findOrFail($id);
-        return response()->json($Inventario);
+        $inventario = Inventario::find($id);
+
+        if (!$inventario) {
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Inventario no encontrado'
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $inventario
+        ]);
     }
 
-    /**
-     * @OA\Get(
-     *     path="/api/inventarios/bajo-stock",
-     *     summary="Obtener inventarios bajo stock",
-     *     tags={"Inventarios"},
-     *     @OA\Response(
-     *         response=200,
-     *         description="Listado de inventarios con bajo stock",
-     *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/Inventario"))
-     *     )
-     * )
-     */
     public function bajoStock()
     {
-        $Inventarios = Inventario::whereColumn('cantidad', '<=', 'stock_minimo')->get();
+        $inventarios = Inventario::whereColumn('cantidad', '<=', 'stock_minimo')->get();
 
-        if ($Inventarios->isEmpty()) {
+        if ($inventarios->isEmpty()) {
+
             return response()->json([
-                'message' => 'No hay productos con bajo stock.'
+                'success' => true,
+                'message' => 'No hay productos con bajo stock.',
+                'data' => []
             ]);
         }
 
-        return response()->json($Inventarios);
+        return response()->json([
+            'success' => true,
+            'data' => $inventarios
+        ]);
     }
 
-    /**
-     * @OA\Post(
-     *     path="/api/inventarios",
-     *     summary="Crear un nuevo inventario",
-     *     tags={"Inventarios"},
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/Inventario")
-     *     ),
-     *     @OA\Response(
-     *         response=201,
-     *         description="Inventario creado",
-     *         @OA\JsonContent(ref="#/components/schemas/Inventario")
-     *     ),
-     *     @OA\Response(
-     *         response=400,
-     *         description="Datos no válidos",
-     *         @OA\JsonContent(type="object", @OA\Property(property="error", type="string"))
-     *     )
-     * )
-     */
     public function store(Request $request)
     {
         $data = $request->validate([
             'nombre' => 'required|string|max:255',
-            'descripcion' => 'nullable|string',
+            'descripcion' => 'nullable|string|max:500',
             'cantidad' => 'nullable|integer|min:0',
             'stock_minimo' => 'nullable|integer|min:0',
         ]);
 
-        $Inventario = Inventario::create($data);
+        try {
 
-        return response()->json($Inventario, 201);
+            $inventario = Inventario::create($data);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Inventario creado correctamente',
+                'data' => $inventario
+            ], 201);
+
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Ocurrió un error al crear el inventario',
+                'detalle' => $e->getMessage()
+            ], 500);
+
+        }
     }
 
-    /**
-     * @OA\Put(
-     *     path="/api/inventarios/{id}",
-     *     summary="Actualizar un inventario",
-     *     tags={"Inventarios"},
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="ID del inventario",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/Inventario")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Inventario actualizado",
-     *         @OA\JsonContent(ref="#/components/schemas/Inventario")
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Inventario no encontrado",
-     *         @OA\JsonContent(type="object", @OA\Property(property="error", type="string"))
-     *     ),
-     *     @OA\Response(
-     *         response=400,
-     *         description="Datos no válidos",
-     *         @OA\JsonContent(type="object", @OA\Property(property="error", type="string"))
-     *     )
-     * )
-     */
     public function update(Request $request, $id)
     {
-        $Inventario = Inventario::findOrFail($id);
+        $inventario = Inventario::find($id);
+
+        if (!$inventario) {
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Inventario no encontrado'
+            ], 404);
+        }
 
         $data = $request->validate([
             'nombre' => 'required|string|max:255',
-            'descripcion' => 'nullable|string',
+            'descripcion' => 'nullable|string|max:500',
             'cantidad' => 'nullable|integer|min:0',
             'stock_minimo' => 'nullable|integer|min:0',
         ]);
 
-        $Inventario->update($data);
+        try {
 
-        return response()->json($Inventario);
+            $inventario->update($data);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Inventario actualizado correctamente',
+                'data' => $inventario
+            ]);
+
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Ocurrió un error al actualizar el inventario',
+                'detalle' => $e->getMessage()
+            ], 500);
+
+        }
     }
 
-    /**
-     * @OA\Delete(
-     *     path="/api/inventarios/{id}",
-     *     summary="Eliminar un inventario",
-     *     tags={"Inventarios"},
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="ID del inventario",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Inventario eliminado",
-     *         @OA\JsonContent(type="object", @OA\Property(property="message", type="string"))
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Inventario no encontrado",
-     *         @OA\JsonContent(type="object", @OA\Property(property="error", type="string"))
-     *     )
-     * )
-     */
     public function destroy($id)
     {
+        $inventario = Inventario::find($id);
+
+        if (!$inventario) {
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Inventario no encontrado'
+            ], 404);
+        }
+
         try {
-            $inventario = Inventario::findOrFail($id);
+
             $inventario->delete();
 
             return response()->json([
-                'message' => 'Inventario eliminado correctamente.'
+                'success' => true,
+                'message' => 'Inventario eliminado correctamente'
             ]);
         } catch (QueryException $e) {
 
             return response()->json([
-                'error' => 'No se puede eliminar el inventario porque está asociado a un trabajo.'
+                'success' => false,
+                'message' => 'No se puede eliminar el inventario porque está asociado a un trabajo',
+                'detalle' => $e->getMessage()
             ], 409);
+
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Ocurrió un error al eliminar el inventario',
+                'detalle' => $e->getMessage()
+            ], 500);
+
         }
     }
 }

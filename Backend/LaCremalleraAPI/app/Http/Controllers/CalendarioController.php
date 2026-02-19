@@ -4,37 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Calendario;
 use Illuminate\Http\Request;
-use OpenApi\Annotations as OA;
 
-/**
- * @OA\Tag(
- *     name="Calendario",
- *     description="Operaciones relacionadas con el calendario"
- * )
- * 
- * @OA\PathItem:"/api/calendarios"
- */
 class CalendarioController extends Controller
 {
-    /**
-     * @OA\Get(
-     *     path="/api/calendarios",
-     *     summary="Obtener todos los calendarios",
-     *     tags={"Calendarios"},
-     *     @OA\Response(
-     *         response=200,
-     *         description="Lista de calendarios",
-     *         @OA\JsonContent(
-     *             type="array",
-     *             @OA\Items(ref="#/components/schemas/Calendario")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=400,
-     *         description="Error en la solicitud"
-     *     )
-     * )
-     */
+
     public function index(Request $request)
     {
         $query = Calendario::query();
@@ -51,72 +24,39 @@ class CalendarioController extends Controller
             $query->where('trabajoId', $request->trabajoId);
         }
 
-        return response()->json($query->get());
+        $calendarios = $query->get();
+
+        if ($calendarios->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No se encontraron calendarios con los filtros aplicados.'
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $calendarios
+        ]);
     }
 
-    /**
-     * @OA\Get(
-     *     path="/api/calendarios/{id}",
-     *     summary="Obtener calendario por ID",
-     *     tags={"Calendarios"},
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="ID del calendario",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Calendario encontrado",
-     *         @OA\JsonContent(ref="#/components/schemas/Calendario")
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Calendario no encontrado"
-     *     )
-     * )
-     */
     public function show($id)
     {
-        $Calendario = Calendario::find($id);
-        if (!$Calendario) {
-            return response()->json(['error' => 'Calendario no encontrado'], 404);
+        $calendario = Calendario::find($id);
+
+        if (!$calendario) {
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Calendario no encontrado.'
+            ], 404);
         }
-        return response()->json($Calendario);
+
+        return response()->json([
+            'success' => true,
+            'data' => $calendario
+        ]);
     }
 
-
-    /**
-     * @OA\Post(
-     *     path="/api/calendarios",
-     *     summary="Crear un nuevo calendario",
-     *     tags={"Calendarios"},
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(
-     *             type="object",
-     *             required={"titulo", "fecha_inicio", "fecha_fin", "usuarioId"},
-     *             @OA\Property(property="titulo", type="string", example="Reunión de equipo"),
-     *             @OA\Property(property="descripcion", type="string", example="Reunión de planificación de proyecto"),
-     *             @OA\Property(property="fecha_inicio", type="string", format="date", example="2023-03-01"),
-     *             @OA\Property(property="fecha_fin", type="string", format="date", example="2023-03-01"),
-     *             @OA\Property(property="usuarioId", type="integer", example=101),
-     *             @OA\Property(property="empleadoId", type="integer", example=202),
-     *             @OA\Property(property="trabajoId", type="integer", example=1)
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=201,
-     *         description="Calendario creado",
-     *         @OA\JsonContent(ref="#/components/schemas/Calendario")
-     *     ),
-     *     @OA\Response(
-     *         response=400,
-     *         description="Datos inválidos"
-     *     )
-     * )
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -129,57 +69,33 @@ class CalendarioController extends Controller
             'trabajoId' => 'nullable|integer',
         ]);
 
-        $Calendario = Calendario::create($validated);
+        try {
 
-        return response()->json($Calendario, 201);
+            $calendario = Calendario::create($validated);
+
+            return response()->json([
+                'success' => true,
+                'data' => $calendario
+            ], 201);
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Ocurrió un error al crear la calendario',
+                'detalle' => $e->getMessage()
+            ], 500);
+        }
     }
 
-    /**
-     * @OA\Put(
-     *     path="/api/calendarios/{id}",
-     *     summary="Actualizar un calendario existente",
-     *     tags={"Calendarios"},
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="ID del calendario",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(
-     *             type="object",
-     *             required={"titulo", "fecha_inicio", "fecha_fin", "usuarioId"},
-     *             @OA\Property(property="titulo", type="string", example="Reunión de equipo"),
-     *             @OA\Property(property="descripcion", type="string", example="Reunión de planificación de proyecto"),
-     *             @OA\Property(property="fecha_inicio", type="string", format="date", example="2023-03-01"),
-     *             @OA\Property(property="fecha_fin", type="string", format="date", example="2023-03-01"),
-     *             @OA\Property(property="usuarioId", type="integer", example=101),
-     *             @OA\Property(property="empleadoId", type="integer", example=202),
-     *             @OA\Property(property="trabajoId", type="integer", example=1)
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Calendario actualizado",
-     *         @OA\JsonContent(ref="#/components/schemas/Calendario")
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Calendario no encontrado"
-     *     ),
-     *     @OA\Response(
-     *         response=400,
-     *         description="Datos inválidos"
-     *     )
-     * )
-     */
     public function update(Request $request, $id)
     {
-        $Calendario = Calendario::find($id);
-        if (!$Calendario) {
-            return response()->json(['error' => 'Calendario no encontrado'], 404);
+        $calendario = Calendario::find($id);
+
+        if (!$calendario) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Calendario no encontrado.'
+            ], 404);
         }
 
         $validated = $request->validate([
@@ -192,43 +108,51 @@ class CalendarioController extends Controller
             'trabajoId' => 'nullable|integer',
         ]);
 
-        $Calendario->update($validated);
+        try {
 
-        return response()->json($Calendario);
+            $calendario->update($validated);
+
+            return response()->json([
+                'success' => true,
+                'data' => $calendario
+            ]);
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Ocurrió un error al actualizar el calendario',
+                'detalle' => $e->getMessage()
+            ], 500);
+        }
     }
 
-    /**
-     * @OA\Delete(
-     *     path="/api/calendarios/{id}",
-     *     summary="Eliminar un calendario",
-     *     tags={"Calendarios"},
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="ID del calendario",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Calendario eliminado correctamente",
-     *         @OA\JsonContent(type="object", @OA\Property(property="message", type="string", example="Calendario eliminado correctamente"))
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Calendario no encontrado"
-     *     )
-     * )
-     */
     public function destroy($id)
     {
-        $Calendario = Calendario::find($id);
-        if (!$Calendario) {
-            return response()->json(['error' => 'Calendario no encontrado'], 404);
+        $calendario = Calendario::find($id);
+
+        if (!$calendario) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Calendario no encontrado.'
+            ], 404);
         }
 
-        $Calendario->delete();
+        try {
 
-        return response()->json(['message' => 'Calendario eliminado correctamente']);
+            $calendario->delete();
+            return response()->json([
+                'success' => true,
+                'message' => 'Calendario eliminado correctamente.'
+            ]);
+
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'success' => false,
+                'message' => 'No se pudo eliminar el calendario.',
+                'error' => $e->getMessage()
+            ], 500);
+            
+        }
     }
 }

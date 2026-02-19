@@ -4,126 +4,45 @@ namespace App\Http\Controllers;
 
 use App\Models\Notificaciones;
 use Illuminate\Http\Request;
-use OpenApi\Annotations as OA;
+use Illuminate\Database\QueryException;
 
-/**
- * @OA\Tag(
- *     name="Notificaciones",
- *     description="Operaciones relacionadas con notificaciones"
- * )
- */
 class NotificacionesController extends Controller
 {
-    /**
-     * @OA\Get(
-     *     path="/api/notificaciones",
-     *     summary="Listar todas las notificaciones",
-     *     tags={"Notificaciones"},
-     *     @OA\Response(
-     *         response=200,
-     *         description="Listado de notificaciones",
-     *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/Notificacion"))
-     *     )
-     * )
-     */
-    public function index()
+    public function index(Request $request)
     {
-        return response()->json(Notificaciones::all());
+
+        $query = Notificaciones::query();
+
+        if ($request->has('receptorId')) {
+            $query->where('receptorId', $request->receptorId);
+        }
+
+        if ($request->has('remitenteId')) {
+            $query->where('remitenteId', $request->remitenteId);
+        }
+
+        if ($request->has('trabajoId')) {
+            $query->where('trabajoId', $request->trabajoId);
+        }
+
+        $notificaciones = $query->get();
+
+        if (
+            ($request->has('receptorId') || $request->has('remitenteId') || $request->has('trabajoId'))
+            && $notificaciones->isEmpty()
+        ) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No se encontraron notificaciones con los filtros aplicados.'
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $notificaciones
+        ]);
     }
 
-    /**
-     * @OA\Get(
-     *     path="/api/notificaciones/receptor/{receptorId}",
-     *     summary="Obtener notificaciones por receptorId",
-     *     tags={"Notificaciones"},
-     *     @OA\Parameter(
-     *         name="receptorId",
-     *         in="path",
-     *         required=true,
-     *         description="ID del receptor",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Listado de notificaciones del receptor",
-     *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/Notificacion"))
-     *     )
-     * )
-     */
-    public function byReceptor($receptorId)
-    {
-        return response()->json(Notificaciones::where('receptorId', $receptorId)->get());
-    }
-
-    /**
-     * @OA\Get(
-     *     path="/api/notificaciones/remitente/{remitenteId}",
-     *     summary="Obtener notificaciones por remitenteId",
-     *     tags={"Notificaciones"},
-     *     @OA\Parameter(
-     *         name="remitenteId",
-     *         in="path",
-     *         required=true,
-     *         description="ID del remitente",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Listado de notificaciones del remitente",
-     *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/Notificacion"))
-     *     )
-     * )
-     */
-    public function byRemitente($remitenteId)
-    {
-        return response()->json(Notificaciones::where('remitenteId', $remitenteId)->get());
-    }
-
-    /**
-     * @OA\Get(
-     *     path="/api/notificaciones/trabajo/{trabajoId}",
-     *     summary="Obtener notificaciones por trabajoId",
-     *     tags={"Notificaciones"},
-     *     @OA\Parameter(
-     *         name="trabajoId",
-     *         in="path",
-     *         required=true,
-     *         description="ID del trabajo",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Listado de notificaciones asociadas a un trabajo",
-     *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/Notificacion"))
-     *     )
-     * )
-     */
-    public function byTrabajo($trabajoId)
-    {
-        return response()->json(Notificaciones::where('trabajoId', $trabajoId)->get());
-    }
-
-    /**
-     * @OA\Post(
-     *     path="/api/notificaciones",
-     *     summary="Crear una nueva notificación",
-     *     tags={"Notificaciones"},
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/Notificacion")
-     *     ),
-     *     @OA\Response(
-     *         response=201,
-     *         description="Notificación creada",
-     *         @OA\JsonContent(ref="#/components/schemas/Notificacion")
-     *     ),
-     *     @OA\Response(
-     *         response=400,
-     *         description="Datos no válidos",
-     *         @OA\JsonContent(type="object", @OA\Property(property="error", type="string"))
-     *     )
-     * )
-     */
     public function store(Request $request)
     {
         $data = $request->validate([
@@ -135,54 +54,39 @@ class NotificacionesController extends Controller
             'mensaje' => 'required|string',
         ]);
 
-        // Establecer valor por defecto de tipo
-        if (!isset($data['tipo'])) {
-            $data['tipo'] = 'notificacion';
-        }
-
+        $data['tipo'] = $data['tipo'] ?? 'notificacion';
         $data['fecha_envio'] = now();
 
-        $notificacion = Notificaciones::create($data);
+        try {
 
-        return response()->json($notificacion, 201);
+            $notificacion = Notificaciones::create($data);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Notificación creada correctamente',
+                'data' => $notificacion
+            ], 201);
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Ocurrió un error al crear la notificación',
+                'detalle' => $e->getMessage()
+            ], 500);
+        }
     }
 
-    /**
-     * @OA\Put(
-     *     path="/api/notificaciones/{id}",
-     *     summary="Actualizar una notificación",
-     *     tags={"Notificaciones"},
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="ID de la notificación",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/Notificacion")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Notificación actualizada",
-     *         @OA\JsonContent(ref="#/components/schemas/Notificacion")
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Notificación no encontrada",
-     *         @OA\JsonContent(type="object", @OA\Property(property="error", type="string"))
-     *     ),
-     *     @OA\Response(
-     *         response=400,
-     *         description="Datos no válidos",
-     *         @OA\JsonContent(type="object", @OA\Property(property="error", type="string"))
-     *     )
-     * )
-     */
     public function update(Request $request, $id)
     {
-        $notificacion = Notificaciones::findOrFail($id);
+        $notificacion = Notificaciones::find($id);
+
+        if (!$notificacion) {
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Notificación no encontrada'
+            ], 404);
+        }
 
         $data = $request->validate([
             'receptorId' => 'required|integer|min:1',
@@ -193,44 +97,61 @@ class NotificacionesController extends Controller
             'mensaje' => 'required|string',
         ]);
 
-        if (!isset($data['tipo'])) {
-            $data['tipo'] = 'notificacion';
+        $data['tipo'] = $data['tipo'] ?? 'notificacion';
+
+        try {
+
+            $notificacion->update($data);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Notificación actualizada correctamente',
+                'data' => $notificacion
+            ]);
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Ocurrió un error al actualizar la notificación',
+                'detalle' => $e->getMessage()
+            ], 500);
         }
-
-        $notificacion->update($data);
-
-        return response()->json($notificacion);
     }
 
-    /**
-     * @OA\Delete(
-     *     path="/api/notificaciones/{id}",
-     *     summary="Eliminar una notificación",
-     *     tags={"Notificaciones"},
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="ID de la notificación",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Notificación eliminada",
-     *         @OA\JsonContent(type="object", @OA\Property(property="message", type="string"))
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Notificación no encontrada",
-     *         @OA\JsonContent(type="object", @OA\Property(property="error", type="string"))
-     *     )
-     * )
-     */
     public function destroy($id)
     {
-        $notificacion = Notificaciones::findOrFail($id);
-        $notificacion->delete();
+        $notificacion = Notificaciones::find($id);
 
-        return response()->json(['message' => 'Notificación eliminada correctamente.']);
+        if (!$notificacion) {
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Notificación no encontrada'
+            ], 404);
+        }
+
+        try {
+
+            $notificacion->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Notificación eliminada correctamente'
+            ]);
+        } catch (QueryException $e) {
+
+            return response()->json([
+                'success' => false,
+                'message' => 'No se puede eliminar la notificación debido a un conflicto en la base de datos',
+                'detalle' => $e->getMessage()
+            ], 409);
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Ocurrió un error al eliminar la notificación',
+                'detalle' => $e->getMessage()
+            ], 500);
+        }
     }
 }
