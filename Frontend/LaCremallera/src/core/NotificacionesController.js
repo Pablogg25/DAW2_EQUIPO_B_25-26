@@ -1,18 +1,15 @@
-
 import apiController from "./ApiController";
 
-const $ordersController = (function () {
-    console.log("Inicializando ordersController");
+const $notificacionesController=(function () {
+    console.log("Inicializar $notificaciones controller");
 
-    async function getOrders() {
-        console.log("ordersController: getOrders");
+    async function getNotificaciones(params){
+        console.log("notificacionesController: getNotificaciones");
 
-        const requestUrl = apiController.getBaseUrl() + '/trabajos';
+        const requestUrl=apiController.getBaseUrl()+"/notificaciones";
 
-        //TODO: gestionar errores y códigos de error
-
-        try {
-            console.log("Realizando petición a: " + requestUrl);
+        try{
+           console.log("Realizando petición a: " + requestUrl);
             const request = await fetch(requestUrl);
 
             if (request.status == 200) {
@@ -35,14 +32,12 @@ const $ordersController = (function () {
 
             return {"data":e,"success":false};
         }
-    };
+    }
 
-    async function getOrder(trabajoId) {
-        console.log("ordersController: getOrder, id:"+trabajoId);
+    async function getNotificacion(notId) {
+        console.log("notificacionesController: getNotificacion id: "+notId);
 
-        const requestUrl = apiController.getBaseUrl() + '/trabajos/'+trabajoId;
-
-        //TODO: gestionar errores y códigos de error
+        const requestUrl=apiController.getBaseUrl()+"/notificaciones/"+notId;
 
         try {
             console.log("Realizando petición a: " + requestUrl);
@@ -51,7 +46,7 @@ const $ordersController = (function () {
             if (request.status == 200) {
                 const respuesta = await request.json();
 
-                console.log("OrdersController respuesta OK 200");
+                console.log("notificacionesController respuesta OK 200");
                 // console.log(respuesta);
 
                 return { "data": respuesta, "status": 200, "success": true };
@@ -68,18 +63,18 @@ const $ordersController = (function () {
 
             return {"data":e,"success":false};
         }
-    };
+    }
 
-    async function createOrder(objOrder){
-        console.log("ordersController createOrder ");
+    async function createNotificacion(objNot) {
+        console.log("notificacionesController: create notificación");
 
-        const requestUrl=apiController.getBaseUrl() + '/trabajos';
+        const requestUrl=apiController.getBaseUrl()+"/notificaciones";
 
         try{
             console.log("Realizando petición a: " + requestUrl);
             const requestBody={
                 method:"POST",
-                body:JSON.stringify(objOrder),
+                body:JSON.stringify(objNot),
                 headers:{
                     "Content-type":"application/json; charset=UTF-8",
                 },
@@ -107,16 +102,16 @@ const $ordersController = (function () {
         }
     }
 
-    async function updateOrder(objOrder,trabajoId){
-        console.log("ordersController updateOrder ");
+    async function updateNotificacion(objNot){
+        console.log("notificacionesController: update Notificacion");
 
-        const requestUrl=apiController.getBaseUrl() + '/trabajos/'+trabajoId;
+        const requestUrl=apiController.getBaseUrl()+"/notificaciones/"+objNot.notificacionId;
 
         try{
             console.log("Realizando petición a: " + requestUrl);
             const requestBody={
                 method:"PUT",
-                body:JSON.stringify(objOrder),
+                body:JSON.stringify(objNot),
                 headers:{
                     "Content-type":"application/json; charset=UTF-8",
                 },
@@ -125,14 +120,9 @@ const $ordersController = (function () {
 
             const datos=await request.json();
 
-            if(request.status==200){
-                console.log("Respuesta 200: OK");
-                return {estado:200,data:datos,"success":true};
-            }
-            if(request.status==404){
-                console.log("Respuesta 404: NOT FOUND");
-                // console.log(datos);
-                return {estado:404,data:datos,"success":false};
+            if(request.status==201){
+                console.log("Respuesta 201: CREATED");
+                return {estado:201,data:datos,"success":true};
             }
             if(request.status==400){
                 console.log("Respuesta 400: VALIDATION ERROR");
@@ -141,7 +131,6 @@ const $ordersController = (function () {
             }
 
             return {estado:request.status,data:datos,"success":false};
-
         }catch (e) {
             console.log("Excepción en petición:");
             console.log(e);
@@ -150,13 +139,13 @@ const $ordersController = (function () {
         }
     }
 
-    async function deleteOrder(trabajoId) {
-        console.log("ordersController: deleteOrder");
+    async function deleteNotificacion(notId) {
+        
+        console.log("notificacionesController: delete Notificacion");
 
-        const requestUrl=apiController.getBaseUrl()+"/trabajos/"+trabajoId;
+        const requestUrl=apiController.getBaseUrl()+"/notificaciones/"+notId;
 
         try{
-            console.log("Realizando petición a: " + requestUrl);
             const requestBody={
                 method:"DELETE",
                 headers:{
@@ -182,16 +171,16 @@ const $ordersController = (function () {
             console.log(e);
             return {"data":e,"success":false};
         }
+
     }
 
-    return {
-        getOrders,
-        getOrder,
-        createOrder,
-        updateOrder,
-        deleteOrder,
-    };
+    return{
+        getNotificaciones,
+        getNotificacion,
+        createNotificacion,
+        updateNotificacion,
+        deleteNotificacion,
+    }
 })();
 
-window.$ordersController = $ordersController;
-export default $ordersController;
+export default $notificacionesController;

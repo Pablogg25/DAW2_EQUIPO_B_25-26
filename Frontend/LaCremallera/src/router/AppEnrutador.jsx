@@ -19,6 +19,7 @@ import PrendaFormPage from "../pages/Prendas/PrendaFormPage.jsx";
 
 //notificaciones
 import NotificacionesPage from "../pages/Notificaciones/NotificacionesPage.jsx";
+import NotificacionFormPage from "../pages/Notificaciones/NotificacionFormpage.jsx";
 
 function AppEnrutador() {
   return (
@@ -42,6 +43,7 @@ function AppEnrutador() {
           <Route path="/login" element={<LoginPage/>}/>
 
           <Route path="notificaciones" element={<NotificacionesPage/>}/>
+          <Route path="/notificaciones/:id" element={<NotificacionFormPage/>}/>
 
           <Route path="*" element={<ErrorPage />} />
         </Route>
