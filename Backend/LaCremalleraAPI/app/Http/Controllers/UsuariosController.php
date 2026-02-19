@@ -111,7 +111,7 @@ class UsuariosController extends Controller
             ], 500);
 
         }
-        
+
     }
 
     public function update(Request $request, $id)
@@ -221,7 +221,7 @@ class UsuariosController extends Controller
 
         }
     }
-    
+
         public function checkPassword(Request $request)
     {
         $request->validate([
@@ -246,166 +246,7 @@ class UsuariosController extends Controller
             'success' => true,
             'valid' => $match
         ]);
-        
+
     }
 
-<<<<<<< HEAD
-    /**
-     * @OA\Put(
-     *     path="/api/usuarios/{id}",
-     *     summary="Actualizar los datos de un usuario",
-     *     tags={"Usuarios"},
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="ID del usuario",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(
-     *             required={"nombre", "username", "email", "rol"},
-     *             @OA\Property(property="nombre", type="string", example="Juan Pérez"),
-     *             @OA\Property(property="telefono", type="string", example="1234567890"),
-     *             @OA\Property(property="email", type="string", example="juan@dominio.com"),
-     *             @OA\Property(property="direccion", type="string", example="Calle Ficticia 123"),
-     *             @OA\Property(property="username", type="string", example="juan123"),
-     *             @OA\Property(property="rol", type="string", example="empleado")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Usuario actualizado",
-     *         @OA\JsonContent(type="boolean")
-     *     ),
-     *     @OA\Response(
-     *         response=400,
-     *         description="Error de validación",
-     *         @OA\JsonContent(type="boolean")
-     *     )
-     *     @OA\Response(
-     *         response=404,
-     *         description="Usuario no encontrado",
-     *         @OA\JsonContent(type="boolean")
-     *     )
-     * )
-     */
-    public function update(Request $request, $id)
-    {
-        $request->validate([
-            'nombre' => 'required',
-            'username' => 'required',
-            'email' => 'required|email',
-            'rol' => 'required|in:cliente,empleado,admin'
-        ]);
-
-        $usuario = Usuarios::findOrFail($id);
-
-        $usuario->update([
-            'nombre' => $request->nombre,
-            'telefono' => $request->telefono,
-            'email' => $request->email,
-            'direccion' => $request->direccion,
-            'username' => $request->username,
-            'rol' => $request->rol
-        ]);
-
-        return response()->json(true);
-    }
-
-    /**
-     * @OA\Put(
-     *     path="/api/usuarios/{id}/password",
-     *     summary="Actualizar la contraseña de un usuario",
-     *     tags={"Usuarios"},
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="ID del usuario",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(
-     *             required={"password"},
-     *             @OA\Property(property="password", type="string", example="nueva_contraseña")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Contraseña actualizada",
-     *         @OA\JsonContent(type="boolean")
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Usuario no encontrado",
-     *         @OA\JsonContent(type="boolean")
-     *     )
-     * )
-     */
-    public function updatePassword(Request $request, $id)
-    {
-        $request->validate([
-            'password' => 'required'
-        ]);
-
-        $usuario = Usuarios::findOrFail($id);
-        $usuario->password_SHA2 = $request->password;
-        $usuario->save();
-
-        return response()->json(true);
-    }
-
-    /**
-     * @OA\Delete(
-     *     path="/api/usuarios/{id}",
-     *     summary="Eliminar un usuario por su ID",
-     *     tags={"Usuarios"},
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="ID del usuario a eliminar",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Usuario eliminado",
-     *         @OA\JsonContent(type="boolean")
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Usuario no encontrado",
-     *         @OA\JsonContent(type="boolean")
-     *     )
-     * )
-     */
-
-    public function destroy($id)
-    {
-        try {
-            $usuario = Usuarios::findOrFail($id);
-            $usuario->delete();
-
-            return response()->json([
-                'message' => 'Usuario eliminado correctamente.'
-            ], 200);
-        } catch (QueryException $e) {
-            // Esto captura errores de clave foránea o conflictos con la base de datos
-            return response()->json([
-                'error' => 'No se puede eliminar el usuario porque está relacionado con otros registros.'
-            ], 409); // 409 = Conflict
-
-        } catch (\Exception $e) {
-            // Captura cualquier otro error inesperado
-            return response()->json([
-                'error' => 'Ocurrió un error al intentar eliminar el usuario.',
-                'detalle' => $e->getMessage()
-            ], 500);
-        }
-    }
-=======
->>>>>>> b328e5a (actualizacion de los controladores, con recojida de errores, actualizacion de la rutas)
 }
