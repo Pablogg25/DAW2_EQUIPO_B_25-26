@@ -8,9 +8,9 @@ use App\Http\Controllers\NotificacionesController;
 use App\Http\Controllers\InventarioController;
 use App\Http\Controllers\FacturasController;
 use App\Http\Controllers\CalendarioController;
+use App\Http\Middleware\Cors;
 
-
-Route::prefix('api')->group(function () {
+Route::prefix('api')->middleware(Cors::class)->group(function () {
 
     // Usuarios
     // Obtener todo los usuarios
@@ -97,10 +97,10 @@ Route::prefix('api')->group(function () {
     Route::get('/facturas', [FacturasController::class, 'index']);
     // Obtener una factura específica por su ID, incluyendo los trabajos asociados
     Route::get('/facturas/{id}', [FacturasController::class, 'show']);
-    // Obtener todas las facturas de un usuario específico por su usuarioId
-    Route::get('/facturas/usuario/{usuarioId}', [FacturasController::class, 'byUsuario']);
-    // Obtener todas las facturas asociadas a un trabajo específico por su trabajoId
-    Route::get('/facturas/trabajo/{trabajoId}', [FacturasController::class, 'byTrabajo']);
+    // // Obtener todas las facturas de un usuario específico por su usuarioId
+    // Route::get('/facturas/usuario/{usuarioId}', [FacturasController::class, 'byUsuario']);
+    // // Obtener todas las facturas asociadas a un trabajo específico por su trabajoId
+    // Route::get('/facturas/trabajo/{trabajoId}', [FacturasController::class, 'byTrabajo']);
     // Crear una nueva factura (requiere usuarioId y fecha)
     Route::post('/facturas', [FacturasController::class, 'store']);
     // Actualizar una factura existente por su ID (usuarioId, fecha, pagado, total_calculado)
@@ -122,18 +122,25 @@ Route::prefix('api')->group(function () {
     // Listar todos los eventos
     Route::get('/eventos', [CalendarioController::class, 'index']);
     // Ver evento por ID                
-    Route::get('/eventos/{id}', [CalendarioController::class, 'show']);          
+    Route::get('/eventos/{id}', [CalendarioController::class, 'show']);
     // Eventos por usuario  
-    Route::get('/eventos/usuario/{usuarioId}', [CalendarioController::class, 'byUsuario']);  
+    Route::get('/eventos/usuario/{usuarioId}', [CalendarioController::class, 'byUsuario']);
     // Eventos por empleado
-    Route::get('/eventos/empleado/{empleadoId}', [CalendarioController::class, 'byEmpleado']); 
+    Route::get('/eventos/empleado/{empleadoId}', [CalendarioController::class, 'byEmpleado']);
     // Eventos por trabajo
-    Route::get('/eventos/trabajo/{trabajoId}', [CalendarioController::class, 'byTrabajo']);   
+    Route::get('/eventos/trabajo/{trabajoId}', [CalendarioController::class, 'byTrabajo']);
     // Crear evento
-    Route::post('/eventos', [CalendarioController::class, 'store']);   
+    Route::post('/eventos', [CalendarioController::class, 'store']);
     // Actualizar evento            
-    Route::put('/eventos/{id}', [CalendarioController::class, 'update']);   
+    Route::put('/eventos/{id}', [CalendarioController::class, 'update']);
     // Eliminar evento       
-    Route::delete('/eventos/{id}', [CalendarioController::class, 'destroy']);      
+    Route::delete('/eventos/{id}', [CalendarioController::class, 'destroy']);
+
+    // Manejo de preflight CORS para permitir solicitudes desde el frontend React
+    Route::options('{any}', function () {
+        return response()->json([], 200);
+    })->where('any', '.*');
 
 });
+
+

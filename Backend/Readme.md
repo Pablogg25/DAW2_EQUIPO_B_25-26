@@ -1,4 +1,4 @@
-# Comandos para Ejecutar la API 
+# Comandos para Ejecutar la API desde el repositorio Local
 
 - Previamente devemos instalar composer en la maquina.
 1. composer install
@@ -6,3 +6,5 @@
 3. php artisan migrate
 4. php artisan migrate --seed
 5. php artisan serve
+
+

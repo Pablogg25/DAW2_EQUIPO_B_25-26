@@ -18,8 +18,22 @@ class FacturasController extends Controller
     /**
      * @OA\Get(
      *     path="/api/facturas",
-     *     summary="Obtener todas las facturas",
+     *     summary="Obtener facturas, opcionalmente filtradas por usuario o trabajo",
      *     tags={"Facturas"},
+     *     @OA\Parameter(
+     *         name="usuarioId",
+     *         in="query",
+     *         required=false,
+     *         description="Filtrar facturas por ID de usuario",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Parameter(
+     *         name="trabajoId",
+     *         in="query",
+     *         required=false,
+     *         description="Filtrar facturas por ID de trabajo",
+     *         @OA\Schema(type="integer")
+     *     ),
      *     @OA\Response(
      *         response=200,
      *         description="Lista de facturas",
@@ -34,9 +48,24 @@ class FacturasController extends Controller
      *     )
      * )
      */
-    public function index()
+    public function index(Request $request)
     {
-        return response()->json(Facturas::all());
+        // Si se proporciona trabajoId, devolvemos facturas asociadas al trabajo
+        if ($request->has('trabajoId')) {
+            $trabajo = Trabajos::findOrFail($request->trabajoId);
+            return response()->json($trabajo->facturas);
+        }
+
+        $query = Facturas::with('trabajos');
+
+        // Filtrar por usuarioId si se pasa
+        if ($request->has('usuarioId')) {
+            $query->where('usuarioId', $request->usuarioId);
+        }
+
+        $facturas = $query->get();
+
+        return response()->json($facturas);
     }
 
     /**
@@ -66,62 +95,6 @@ class FacturasController extends Controller
     {
         $factura = Facturas::with('trabajos')->findOrFail($id);
         return response()->json($factura);
-    }
-
-    /**
-     * @OA\Get(
-     *     path="/api/facturas/usuario/{usuarioId}",
-     *     summary="Obtener todas las facturas de un usuario",
-     *     tags={"Facturas"},
-     *     @OA\Parameter(
-     *         name="usuarioId",
-     *         in="path",
-     *         required=true,
-     *         description="ID del usuario",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Listado de facturas del usuario",
-     *         @OA\JsonContent(
-     *             type="array",
-     *             @OA\Items(ref="#/components/schemas/Factura")
-     *         )
-     *     )
-     * )
-     */
-    public function byUsuario($usuarioId)
-    {
-        $facturas = Facturas::where('usuarioId', $usuarioId)->with('trabajos')->get();
-        return response()->json($facturas);
-    }
-
-    /**
-     * @OA\Get(
-     *     path="/api/facturas/trabajo/{trabajoId}",
-     *     summary="Obtener facturas asociadas a un trabajo",
-     *     tags={"Facturas"},
-     *     @OA\Parameter(
-     *         name="trabajoId",
-     *         in="path",
-     *         required=true,
-     *         description="ID del trabajo",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Listado de facturas asociadas al trabajo",
-     *         @OA\JsonContent(
-     *             type="array",
-     *             @OA\Items(ref="#/components/schemas/Factura")
-     *         )
-     *     )
-     * )
-     */
-    public function byTrabajo($trabajoId)
-    {
-        $trabajo = Trabajos::findOrFail($trabajoId);
-        return response()->json($trabajo->facturas);
     }
 
     /**
@@ -225,7 +198,7 @@ class FacturasController extends Controller
     public function destroy($id)
     {
         $factura = Facturas::findOrFail($id);
-        $factura->trabajos()->detach(); // Desasociar trabajos
+        $factura->trabajos()->detach();
         $factura->delete();
 
         return response()->json(['message' => 'Factura eliminada correctamente']);
@@ -255,14 +228,6 @@ class FacturasController extends Controller
      *         response=200,
      *         description="Trabajo asociado correctamente",
      *         @OA\JsonContent(type="object", @OA\Property(property="message", type="string"))
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Factura no encontrada"
-     *     ),
-     *     @OA\Response(
-     *         response=400,
-     *         description="Datos inválidos"
      *     )
      * )
      */
@@ -303,14 +268,6 @@ class FacturasController extends Controller
      *         response=200,
      *         description="Trabajo desasociado correctamente",
      *         @OA\JsonContent(type="object", @OA\Property(property="message", type="string"))
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Factura no encontrada"
-     *     ),
-     *     @OA\Response(
-     *         response=400,
-     *         description="Datos inválidos"
      *     )
      * )
      */
@@ -346,10 +303,6 @@ class FacturasController extends Controller
      *             type="object",
      *             @OA\Property(property="total", type="number", format="float", example=100.50)
      *         )
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Factura no encontrada"
      *     )
      * )
      */

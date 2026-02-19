@@ -1,7 +1,10 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-// import $ordersController from "../../core/TestController/TestOrdersController";
+
 import $ordersController from "../../core/OrdersController";
+import $usuariosController from "../../core/TestController/TestUsersController";
+import $prendasController from "../../core/TestController/TestPrendasController";
+
 
 function OrderFormPage() {
     const [orderData, setOrderData] = useState({
@@ -10,17 +13,30 @@ function OrderFormPage() {
         precio: 0, prenda: "", trabajo_id: 0
     });
 
+    const [usuariosData, setUsuarioData] = useState([]);
+    const [prendasData, setPrendasData] = useState([]);
+
     const { id } = useParams();
 
-    const cargarDatos=async()=>{
+    const cargarDatos = async () => {
         console.log("cargando datos");
-        if(id!=0){
+        if (id != 0) {
             //modo edit
-            let datos=await $ordersController.getOrder(id);
-            setOrderData(datos);
+            let datos = await $ordersController.getOrder(id);
             console.log(datos);
+            if (datos.success) {
+                setOrderData(datos.data);
+            } else {
+                alert("Error, no se ha podido procesar su petición");
+                navegar("/orders");
+            }
+
         }
         //else modo create
+
+        //TODO, cargar empleados y prendas por ids
+        setUsuarioData(await $usuariosController.getUsuarios());
+        setPrendasData(await $prendasController.getPrendas());
     }
 
     const navegar = useNavigate();
@@ -33,14 +49,25 @@ function OrderFormPage() {
     }
 
     const enviarDatos = async () => {
+        let success;
+        let statusCode=0;
         if (id != 0) {
             //update
-            const response =await $ordersController.updateOrder(orderData);
+            const response = await $ordersController.updateOrder(orderData,id);
+            success = response.success;
+            statusCode=response.estado;
         } else {
-            const response =await $ordersController.createOrder(orderData);
+            const response = await $ordersController.createOrder(orderData);
+            success = response.success;
+            statusCode=response.estado;
         }
-        //TODO: comprobar resultado correcto
-        navegar("/orders");
+        
+        if (success) {
+            navegar("/orders");
+        } else {
+            alert("Error, ha surgido un error al procesar su petición.\nCodigo de error: "+statusCode);
+        }
+
     }
 
     const handleOnCancel = (evento) => {
@@ -55,13 +82,14 @@ function OrderFormPage() {
         setOrderData(actualizar);
     }
 
-    useEffect(()=>{
+    useEffect(() => {
         cargarDatos(id);
-    },[id]);
+    }, [id]);
+
 
     return (
         <div>
-            <div>Formulario create</div>
+            <div>Formulario create/update</div>
 
             <form onSubmit={handleOnSubmit}>
                 <div>
@@ -74,18 +102,23 @@ function OrderFormPage() {
                 </div>
                 <div>
                     <div> Prenda: </div>
-                    <input type="text" name="prenda" id="prenda" value={orderData.prenda} onChange={handleOnChange} />
+                    <select type="text" name="prendaId" id="prendaId" onChange={handleOnChange} >
+                        {prendasData.map((elemento)=>{
+                            return(
+                                <option key={elemento.prendaId} value={elemento.prendaId} selected={orderData.prenda == elemento.prendaId}>{elemento.tipo}</option>
+                            );
+                        })}
+                    </select>
                 </div>
                 <div>
                     <div> Empleado: </div>
                     {/* drop down con los empleados disponibles */}
-                    <select name="empleado" id="empleado" onChange={handleOnChange}>
-                        <option value="1" selected={orderData.empleado==1}>empleado 1</option>
-                        <option value="2" selected={orderData.empleado==2}>empleado 2</option>
-                        <option value="3" selected={orderData.empleado==3}>empleado 3</option>
-                        <option value="4" selected={orderData.empleado==4}>empleado 4</option>
-                        <option value="5" selected={orderData.empleado==5}>empleado 5</option>
-                        <option value="6" selected={orderData.empleado==6}>empleado 6</option>
+                    <select name="empleadoId" id="empleadoId" onChange={handleOnChange}>
+                        {usuariosData.map((elemento)=>{
+                            return(
+                                <option key={elemento.usuarioId} value={elemento.usuarioId} selected={orderData.empleado == elemento.usuarioId}>{elemento.nombre}</option>
+                            );
+                        })}
                     </select>
                 </div>
                 <div>
@@ -103,10 +136,10 @@ function OrderFormPage() {
                 <div>
                     <div> estado: </div>
                     <select name="estado" id="estado" onChange={handleOnChange}>
-                        <option value="pendiente" selected={orderData.estado=="pendiente"}>pendiente</option>
-                        <option value="en_proceso" selected={orderData.estado=="en_proceso"}>En proceso</option>
-                        <option value="listo" selected={orderData.estado=="listo"}>listo</option>
-                        <option value="entregado" selected={orderData.estado=="entregado"}>entregado</option>
+                        <option value="pendiente" selected={orderData.estado == "pendiente"}>pendiente</option>
+                        <option value="en_proceso" selected={orderData.estado == "en_proceso"}>En proceso</option>
+                        <option value="listo" selected={orderData.estado == "listo"}>listo</option>
+                        <option value="entregado" selected={orderData.estado == "entregado"}>entregado</option>
                     </select>
                 </div>
 
