@@ -21,6 +21,10 @@ import PrendaFormPage from "../pages/Prendas/PrendaFormPage.jsx";
 import NotificacionesPage from "../pages/Notificaciones/NotificacionesPage.jsx";
 import NotificacionFormPage from "../pages/Notificaciones/NotificacionFormpage.jsx";
 
+//facturas
+import FacturasPage from "../pages/Facturas/FacturasPage.jsx";
+import FacturaFormPage from "../pages/Facturas/FacturaFormpage.jsx";
+
 function AppEnrutador() {
   return (
     <BrowserRouter>
@@ -35,15 +39,18 @@ function AppEnrutador() {
           <Route path="orders" element={<OrdersPage />} />
           <Route path="/orders/:id" element={<OrderFormPage />} />
 
-          <Route path="prendas" element={<PrendasPage/>}/>
-          <Route path="/prendas/:id" element={<PrendaFormPage/>}/>
+          <Route path="prendas" element={<PrendasPage />} />
+          <Route path="/prendas/:id" element={<PrendaFormPage />} />
 
-          <Route path="users" element={<UsersPage/>}/>
-          <Route path="/users/:id" element={<UserFormPage/>}/>
-          <Route path="/login" element={<LoginPage/>}/>
+          <Route path="users" element={<UsersPage />} />
+          <Route path="/users/:id" element={<UserFormPage />} />
+          <Route path="/login" element={<LoginPage />} />
 
-          <Route path="notificaciones" element={<NotificacionesPage/>}/>
-          <Route path="/notificaciones/:id" element={<NotificacionFormPage/>}/>
+          <Route path="notificaciones" element={<NotificacionesPage />} />
+          <Route path="/notificaciones/:id" element={<NotificacionFormPage />} />
+
+          <Route path="facturas" element={<FacturasPage />} />
+          <Route path="/facturas/:id" element={<FacturaFormPage />} />
 
           <Route path="*" element={<ErrorPage />} />
         </Route>

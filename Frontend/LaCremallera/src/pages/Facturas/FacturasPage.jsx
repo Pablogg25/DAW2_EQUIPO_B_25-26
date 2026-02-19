@@ -27,6 +27,7 @@ function FacturasPage(){
         console.log("On create factura");
 
         //navegar
+        
     }
 
     const onEditFactura=(facturaId)=>{
@@ -45,6 +46,29 @@ function FacturasPage(){
     useEffect(()=>{
         cargarDatos();
     },[]);
+
+    function getUsuarioName(usuarioId) {
+        if (usuarios) {
+            let index = usuarios.findIndex(p => p.usuarioId == usuarioId);
+
+            if (index !== -1) {
+                return usuarios[index];
+            }
+        }
+
+    }
+
+    function getTotalFactura(factura){
+        if(factura["total_calculado"]){
+            return factura["total_calculado"];
+        }
+        //else
+        let calc=0;
+        for(let t of factura["trabajos"]){
+            calc+=parseInt(t["precio"]);
+        }
+        return calc;
+    }
 
     return(
         <>
@@ -86,14 +110,14 @@ function FacturasPage(){
                 return (
                     <div key={elemento["facturaId"]} className="tableRow">
                         <div>{elemento["facturaId"]}</div>
-                        <div>{elemento["usuarioId"]}</div>
+                        <div>{getUsuarioName(elemento["usuarioId"])}</div>
                         <div>{elemento["fecha"]}</div>
                         <div>{elemento["pagado"]}</div>
-                        <div>{elemento["total_calculado"]}</div>
+                        <div>{getTotalFactura(elemento)}</div>
                         <div>{elemento["trabajos"].length}</div>
                         <div>
-                            <button>Ver/editar</button>
-                            <button>Eliminar</button>
+                            <button onClick={()=>{onEditFactura(elemento["facturaId"])}}>Ver/editar</button>
+                            <button onClick={()=>{onDeleteFactura(elemento["facturaId"])}}>Eliminar</button>
                         </div>
                     </div>
                 )
