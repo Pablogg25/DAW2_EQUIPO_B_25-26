@@ -1,8 +1,10 @@
 import { useState, useEffect, act } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-import $prendasController from "../../core/TestController/TestPrendasController";
-import $usuariosController from "../../core/TestController/TestUsersController";
+// import $prendasController from "../../core/TestController/TestPrendasController";
+// import $usuariosController from "../../core/TestController/TestUsersController";
+import $prendasController from "../../core/PrendasController";
+import $usersController from "../../core/UsersController";
 
 function PrendaFormPage(){
     const [prendaData,setPrendaData]=useState({
@@ -23,9 +25,9 @@ function PrendaFormPage(){
     const cargarDatos=async()=>{
         console.log("Cargando Datos");
 
-        let datosUsuario=await $usuariosController.getUsuarios();
+        let datosUsuario=await $usersController.getUsers();
 
-        setUsuariosData(datosUsuario);
+        setUsuariosData(datosUsuario.data);
 
         if(id!=0){
             console.log("modo update");
@@ -33,7 +35,13 @@ function PrendaFormPage(){
             let datos=await $prendasController.getPrenda(id);
 
             //comprobar success
-            setPrendaData(datos);
+            if(datos.success){
+                setPrendaData(datos.data);
+            }else{
+                alert("Ha surgido un error inesperado al procesar la petición");
+                navegar("/prendas");
+            }
+            
         }
     }
 
@@ -49,22 +57,29 @@ function PrendaFormPage(){
         console.log(prendaData);
 
         let success;
-        let statusCode=0;
+        let result;
 
         if(id!=0){
             console.log("actualizar");
             let setearPrenda={...prendaData,["prendaId"]:id};
-            let result= await $prendasController.updatePrenda(setearPrenda);
-            navegar("/prendas");
+            result= await $prendasController.updatePrenda(setearPrenda);
+            success=result.success;
         }else{
             console.log("crear");
-            let result=await $prendasController.createPrenda(prendaData);
+            result=await $prendasController.createPrenda(prendaData);
+            success=result.success;
 
-            navegar("/prendas");
         }
 
         //todo: implementar operaciones
         // y manejo de errores
+
+        if(success){
+            alert("Datos enviados con éxito");
+            navegar("/prendas");
+        }else{
+            alert("Ha surgido un error al enviar los datos, compruebe los logs");
+        }
     }
 
     const handleOnCancel=(evento)=>{

@@ -2,12 +2,14 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import "./PrendasPage.css";
-import $prendasController from "../../core/TestController/TestPrendasController";
-import $usuariosController from "../../core/TestController/TestUsersController";
+// import $prendasController from "../../core/TestController/TestPrendasController";
+import $prendasController from "../../core/PrendasController";
+// import $usuariosController from "../../core/TestController/TestUsersController";
+import $usersController from "../../core/UsersController";
 
 function PrendasPage() {
     const [prendas, setPrendas] = useState([]);
-    const [usuarios,setUsuarios]=useState([]);
+    const [usuarios, setUsuarios] = useState([]);
 
     const navegar = useNavigate();
 
@@ -16,14 +18,16 @@ function PrendasPage() {
 
         //obtener datos de controlador
 
-        //si datos de usuario no estan inicializados cargar:
-        if(usuarios.length==0){
-            let datosUsuario=await $usuariosController.getUsuarios();
-            setUsuarios(datosUsuario);
+        //si datos de usuario no estan inicializados cargar y cachear:
+        if (usuarios.length == 0) {
+            console.log("Cargando datos de usuarios");
+            let datosUsuario = await $usersController.getUsers();
+            setUsuarios(datosUsuario.data);
 
         }
+        console.log("Cargando datos de prendas")
         let datos = await $prendasController.getPrendas();
-        setPrendas(datos);
+        setPrendas(datos.data);
 
         //si success guardar, sino dar aviso
     }
@@ -39,7 +43,7 @@ function PrendasPage() {
         console.log("On edit prenda id: " + prendaId);
 
         //navegar al id
-        navegar("/prendas/"+prendaId);
+        navegar("/prendas/" + prendaId);
 
     }
 
@@ -48,12 +52,18 @@ function PrendasPage() {
 
         if (prendaId) {
             //hacer confirm para borrar el usuario y luego recargar datos
-            let result=await $prendasController.deletePrenda(prendaId);
 
-            if(result){
-                cargarDatos();
-                navegar("/prendas");
+            if (confirm("¿Seguro que desea eliminar la prenda?")) {
+                let result = await $prendasController.deletePrenda(prendaId);
+
+                if (result) {
+                    cargarDatos();
+                    navegar("/prendas");
+                }else{
+                    alert("Ha surgido un error al eliminar la prenda")
+                }
             }
+
         }
     }
 
@@ -61,9 +71,9 @@ function PrendasPage() {
         cargarDatos();
     }, [])
 
-    function getUsername(userId){
-        let index=usuarios.findIndex(u=>u.usuarioId==userId);
-        if(index!=-1){
+    function getUsername(userId) {
+        let index = usuarios.findIndex(u => u.usuarioId == userId);
+        if (index != -1) {
             return usuarios[index].nombre;
         }
         return "not found";

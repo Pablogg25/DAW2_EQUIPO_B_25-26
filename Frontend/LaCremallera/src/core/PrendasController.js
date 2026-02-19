@@ -185,3 +185,5 @@ const $prendasController = (function () {
         deletePrenda
     }
 })();
+
+export default $prendasController;

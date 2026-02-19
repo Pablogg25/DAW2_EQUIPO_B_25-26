@@ -17,6 +17,10 @@ import OrderFormPage from "../pages/Orders/OrderFormPage.jsx";
 import PrendasPage from "../pages/Prendas/PrendasPage.jsx";
 import PrendaFormPage from "../pages/Prendas/PrendaFormPage.jsx";
 
+//notificaciones
+import NotificacionesPage from "../pages/Notificaciones/NotificacionesPage.jsx";
+import NotificacionFormPage from "../pages/Notificaciones/NotificacionFormpage.jsx";
+
 function AppEnrutador() {
   return (
     <BrowserRouter>
@@ -37,6 +41,9 @@ function AppEnrutador() {
           <Route path="users" element={<UsersPage/>}/>
           <Route path="/users/:id" element={<UserFormPage/>}/>
           <Route path="/login" element={<LoginPage/>}/>
+
+          <Route path="notificaciones" element={<NotificacionesPage/>}/>
+          <Route path="/notificaciones/:id" element={<NotificacionFormPage/>}/>
 
           <Route path="*" element={<ErrorPage />} />
         </Route>
