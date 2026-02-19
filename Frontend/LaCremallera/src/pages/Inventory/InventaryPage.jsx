@@ -14,6 +14,8 @@ function InventaryPage() {
     cargarInventario();
   }, []);
 
+  
+
   return (
     <div className="container mt-4">
       <h2 className="mb-3">Inventario</h2>
@@ -112,7 +114,6 @@ function InventaryPage() {
           gap: 6px;
         }
 
-        /* 🔥 RESPONSIVE: EN MÓVIL LA TABLA SE VUELVE LISTA */
         @media (max-width: 768px) {
           .fila {
             grid-template-columns: 1fr;
