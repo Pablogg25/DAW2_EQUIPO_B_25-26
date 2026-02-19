@@ -35,9 +35,23 @@ class CalendarioController extends Controller
      *     )
      * )
      */
-    public function index()
+    public function index(Request $request)
     {
-        return response()->json(Calendario::all());
+        $query = Calendario::query();
+
+        if ($request->has('usuarioId')) {
+            $query->where('usuarioId', $request->usuarioId);
+        }
+
+        if ($request->has('empleadoId')) {
+            $query->where('empleadoId', $request->empleadoId);
+        }
+
+        if ($request->has('trabajoId')) {
+            $query->where('trabajoId', $request->trabajoId);
+        }
+
+        return response()->json($query->get());
     }
 
     /**
@@ -72,89 +86,6 @@ class CalendarioController extends Controller
         return response()->json($Calendario);
     }
 
-    /**
-     * @OA\Get(
-     *     path="/api/calendarios/usuario/{usuarioId}",
-     *     summary="Obtener calendarios por usuario",
-     *     tags={"Calendarios"},
-     *     @OA\Parameter(
-     *         name="usuarioId",
-     *         in="path",
-     *         required=true,
-     *         description="ID del usuario",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Lista de calendarios del usuario",
-     *         @OA\JsonContent(
-     *             type="array",
-     *             @OA\Items(ref="#/components/schemas/Calendario")
-     *         )
-     *     )
-     * )
-     */
-    public function byUsuario($usuarioId)
-    {
-        $Calendarios = Calendario::where('usuarioId', $usuarioId)->get();
-        return response()->json($Calendarios);
-    }
-
-    /**
-     * @OA\Get(
-     *     path="/api/calendarios/empleado/{empleadoId}",
-     *     summary="Obtener calendarios por empleado",
-     *     tags={"Calendarios"},
-     *     @OA\Parameter(
-     *         name="empleadoId",
-     *         in="path",
-     *         required=true,
-     *         description="ID del empleado",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Lista de calendarios del empleado",
-     *         @OA\JsonContent(
-     *             type="array",
-     *             @OA\Items(ref="#/components/schemas/Calendario")
-     *         )
-     *     )
-     * )
-     */
-    public function byEmpleado($empleadoId)
-    {
-        $Calendarios = Calendario::where('empleadoId', $empleadoId)->get();
-        return response()->json($Calendarios);
-    }
-
-    /**
-     * @OA\Get(
-     *     path="/api/calendarios/trabajo/{trabajoId}",
-     *     summary="Obtener calendarios por trabajo",
-     *     tags={"Calendarios"},
-     *     @OA\Parameter(
-     *         name="trabajoId",
-     *         in="path",
-     *         required=true,
-     *         description="ID del trabajo",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Lista de calendarios del trabajo",
-     *         @OA\JsonContent(
-     *             type="array",
-     *             @OA\Items(ref="#/components/schemas/Calendario")
-     *         )
-     *     )
-     * )
-     */
-    public function byTrabajo($trabajoId)
-    {
-        $Calendarios = Calendario::where('trabajoId', $trabajoId)->get();
-        return response()->json($Calendarios);
-    }
 
     /**
      * @OA\Post(

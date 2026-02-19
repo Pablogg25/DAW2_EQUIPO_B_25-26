@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Usuarios;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use OpenApi\Annotations as OA;
 
@@ -11,7 +12,7 @@ use OpenApi\Annotations as OA;
  *     name="Usuarios",
  *     description="Operaciones relacionadas con los usuarios"
  * )
-  * 
+ * 
  * @OA\PathItem(
  *     path="/api/Usuarios"
  * )
@@ -352,9 +353,28 @@ class UsuariosController extends Controller
      *     )
      * )
      */
+
     public function destroy($id)
     {
-        Usuarios::findOrFail($id)->delete();
-        return response()->json(true);
+        try {
+            $usuario = Usuarios::findOrFail($id);
+            $usuario->delete();
+
+            return response()->json([
+                'message' => 'Usuario eliminado correctamente.'
+            ], 200);
+        } catch (QueryException $e) {
+            // Esto captura errores de clave foránea o conflictos con la base de datos
+            return response()->json([
+                'error' => 'No se puede eliminar el usuario porque está relacionado con otros registros.'
+            ], 409); // 409 = Conflict
+
+        } catch (\Exception $e) {
+            // Captura cualquier otro error inesperado
+            return response()->json([
+                'error' => 'Ocurrió un error al intentar eliminar el usuario.',
+                'detalle' => $e->getMessage()
+            ], 500);
+        }
     }
 }

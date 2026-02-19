@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Inventario;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use OpenApi\Annotations as OA;
 
@@ -76,6 +77,13 @@ class InventarioController extends Controller
     public function bajoStock()
     {
         $Inventarios = Inventario::whereColumn('cantidad', '<=', 'stock_minimo')->get();
+
+        if ($Inventarios->isEmpty()) {
+            return response()->json([
+                'message' => 'No hay productos con bajo stock.'
+            ]);
+        }
+
         return response()->json($Inventarios);
     }
 
@@ -189,9 +197,18 @@ class InventarioController extends Controller
      */
     public function destroy($id)
     {
-        $Inventario = Inventario::findOrFail($id);
-        $Inventario->delete();
+        try {
+            $inventario = Inventario::findOrFail($id);
+            $inventario->delete();
 
-        return response()->json(['message' => 'Inventario eliminado correctamente.']);
+            return response()->json([
+                'message' => 'Inventario eliminado correctamente.'
+            ]);
+        } catch (QueryException $e) {
+
+            return response()->json([
+                'error' => 'No se puede eliminar el inventario porque está asociado a un trabajo.'
+            ], 409);
+        }
     }
 }

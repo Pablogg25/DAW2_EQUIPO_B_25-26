@@ -94,6 +94,9 @@ class FacturasController extends Controller
     public function show($id)
     {
         $factura = Facturas::with('trabajos')->findOrFail($id);
+        if (!$factura) {
+            return response()->json(['error' => 'Factura no encontrada'], 404);
+        }
         return response()->json($factura);
     }
 

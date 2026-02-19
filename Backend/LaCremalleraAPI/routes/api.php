@@ -81,10 +81,10 @@ Route::prefix('api')->middleware(Cors::class)->group(function () {
     //Inventario
     // Obtener todos los inventario
     Route::get('/inventario', [InventarioController::class, 'index']);
-    // Obtener un item por id
-    Route::get('/inventario/{id}', [InventarioController::class, 'show']);
     // Obtener inventario bajo stock
     Route::get('/inventario/bajo-stock', [InventarioController::class, 'bajoStock']);
+    // Obtener un item por id
+    Route::get('/inventario/{id}', [InventarioController::class, 'show']);
     // Crear inventario
     Route::post('/inventario', [InventarioController::class, 'store']);
     // Actualizar inventario
@@ -94,13 +94,9 @@ Route::prefix('api')->middleware(Cors::class)->group(function () {
 
     //Facturas
     // Obtener todas las facturas
-    Route::get('/facturas', [FacturasController::class, 'index']);
+    Route::get('/facturas', [FacturasController::class, 'index']); //en el index hace el filtro
     // Obtener una factura específica por su ID, incluyendo los trabajos asociados
     Route::get('/facturas/{id}', [FacturasController::class, 'show']);
-    // // Obtener todas las facturas de un usuario específico por su usuarioId
-    // Route::get('/facturas/usuario/{usuarioId}', [FacturasController::class, 'byUsuario']);
-    // // Obtener todas las facturas asociadas a un trabajo específico por su trabajoId
-    // Route::get('/facturas/trabajo/{trabajoId}', [FacturasController::class, 'byTrabajo']);
     // Crear una nueva factura (requiere usuarioId y fecha)
     Route::post('/facturas', [FacturasController::class, 'store']);
     // Actualizar una factura existente por su ID (usuarioId, fecha, pagado, total_calculado)
@@ -114,7 +110,7 @@ Route::prefix('api')->middleware(Cors::class)->group(function () {
     // Desasociar un trabajo de una factura (requiere trabajoId en el body)
     Route::post('/facturas/{id}/desasociar-trabajo', [FacturasController::class, 'desasociarTrabajo']);
 
-    //Cálculos
+    //Cálculos para facturas
     // Calcular el total de una factura sumando los precios de todos los trabajos asociados
     Route::get('/facturas/{id}/calcular-total', [FacturasController::class, 'calcularTotal']);
 
@@ -123,12 +119,6 @@ Route::prefix('api')->middleware(Cors::class)->group(function () {
     Route::get('/eventos', [CalendarioController::class, 'index']);
     // Ver evento por ID                
     Route::get('/eventos/{id}', [CalendarioController::class, 'show']);
-    // Eventos por usuario  
-    Route::get('/eventos/usuario/{usuarioId}', [CalendarioController::class, 'byUsuario']);
-    // Eventos por empleado
-    Route::get('/eventos/empleado/{empleadoId}', [CalendarioController::class, 'byEmpleado']);
-    // Eventos por trabajo
-    Route::get('/eventos/trabajo/{trabajoId}', [CalendarioController::class, 'byTrabajo']);
     // Crear evento
     Route::post('/eventos', [CalendarioController::class, 'store']);
     // Actualizar evento            
