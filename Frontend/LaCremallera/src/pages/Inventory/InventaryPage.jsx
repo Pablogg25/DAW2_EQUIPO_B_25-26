@@ -112,7 +112,6 @@ function InventaryPage() {
           gap: 6px;
         }
 
-        /* 🔥 RESPONSIVE: EN MÓVIL LA TABLA SE VUELVE LISTA */
         @media (max-width: 768px) {
           .fila {
             grid-template-columns: 1fr;
