@@ -14,6 +14,8 @@ Route::prefix('api')->middleware(Cors::class)->group(function () {
 
     // Usuarios
     Route::prefix('usuarios')->group(function () {
+        // Login / verificar contraseña
+        Route::post('/login', [UsuariosController::class, 'checkPassword']);
         // Listar usuarios
         Route::get('/', [UsuariosController::class, 'index']); // listar con filtro opcional ?username=pablo_adm
         // Obtener usuario por ID
@@ -26,8 +28,7 @@ Route::prefix('api')->middleware(Cors::class)->group(function () {
         Route::put('/{id}/password', [UsuariosController::class, 'updatePassword']);
         // Eliminar usuario por ID
         Route::delete('/{id}', [UsuariosController::class, 'destroy']);
-        // Login / verificar contraseña
-        Route::post('/login', [UsuariosController::class, 'checkPassword']);
+        
     });
 
     // Trabajos

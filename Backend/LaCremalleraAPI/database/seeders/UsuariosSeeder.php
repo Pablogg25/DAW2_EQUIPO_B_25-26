@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class UsuariosSeeder extends Seeder
 {
@@ -16,7 +17,7 @@ class UsuariosSeeder extends Seeder
                 'email' => 'laura@cremallera.com',
                 'direccion' => 'C/ Sol 12',
                 'username' => 'laura_adm',
-                'password_SHA2' => hash('sha224', 'hash1'),
+                'password' => Hash::make('hash1'),
                 'rol' => 'admin'
             ],
             [
@@ -25,7 +26,7 @@ class UsuariosSeeder extends Seeder
                 'email' => 'pablo@cremallera.com',
                 'direccion' => 'C/ Luna 33',
                 'username' => 'pablo_adm',
-                'password_SHA2' => hash('sha224', 'hash2'),
+                'password' => Hash::make('hash2'),
                 'rol' => 'admin'
             ],
             [
@@ -34,7 +35,7 @@ class UsuariosSeeder extends Seeder
                 'email' => 'sergio@cremallera.com',
                 'direccion' => 'C/ Río 21',
                 'username' => 'sergio_emp',
-                'password_SHA2' => hash('sha224', 'hash3'),
+                'password' => Hash::make('hash3'),
                 'rol' => 'empleado'
             ],
             [
@@ -43,7 +44,7 @@ class UsuariosSeeder extends Seeder
                 'email' => 'gustavo@cremallera.com',
                 'direccion' => 'C/ Águila 2',
                 'username' => 'gustavo_emp',
-                'password_SHA2' => hash('sha224', 'hash4'),
+                'password' => Hash::make('hash4'),
                 'rol' => 'empleado'
             ],
             [
@@ -52,7 +53,7 @@ class UsuariosSeeder extends Seeder
                 'email' => 'pablo.nunez@cremallera.com',
                 'direccion' => 'C/ Olivo 19',
                 'username' => 'pablo_emp',
-                'password_SHA2' => hash('sha224', 'hash5'),
+                'password' => Hash::make('hash5'),
                 'rol' => 'empleado'
             ],
             [
@@ -61,7 +62,7 @@ class UsuariosSeeder extends Seeder
                 'email' => 'ana@gmail.com',
                 'direccion' => 'Av. Castilla 9',
                 'username' => 'ana_cli',
-                'password_SHA2' => hash('sha224', 'hash6'),
+                'password' => Hash::make('hash6'),
                 'rol' => 'cliente'
             ],
             [
@@ -70,7 +71,7 @@ class UsuariosSeeder extends Seeder
                 'email' => 'carlos@gmail.com',
                 'direccion' => 'C/ Mayor 41',
                 'username' => 'carlos_cli',
-                'password_SHA2' => hash('sha224', 'hash7'),
+                'password' => Hash::make('hash7'),
                 'rol' => 'cliente'
             ],
             [
@@ -79,7 +80,7 @@ class UsuariosSeeder extends Seeder
                 'email' => 'maria@gmail.com',
                 'direccion' => 'C/ Prado 15',
                 'username' => 'maria_cli',
-                'password_SHA2' => hash('sha224', 'hash8'),
+                'password' => Hash::make('hash8'),
                 'rol' => 'cliente'
             ],
             [
@@ -88,7 +89,7 @@ class UsuariosSeeder extends Seeder
                 'email' => 'jorge@gmail.com',
                 'direccion' => 'C/ Jardines 4',
                 'username' => 'jorge_cli',
-                'password_SHA2' => hash('sha224', 'hash9'),
+                'password' => Hash::make('hash9'),
                 'rol' => 'cliente'
             ],
             [
@@ -97,7 +98,7 @@ class UsuariosSeeder extends Seeder
                 'email' => 'elena@gmail.com',
                 'direccion' => 'C/ Sur 28',
                 'username' => 'elena_cli',
-                'password_SHA2' => hash('sha224', 'hash10'),
+                'password' => Hash::make('hash10'),
                 'rol' => 'cliente'
             ]
         ]);

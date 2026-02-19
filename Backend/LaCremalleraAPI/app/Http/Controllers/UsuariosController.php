@@ -3,16 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\Usuarios;
-use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Database\QueryException;
 
 class UsuariosController extends Controller
 {
 
     public function index(Request $request)
     {
-        $query = Usuarios::select( // Verificar cual dato queremos mostrar
+        $query = Usuarios::select(
             'usuarioId',
             'nombre',
             'telefono',
@@ -30,7 +30,6 @@ class UsuariosController extends Controller
         $usuarios = $query->get();
 
         if ($request->has('username') && $usuarios->isEmpty()) {
-
             return response()->json([
                 'success' => false,
                 'message' => 'Usuario no encontrado'
@@ -45,7 +44,7 @@ class UsuariosController extends Controller
 
     public function show($id)
     {
-        $usuario = Usuarios::select( // Verificar cual dato queremos mostrar
+        $usuario = Usuarios::select(
             'usuarioId',
             'nombre',
             'telefono',
@@ -57,7 +56,6 @@ class UsuariosController extends Controller
         )->find($id);
 
         if (!$usuario) {
-
             return response()->json([
                 'success' => false,
                 'message' => 'Usuario no encontrado'
@@ -81,6 +79,7 @@ class UsuariosController extends Controller
         ]);
 
         try {
+
             $usuario = new Usuarios();
             $usuario->nombre = $request->nombre;
             $usuario->telefono = $request->telefono;
@@ -88,8 +87,9 @@ class UsuariosController extends Controller
             $usuario->direccion = $request->direccion;
             $usuario->username = $request->username;
             $usuario->rol = $request->rol ?? 'cliente';
-            // Guardamos la contraseña hasheada en password_SHA2
-            $usuario->password_SHA2 = hash('sha224', $request->password);
+            $usuario->password = $request->password; 
+            
+            // El mutator del modelo lo encripta automáticamente bcrypt
             $usuario->save();
 
             return response()->json([
@@ -97,7 +97,9 @@ class UsuariosController extends Controller
                 'message' => 'Usuario creado correctamente',
                 'data' => $usuario
             ], 201);
+
         } catch (\Exception $e) {
+
             return response()->json([
                 'success' => false,
                 'message' => 'Ocurrió un error al crear el usuario',
@@ -117,7 +119,14 @@ class UsuariosController extends Controller
 
         try {
 
-            $usuario = Usuarios::findOrFail($id);
+            $usuario = Usuarios::find($id);
+
+            if (!$usuario) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Usuario no encontrado'
+                ], 404);
+            }
 
             $usuario->update([
                 'nombre' => $request->nombre,
@@ -133,6 +142,7 @@ class UsuariosController extends Controller
                 'message' => 'Usuario actualizado correctamente',
                 'data' => $usuario
             ]);
+
         } catch (\Exception $e) {
 
             return response()->json([
@@ -145,20 +155,31 @@ class UsuariosController extends Controller
 
     public function updatePassword(Request $request, $id)
     {
-        $request->validate([
-            'password' => 'required|string|min:6'
-        ]);
-
         try {
 
-            $usuario = Usuarios::findOrFail($id);
-            $usuario->password = Hash::make($request->password);
+            $usuario = Usuarios::find($id);
+
+            if (!$usuario) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Usuario no encontrado'
+                ], 404);
+            }
+
+            $request->validate([
+                'password' => 'required|string|min:6'
+            ]);
+
+            $usuario->password = $request->password;
+
+            // Mutator encripta automáticamente bcrypt
             $usuario->save();
 
             return response()->json([
                 'success' => true,
                 'message' => 'Contraseña actualizada correctamente'
             ]);
+
         } catch (\Exception $e) {
 
             return response()->json([
@@ -173,14 +194,13 @@ class UsuariosController extends Controller
     {
         try {
 
-            $usuario = Usuarios::findOrFail($id);
+            $usuario = Usuarios::find($id);
 
-            // Opcional: verificar relaciones antes de borrar
-            if ($usuario->trabajos()->exists()) {
+            if (!$usuario) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'No se puede eliminar el usuario porque está relacionado con trabajos.'
-                ], 409);
+                    'message' => 'Usuario no encontrado'
+                ], 404);
             }
 
             $usuario->delete();
@@ -189,13 +209,14 @@ class UsuariosController extends Controller
                 'success' => true,
                 'message' => 'Usuario eliminado correctamente'
             ]);
+
         } catch (QueryException $e) {
 
             return response()->json([
                 'success' => false,
-                'message' => 'No se puede eliminar el usuario debido a un conflicto de base de datos',
-                'detalle' => $e->getMessage()
+                'message' => 'No se puede eliminar el usuario porque está relacionado con otros registros'
             ], 409);
+
         } catch (\Exception $e) {
 
             return response()->json([
@@ -208,26 +229,37 @@ class UsuariosController extends Controller
 
     public function checkPassword(Request $request)
     {
-        $request->validate([
-            'username' => 'required|string',
-            'password' => 'required|string'
-        ]);
+        try {
 
-        $usuario = Usuarios::where('username', $request->username)->first();
+            $request->validate([
+                'username' => 'required|string',
+                'password' => 'required|string'
+            ]);
 
-        if (!$usuario) {
+            $usuario = Usuarios::where('username', $request->username)->first();
+
+            if (!$usuario) {
+                return response()->json([
+                    'success' => false,
+                    'valid' => false,
+                    'message' => 'Usuario no encontrado'
+                ], 404);
+            }
+
+            $valid = Hash::check($request->password, $usuario->password);
+
+            return response()->json([
+                'success' => true,
+                'valid' => $valid
+            ]);
+
+        } catch (\Exception $e) {
 
             return response()->json([
                 'success' => false,
-                'message' => 'Usuario no encontrado'
-            ], 404);
+                'message' => 'Error en login',
+                'detalle' => $e->getMessage()
+            ], 500);
         }
-
-        $match = Hash::check($request->password, $usuario->password);
-
-        return response()->json([
-            'success' => true,
-            'valid' => $match
-        ]);
     }
 }

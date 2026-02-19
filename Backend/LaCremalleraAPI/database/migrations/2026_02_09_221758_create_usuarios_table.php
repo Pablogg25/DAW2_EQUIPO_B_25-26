@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->string('email', 100)->unique();
             $table->string('direccion', 150)->nullable();
             $table->string('username', 50)->unique();
-            $table->string('password_SHA2', 255);
+            $table->string('password', 255);
             $table->enum('rol', ['admin', 'empleado', 'cliente']);
             $table->timestamp('fecha_registro')->useCurrent();
         });
