@@ -12,6 +12,19 @@ const $inventarioController = (function () {
     );
     return await response.json();
   }
+  async function crearItemInventario(item) {
+    const response = await fetch(apiController.getBaseUrl() + "/inventario", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(item),
+    });
+
+    try {
+      return await response.json();
+    } catch {
+      return null;
+    }
+  }
 
   async function eliminarItemInventario(id) {
     const response = await fetch(
@@ -26,6 +39,7 @@ const $inventarioController = (function () {
   return {
     obtenerInventario,
     obtenerItemInventario,
+    crearItemInventario,
     eliminarItemInventario,
   };
 })();
