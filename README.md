@@ -1,6 +1,8 @@
-![LogoDeLaEmpresa](Imagenes/Logo%20-%20La%20Cremallera%20-%20Sin%20Fondo.png) ![LogoDeGrupo](Imagenes/Logo%20-%20Grupo%20B%20-%20Sin%20Fondo.png)
+![LogoDeGrupo](Imagenes/Logo%20-%20Grupo%20B.png)
 
 # 🧵 La Cremallera — Sistema de Gestión Web para Tienda de Costura
+
+![LogoDeLaEmpresa](Imagenes/Logo%20-%20La%20Cremallera.png)
 
 **CFGS Desarrollo de Aplicaciones Web — Proyecto Final**  
 **Centro:** IES Miguel Herrero (o el centro correspondiente)  
