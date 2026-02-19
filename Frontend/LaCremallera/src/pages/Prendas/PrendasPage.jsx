@@ -59,13 +59,14 @@ function PrendasPage() {
                 if (result) {
                     cargarDatos();
                     navegar("/prendas");
-                }else{
-                    if(result.estado==409){
+                } else {
+                    if (result.estado == 409) {
                         alert("ERROR: 409: no se puede borrar la prenda porque depende de otro elemento de la base de datos");
-                    }else{
-                        alert("Ha surgido un error al eliminar la prenda");
+                    } else {
+                        alert("Error, ha surgido un error al procesar su petición.\nCodigo de error: " + result.estado);
+
                     }
-                    
+
                 }
             }
 

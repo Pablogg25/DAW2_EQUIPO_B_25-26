@@ -66,7 +66,8 @@ function NotificacionesPage() {
                     if (result.estado == 409) {
                         alert("Error 409: no se puede eliminar la notificación porque es dependiente de otro elemento en la base de datos")
                     } else {
-                        alert("Ha surgido un error al eliminar la notificación");
+                        alert("Error, ha surgido un error al procesar su petición.\nCodigo de error: " + result.estado);
+
                     }
 
                 }

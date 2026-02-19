@@ -33,7 +33,8 @@ function NotificacionFormPage() {
             if (datosUsuario.success) {
                 setUsuariosData(datosUsuario.data);
             } else {
-                alert("Ha surgido un error al cargar datos");
+                alert("Error, ha surgido un error al procesar su petición.\nCodigo de error: " + datosUsuario.status);
+
                 navegar("/notificaciones");
             }
 
@@ -46,7 +47,8 @@ function NotificacionFormPage() {
             if (datosTrabajo.success) {
                 setTrabajosData(datosTrabajo.data);
             } else {
-                alert("Ha surgido un error al cargar datos");
+                alert("Error, ha surgido un error al procesar su petición.\nCodigo de error: " + datosTrabajo.status);
+
                 navegar("/notificaciones");
             }
 
@@ -57,7 +59,8 @@ function NotificacionFormPage() {
             if (datosNot.success) {
                 setNotificacionData(datosNot.data);
             } else {
-                alert("Ha surgido un error al procesar su petición");
+                alert("Error, ha surgido un error al procesar su petición.\nCodigo de error: " + datosNot.status);
+
             }
 
         }
@@ -96,12 +99,13 @@ function NotificacionFormPage() {
         } else {
             if (result.estado == 404) {
                 alert("Error 404, no se ha podido encontrar la notificación")
-            }
-            if(result.estado==400){
+            } else if (result.estado == 400) {
                 alert("Error 400: error de validación: compruebe que los campos están correctamente rellenados");
+            } else {
+                alert("Error, ha surgido un error al procesar su petición.\nCodigo de error: " + result.estado);
+
             }
 
-            alert("Ha surgido un error al enviar datos");
         }
 
     }
