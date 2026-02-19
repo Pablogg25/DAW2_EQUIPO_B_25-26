@@ -1,4 +1,5 @@
-![LogoDeLaEmpresa](Imagenes/Logo-La-Cremallera-Sin-Fondo.png) ![LogoDeGrupo](Imagenes/Logo-Grupo-B-Sin-Fondo.png)
+![LogoDeLaEmpresa](Imagenes/Logo%20-%20La%20Cremallera%20-%20Sin%20Fondo.png) ![LogoDeGrupo](Imagenes/Logo%20-%20Grupo%20B%20-%20Sin%20Fondo.png)
+
 # 🧵 La Cremallera — Sistema de Gestión Web para Tienda de Costura
 
 **CFGS Desarrollo de Aplicaciones Web — Proyecto Final**  
