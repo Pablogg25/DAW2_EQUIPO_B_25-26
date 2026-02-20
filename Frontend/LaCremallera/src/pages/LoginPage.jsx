@@ -1,87 +1,64 @@
-import React from "react";
-import { useState, useEffect } from "react";
+import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-
 import $usersController from "../core/UsersController";
-
+import { AuthContext } from "../context/AuthContext";
 
 function LoginPage() {
-  const [userCred,setUserCred]=useState({
-    username:"",password:""
-  });
+  const [userCred, setUserCred] = useState({ username: "", password: "" });
+  const navigate = useNavigate();
+  const { login } = useContext(AuthContext);
 
-
-  const navegar=useNavigate();
-
-
-  const handleOnSubmit=(event)=>{
+  const handleOnSubmit = async (event) => {
     event.preventDefault();
-    enviarDatos();
-  }
 
-  const enviarDatos=async()=>{
-    console.log("Enviar datos");
+    const response = await $usersController.loginUser(userCred);
 
-    const response=await $usersController.loginUser(userCred);
-      console.log(response);
+    if (response.success) {
+      if (response.data === true) {
+        // Obtener datos del usuario
+        const userData = await $usersController.getUserByUsername(
+          userCred.username,
+        );
 
-    if(response.success){
-      console.log("Datos recividos");
-      if(response.data){
-        alert("login correcto");
-
-        //TODO: insertar información del rol y permisos de usuario 
-        // en context
-        // TODO: hacer context
-
-        navegar("/");
-      }else{
+        if (userData.success) {
+          login(userData.data); // Guardar usuario en contexto
+          alert("Login correcto");
+          navigate("/");
+        } else {
+          alert("No se pudo obtener la información del usuario");
+        }
+      } else {
         alert("Credenciales incorrectas");
       }
+    } else {
+      alert("Error en login. Código: " + response.status);
     }
+  };
 
-  }
+  const handleOnChange = (e) => {
+    const { name, value } = e.target;
+    setUserCred({ ...userCred, [name]: value });
+  };
 
-  const handleOnChange = (evento) => {
-        const { name, value } = evento.target;
-        let actualizar = { ...userCred, [name]: value };
-        setUserCred(actualizar);
-    }
-
-  const handleOnCancel=(event)=>{
-    //TODO: navegar a homepage
-    event.preventDefault();
-    navegar("/");
-  }
-
-
-  return (<div>
+  return (
     <div>
-      Página Login
+      <h2>Login</h2>
+
+      <form onSubmit={handleOnSubmit}>
+        <div>
+          Usuario:
+          <input type="text" name="username" onChange={handleOnChange} />
+        </div>
+
+        <div>
+          Contraseña:
+          <input type="password" name="password" onChange={handleOnChange} />
+        </div>
+
+        <button type="submit">Entrar</button>
+      </form>
     </div>
-
-    <form onSubmit={handleOnSubmit}>
-      <div>
-        <div>
-          Nombre de usuario:
-        </div>
-        <input type="text" name="username" id="username" onChange={handleOnChange}/>
-      </div>
-
-      <div>
-        <div>
-          password:
-        </div>
-        <input type="password" name="password" id="password" onChange={handleOnChange}/>
-      </div>
-
-      <div>
-        <button type="submit">Conectarse</button>
-        <button onClick={()=>{handleOnCancel();}}>Cancelar</button>
-      </div>
-      
-    </form>
-
-  </div>);
+  );
 }
+
 export default LoginPage;

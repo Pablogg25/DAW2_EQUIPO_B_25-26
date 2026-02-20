@@ -1,271 +1,215 @@
 import apiController from "./ApiController";
 
 const $usersController = (function () {
-    console.log("Inicializando userscontroller");
+  console.log("Inicializando userscontroller");
 
-    async function getUsers() {
-        console.log("usersController getUsers");
+  async function getUsers() {
+    console.log("usersController getUsers");
 
-        const requestUrl = apiController.getBaseUrl() + '/usuarios';
+    const requestUrl = apiController.getBaseUrl() + "/usuarios";
 
-        try{
-            console.log("Realizando petición a: " + requestUrl);
-            const request = await fetch(requestUrl);
-                const respuesta = await request.json();
+    try {
+      const request = await fetch(requestUrl);
+      const respuesta = await request.json();
 
-            if (request.status == 200) {
+      if (request.status === 200) {
+        return { data: respuesta.data, status: 200, success: true };
+      }
 
-                console.log("usersController respuesta OK 200");
-                // console.log(respuesta);
-
-                return { "data": respuesta.data, "status": 200, "success": true };
-            }
-
-            if(request.status==404){
-                console.log("respuesta 404 NOT FOUND");
-            }
-
-            //else error
-            console.log("error al obtener datos");
-            return { "data": respuesta.message, "status": request.status, "success": false };
- 
-        }catch (e) {
-            console.log("Excepción en petición:");
-            console.log(e);
-
-            return {"data":e,"success":false};
-        }
+      return {
+        data: respuesta.message,
+        status: request.status,
+        success: false,
+      };
+    } catch (e) {
+      return { data: e, success: false };
     }
+  }
 
-    async function getUser(userId){
-        console.log("usersController getUser id: "+userId);
+  async function getUser(userId) {
+    const requestUrl = apiController.getBaseUrl() + "/usuarios/" + userId;
 
-        const requestUrl = apiController.getBaseUrl() + '/usuarios/'+userId;
+    try {
+      const request = await fetch(requestUrl);
+      const respuesta = await request.json();
 
-        try{
-            console.log("Realizando petición a: " + requestUrl);
-            const request = await fetch(requestUrl);
-                const respuesta = await request.json();
+      if (request.status === 200) {
+        return { data: respuesta.data, status: 200, success: true };
+      }
 
-            if (request.status == 200) {
-
-                console.log("usersController respuesta OK 200");
-                // console.log(respuesta);
-
-                return { "data": respuesta.data, "status": 200, "success": true };
-            }
-
-            if(request.status==404){
-                console.log("usersController respuesta NOT FOUND 404")
-            }
-            //else error
-            console.log("error al obtener datos");
-            return { "data": respuesta.message, "status": request.status, "success": false };
- 
-        }catch (e) {
-            console.log("Excepción en petición:");
-            console.log(e);
-
-            return {"data":e,"success":false};
-        }
+      return {
+        data: respuesta.message,
+        status: request.status,
+        success: false,
+      };
+    } catch (e) {
+      return { data: e, success: false };
     }
+  }
 
-    async function createUser(objUser){
-        console.log("usersController create user");
+  async function getUserByUsername(username) {
+    const requestUrl =
+      apiController.getBaseUrl() + "/usuarios?username=" + username;
 
-        const requestUrl = apiController.getBaseUrl() + '/usuarios';
+    try {
+      const request = await fetch(requestUrl);
+      const respuesta = await request.json();
 
-        try{
-            console.log("Realizando petición a: " + requestUrl);
-            const requestBody={
-                method:"POST",
-                body:JSON.stringify(objUser),
-                headers:{
-                    "Content-type":"application/json; charset=UTF-8",
-                },
-            }
-            const request = await fetch(requestUrl,requestBody);
+      if (request.status === 200) {
+        return { data: respuesta.data[0], status: 200, success: true };
+      }
 
-            const datos=await request.json();
-
-            if(request.status==201){
-                console.log("Respuesta 201: CREATED");
-                return {estado:201,data:datos.data,"success":true};
-            }
-            if(request.status==400){
-                console.log("Respuesta 400: VALIDATION ERROR");
-                // console.log(datos);
-                // return {estado:400,data:datos,"success":false};
-            }
-
-            return {estado:request.status,data:datos.message,"success":false};
-        }catch (e) {
-            console.log("Excepción en petición:");
-            console.log(e);
-
-            return {"data":e,"success":false};
-        }
+      return {
+        data: respuesta.message,
+        status: request.status,
+        success: false,
+      };
+    } catch (e) {
+      return { data: e, success: false };
     }
+  }
 
-    async function loginUser(objUserCred){
-        console.log("usersController loginUser");
+  async function createUser(objUser) {
+    const requestUrl = apiController.getBaseUrl() + "/usuarios";
 
-        const requestUrl = apiController.getBaseUrl() + '/login';
+    try {
+      const requestBody = {
+        method: "POST",
+        body: JSON.stringify(objUser),
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+        },
+      };
 
-        try{
-            console.log("Realizando petición a: " + requestUrl);
-            const requestBody={
-                method:"POST",
-                body:JSON.stringify(objUserCred),
-                headers:{
-                    "Content-type":"application/json; charset=UTF-8",
-                },
-            }
-            const request = await fetch(requestUrl,requestBody);
-                const respuesta = await request.json();
+      const request = await fetch(requestUrl, requestBody);
+      const datos = await request.json();
 
-            if (request.status == 200) {
+      if (request.status === 201) {
+        return { estado: 201, data: datos.data, success: true };
+      }
 
-                console.log("usersController respuesta OK 200");
-                // console.log(respuesta);
-
-                return { "data": respuesta.valid, "status": 200, "success": true };
-            }
-
-            // if(request.status==401){
-            //     console.log("usersController respuesta WRONG CREDENTIALS 401");
-            //     // return { "data": respuesta.message, "status": 401, "success": false };
-            // }
-            //else error
-            console.log("error al obtener datos");
-            return { "data": respuesta.message, "status": request.status, "success": false };
- 
-        }catch (e) {
-            console.log("Excepción en petición:");
-            console.log(e);
-
-            return {"data":e,"success":false};
-        }
+      return { estado: request.status, data: datos.message, success: false };
+    } catch (e) {
+      return { data: e, success: false };
     }
+  }
 
-    async function updateUser(objUser,userId) {
-        console.log("usersController update user");
+  async function loginUser(objUserCred) {
+    console.log("usersController loginUser");
 
-        const requestUrl = apiController.getBaseUrl() + '/usuarios/'+userId;
+    const requestUrl = apiController.getBaseUrl() + "/usuarios/login";
 
-        try{
-            console.log("Realizando petición a: " + requestUrl);
-            const requestBody={
-                method:"PUT",
-                body:JSON.stringify(objUser),
-                headers:{
-                    "Content-type":"application/json; charset=UTF-8",
-                },
-            }
-            const request = await fetch(requestUrl,requestBody);
+    try {
+      const requestBody = {
+        method: "POST",
+        body: JSON.stringify(objUserCred),
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+        },
+      };
 
-            const datos=await request.json();
+      const request = await fetch(requestUrl, requestBody);
+      const respuesta = await request.json();
 
-            if(request.status==200){
-                console.log("Respuesta 200: OK");
-                return {estado:201,data:datos.data,"success":true};
-            }
-            if(request.status==400){
-                console.log("Respuesta 400: VALIDATION ERROR");
-                // console.log(datos);
-                // return {estado:400,data:datos,"success":false};
-            }
+      if (request.status === 200) {
+        return { data: respuesta.valid, status: 200, success: true };
+      }
 
-            return {estado:request.status,data:datos.message,"success":false};
-        }catch (e) {
-            console.log("Excepción en petición:");
-            console.log(e);
-
-            return {"data":e,"success":false};
-        }
+      return {
+        data: respuesta.message,
+        status: request.status,
+        success: false,
+      };
+    } catch (e) {
+      return { data: e, success: false };
     }
+  }
 
-    async function updatePassword(objPassword,userId){
-        console.log("usersController update password");
+  async function updateUser(objUser, userId) {
+    const requestUrl = apiController.getBaseUrl() + "/usuarios/" + userId;
 
-        const requestUrl = apiController.getBaseUrl() + '/usuarios/'+userId+'/password';
+    try {
+      const requestBody = {
+        method: "PUT",
+        body: JSON.stringify(objUser),
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+        },
+      };
 
-        try{
-            console.log("Realizando petición a: " + requestUrl);
-            const requestBody={
-                method:"PUT",
-                body:JSON.stringify(objPassword),
-                headers:{
-                    "Content-type":"application/json; charset=UTF-8",
-                },
-            }
-            const request = await fetch(requestUrl,requestBody);
+      const request = await fetch(requestUrl, requestBody);
+      const datos = await request.json();
 
-            const datos=await request.json();
+      if (request.status === 200) {
+        return { estado: 200, data: datos.data, success: true };
+      }
 
-            if(request.status==201){
-                console.log("Respuesta 200: OK");
-                return {estado:200,data:datos,"success":true};
-            }
-            if(request.status==400){
-                console.log("Respuesta 400: VALIDATION ERROR");
-                // console.log(datos);
-                // return {estado:400,data:datos,"success":false};
-            }
-
-            return {estado:request.status,data:datos.message,"success":false};
-        }catch (e) {
-            console.log("Excepción en petición:");
-            console.log(e);
-
-            return {"data":e,"success":false};
-        }
+      return { estado: request.status, data: datos.message, success: false };
+    } catch (e) {
+      return { data: e, success: false };
     }
+  }
 
-    async function deleteUser(userId){
-        console.log("usersController: deleteOrder");
+  async function updatePassword(objPassword, userId) {
+    const requestUrl =
+      apiController.getBaseUrl() + "/usuarios/" + userId + "/password";
 
-        try{
-            const requestBody={
-                method:"DELETE",
-                headers:{
-                    "Content-type":"application/json; charset=UTF-8",
-                },
-            };
-            const respuesta= await fetch(apiController.getBaseUrl()+"/usuarios/"+userId,requestBody);
+    try {
+      const requestBody = {
+        method: "PUT",
+        body: JSON.stringify(objPassword),
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+        },
+      };
 
-            const datos=await respuesta.json();
+      const request = await fetch(requestUrl, requestBody);
+      const datos = await request.json();
 
-            if(respuesta.status==200){
-                console.log("Respuesta 200: OK");
-                return {estado:200,data:datos.data,success:true};
-            }
-            if(respuesta.status==404){
-                console.log("Respuesta 404: NOT FOUND");
-                // return {estado:404,data:datos,success:false};
-            }
-            if(respuesta.status==409){
-                console.log("Respuesta 404: CONSTRAINT");
-                // return {estado:404,data:datos,success:false};
-            }
-            return {estado:respuesta.status,data:datos.message,success:false};
+      if (request.status === 200) {
+        return { estado: 200, data: datos, success: true };
+      }
 
-        }catch(e){
-            console.log("$negocioApi: Resultado error");
-            console.log(e);
-            return {"data":e,"success":false};
-        }
+      return { estado: request.status, data: datos.message, success: false };
+    } catch (e) {
+      return { data: e, success: false };
     }
+  }
 
-    return {
-        getUsers,
-        getUser,
-        loginUser,
-        createUser,
-        updateUser,
-        updatePassword,
-        deleteUser
+  async function deleteUser(userId) {
+    const requestUrl = apiController.getBaseUrl() + "/usuarios/" + userId;
+
+    try {
+      const requestBody = {
+        method: "DELETE",
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+        },
+      };
+
+      const respuesta = await fetch(requestUrl, requestBody);
+      const datos = await respuesta.json();
+
+      if (respuesta.status === 200) {
+        return { estado: 200, data: datos.data, success: true };
+      }
+
+      return { estado: respuesta.status, data: datos.message, success: false };
+    } catch (e) {
+      return { data: e, success: false };
     }
+  }
+
+  return {
+    getUsers,
+    getUser,
+    getUserByUsername,
+    loginUser,
+    createUser,
+    updateUser,
+    updatePassword,
+    deleteUser,
+  };
 })();
 
 export default $usersController;
