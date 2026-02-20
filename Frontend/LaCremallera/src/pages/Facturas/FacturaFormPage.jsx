@@ -256,21 +256,21 @@ function FacturaFormPage() {
         return newFormat;
     }
 
-    function getTotalFactura(factura) {
-        if (factura["total_calculado"]) {
-            return factura["total_calculado"];
-        }
-        //else está vacío
-        if (!factura["trabajos"]) {
-            return 0;
-        }
-        //else calcular
-        let calc = 0;
-        for (let t of factura["trabajos"]) {
-            calc += parseInt(t["precio"]);
-        }
-        return calc;
-    }
+    // function getTotalFactura(factura) {
+    //     if (factura["total_calculado"]) {
+    //         return factura["total_calculado"];
+    //     }
+    //     //else está vacío
+    //     if (!factura["trabajos"]) {
+    //         return 0;
+    //     }
+    //     //else calcular
+    //     let calc = 0;
+    //     for (let t of factura["trabajos"]) {
+    //         calc += parseInt(t["precio"]);
+    //     }
+    //     return calc;
+    // }
 
     function calcularTotalFactura() {
         let factura=facturaDatos;
