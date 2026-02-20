@@ -1,9 +1,12 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-import $facturasController from "../../core/TestController/TestFacturasController";
-import $usuariosController from "../../core/TestController/TestUsersController";
-import $ordersController from "../../core/TestController/TestOrdersController";
+// import $facturasController from "../../core/TestController/TestFacturasController";
+import $facturasController from "../../core/FacturasController";
+// import $usuariosController from "../../core/TestController/TestUsersController";
+import $usersController from "../../core/UsersController";
+// import $ordersController from "../../core/TestController/TestOrdersController";
+import $ordersController from "../../core/OrdersController";
 
 function FacturaFormPage() {
     const [facturaDatos, setFacturaDatos] = useState({
@@ -48,11 +51,11 @@ function FacturaFormPage() {
         console.log("Cargando datos");
 
         if (usuariosData.length == 0) {
-            let datosUsuario = await $usuariosController.getUsuarios();
-            // let datosUsuario = await $usersController.getUsers();
+            // let datosUsuario = await $usuariosController.getUsuarios();
+            let datosUsuario = await $usersController.getUsers();
 
-            if (datosUsuario) {
-                setUsuariosData(datosUsuario);
+            if (datosUsuario.success) {
+                setUsuariosData(datosUsuario.data);
                 // setUsuariosData(datosUsuario.data);
             } else {
                 alert("Ha surgido un error al cargar datos");
@@ -64,18 +67,24 @@ function FacturaFormPage() {
         if (trabajosData.length == 0) {
             let datosTrabajo = await $ordersController.getOrders();
 
-            if (datosTrabajo) {
-                setTrabajosData(datosTrabajo);
+            if (datosTrabajo.success) {
+                setTrabajosData(datosTrabajo.data);
             } else {
                 alert("Ha surgido un error al cargar datos");
                 navegar("/notificaciones");
             }
         }
 
-        let datos = await $facturasController.getFactura(id);
+        let datosFactura = await $facturasController.getFactura(id);
 
-        setFacturaDatos(datos);
+        if (datosFactura.success) {
+            setFacturaDatos(datosFactura.data);
+        } else {
+            alert("Ha surgido un error al cargar datos");
+            navegar("/notificaciones");
+        }
     }
+
 
 
     const handeOnSubmit = (evento) => {
@@ -97,10 +106,58 @@ function FacturaFormPage() {
             let datos = { ...facturaDatos, ["facturaId"]: id };
             result = await $facturasController.updateFactura(datos);
 
+            if (result.success) {
+                //se realiza creación correctamente
+                for (let add of trabajosAdd) {
+                    console.log("asociando trabajo id: " + add);
+                    let resultAdd = await $facturasController.asociarTrabajo(id, add);
+
+                    if (!resultAdd.success) {
+                        console.log("error en asociación");
+                        alert("Ha surgido un error al asociar trabajos");
+                        navegar("/facturas");
+                        break;
+                    }
+                    console.log("añadido correctamente");
+                }
+                for (let rem of trabajosRemove) {
+                    console.log("desasociando trabajo id: " + rem);
+                    let resultAdd = await $facturasController.desasociarTrabajo(id, rem);
+
+                    if (!resultAdd.success) {
+                        console.log("error en desasociado");
+                        alert("Ha surgido un error al desasociar trabajos");
+                        navegar("/facturas");
+                        break;
+                    }
+                    console.log("quitado correctamente");
+                    navegar("/facturas");
+                }
+            } else {
+                alert("Ha surgido un error al enviar datos");
+            }
         } else {
             console.log("Modo create");
             result = await $facturasController.createFactura(facturaDatos);
+
+            if (result.success) {
+                for (let add of trabajosAdd) {
+                    console.log("asociando trabajo id: " + add);
+                    let resultAdd = await $facturasController.asociarTrabajo(id, add);
+
+                    if (!resultAdd.success) {
+                        console.log("error en asociación");
+                        alert("Ha surgido un error al asociar trabajos");
+                        navegar("/facturas");
+                        break;
+                    }
+                    console.log("añadido correctamente");
+                }
+            }
         }
+        //por cada operación de añadir o eliminar realizr operaciónd el controler
+
+
 
         // if (result.success) {
         //     alert("Datos enviados correctamente");
@@ -130,17 +187,17 @@ function FacturaFormPage() {
 
     const handleOnAddItem = (evento) => {
         evento.preventDefault();
-        let targetId=parseInt(selectedAddTrabajo);
+        let targetId = parseInt(selectedAddTrabajo);
         // console.log("handleOnAddItem target id: "+targetId);
-        if(targetId==0){
+        if (targetId == 0) {
             // console.log("añadiendo default");
-            targetId=parseInt(getTrabajoOptions()[0].trabajoId);
+            targetId = parseInt(getTrabajoOptions()[0].trabajoId);
         }
         // console.log("handleOnAddItem Añadiendo item id: "+targetId);
 
         //si ya esta añadido no hacer nada
 
-        if (trabajosRemove.indexOf(targetId)!=-1) {
+        if (trabajosRemove.indexOf(targetId) != -1) {
             // console.log("Quitando de lista de quitar trabajos");
             //si al lista de trabajos a quitar contiene el id a quitar entonces revertimos esa operación
             let updateremove = [...trabajosRemove];
@@ -149,7 +206,7 @@ function FacturaFormPage() {
             return;
         }
         //asumimos que items ya presentes en la lista de trabajos original o la de añadir no se pueden seleccionar
-        if (trabajosAdd.indexOf(targetId)==-1) {
+        if (trabajosAdd.indexOf(targetId) == -1) {
             //si la lista de trabajos a añadir no contiene el trabajo seleccionado
             // console.log("Añadiendo a lista de añadir trabajos");
             //se añade
@@ -186,12 +243,12 @@ function FacturaFormPage() {
     function getFullItemList() {
         console.log("Obtener datos de añadir");
 
-        let listaAnadir=[];
+        let listaAnadir = [];
 
-        for(let elementoAdd of trabajosAdd){
-            let index=trabajosData.map(el=>el.trabajoId).indexOf(elementoAdd);
+        for (let elementoAdd of trabajosAdd) {
+            let index = trabajosData.map(el => el.trabajoId).indexOf(elementoAdd);
             // console.log("Buscando id: "+id+" resultado index= "+index);
-            if(index!=-1){
+            if (index != -1) {
                 // console.log("añadiendo trabajo");
                 // console.log(trabajosData[index]);
                 listaAnadir.push(trabajosData[index]);
@@ -200,12 +257,12 @@ function FacturaFormPage() {
 
         console.log(listaAnadir);
         console.log("Obtener lista sin los que se quitan");
-        
-        let listaSinQuitados=[];
 
-        for(let t of facturaDatos.trabajos){
-            let indexDeleteado=trabajosRemove.indexOf(t.trabajoId);
-            if(indexDeleteado==-1){
+        let listaSinQuitados = [];
+
+        for (let t of facturaDatos.trabajos) {
+            let indexDeleteado = trabajosRemove.indexOf(t.trabajoId);
+            if (indexDeleteado == -1) {
                 //si no está entre los deleteados
                 listaSinQuitados.push(t);
             }
@@ -223,7 +280,7 @@ function FacturaFormPage() {
 
     function getTrabajoOptions() {
         let listaOptions = [];
-        let idsEnLista=getFullItemList().map(u => u.trabajoId);
+        let idsEnLista = getFullItemList().map(u => u.trabajoId);
 
         //por cada trabajo en datos, si no se encuentra en la lista total no se añade
         for (let t of trabajosData) {
@@ -273,7 +330,7 @@ function FacturaFormPage() {
     // }
 
     function calcularTotalFactura() {
-        let factura=facturaDatos;
+        let factura = facturaDatos;
         if (factura["total_calculado"]) {
             return factura["total_calculado"];
         }
@@ -354,10 +411,10 @@ function FacturaFormPage() {
                         {(getFullItemList()).map((elemento) => {
                             return (<div key={elemento["trabajoId"]}>
                                 {elemento["trabajoId"]} - {elemento["descripcion"]} - {elemento["precio"]} €
-                                <button onClick={(evento) => { 
+                                <button onClick={(evento) => {
                                     evento.preventDefault();
-                                    handleOnRemoveItem(elemento["trabajoId"]); 
-                                    }}>-Eliminar-</button>
+                                    handleOnRemoveItem(elemento["trabajoId"]);
+                                }}>-Eliminar-</button>
                             </div>)
                         })}
                     </div>
