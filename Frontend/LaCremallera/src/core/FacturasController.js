@@ -22,6 +22,15 @@ const $facturasController = (function () {
                 return { "data": respuesta.data, "status": 200, "success": true };
             }
 
+            if(request.status==404){
+                const respuesta = await request.json();
+
+                console.log("facturas respuesta NOT FOUND 404");
+                // console.log(respuesta);
+
+                return { "data": respuesta.message, "status": 404, "success": false };
+            }
+
             //else error
             console.log("error al obtener datos");
             return { "data": request.message, "status": request.status, "success": false };
@@ -43,13 +52,21 @@ const $facturasController = (function () {
             console.log("realizando petición a: " + requestUrl);
             const request = await fetch(requestUrl);
 
-            if (request.status == 200) {
                 const respuesta = await request.json();
+            if (request.status == 200) {
 
                 console.log("facturas controller respuesta OK 200");
                 // console.log(respuesta);
 
                 return { "data": respuesta.data, "status": 200, "success": true };
+            }
+
+            if(request.status==404){
+
+                console.log("facturas respuesta NOT FOUND 404");
+                // console.log(respuesta);
+
+                return { "data": respuesta.message, "status": 404, "success": false };
             }
 
             //else error
