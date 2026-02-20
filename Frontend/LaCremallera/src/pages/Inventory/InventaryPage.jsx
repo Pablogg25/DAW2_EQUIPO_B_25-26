@@ -6,14 +6,18 @@ function InventaryPage() {
   const [inventario, setInventario] = useState([]);
   const navigate = useNavigate();
 
-  // Cargar inventario al iniciar
-  useEffect(() => {
-    async function cargarInventario() {
-      const lista = await $inventarioController.obtenerInventario();
-      console.log("LISTA->" + lista);
-      setInventario(lista.data);
-    }
+  async function cargarInventario() {
+    const respuesta = await $inventarioController.obtenerInventario();
 
+    if (respuesta.success) {
+      setInventario(respuesta.data);
+    } else {
+      console.error("Error al cargar inventario:", respuesta);
+      alert("Error al cargar inventario. Código: " + respuesta.status);
+    }
+  }
+
+  useEffect(() => {
     cargarInventario();
   }, []);
 
@@ -22,14 +26,24 @@ function InventaryPage() {
     const seguro = window.confirm(
       "¿Seguro que quieres eliminar este elemento?",
     );
-
     if (!seguro) return;
 
-    await $inventarioController.eliminarItemInventario(id);
+    const respuesta = await $inventarioController.eliminarItemInventario(id);
 
-    // Recargar inventario
-    const lista = await $inventarioController.obtenerInventario();
-    setInventario(lista);
+    if (respuesta.success) {
+      alert("Elemento eliminado correctamente");
+      cargarInventario();
+    } else {
+      if (respuesta.status === 409) {
+        alert(
+          "Error 409: No se puede eliminar porque está asociado a un trabajo.",
+        );
+      } else if (respuesta.status === 404) {
+        alert("Error 404: El elemento no existe.");
+      } else {
+        alert("Error al eliminar. Código: " + respuesta.status);
+      }
+    }
   }
 
   return (

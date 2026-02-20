@@ -16,14 +16,24 @@ function PropsElementoInventoryPage() {
   // Cargar datos si NO es creación
   useEffect(() => {
     async function cargarItem() {
-      if (id === "new") return; // modo creación → no cargar nada
+      if (id === "new") return;
 
-      const datos = await $inventarioController.obtenerItemInventario(id);
-      setItem(datos);
+      const respuesta = await $inventarioController.obtenerItemInventario(id);
+
+      if (respuesta.success) {
+        setItem(respuesta.data);
+      } else {
+        if (respuesta.status === 404) {
+          alert("Error 404: El item no existe");
+        } else {
+          alert("Error al cargar el item. Código: " + respuesta.status);
+        }
+        navigate("/inventory");
+      }
     }
 
     cargarItem();
-  }, [id]);
+  }, [id, navigate]);
 
   // Manejar cambios en inputs
   function handleChange(e) {
@@ -33,13 +43,23 @@ function PropsElementoInventoryPage() {
 
   // Guardar cambios (crear o actualizar)
   async function guardar() {
+    let respuesta;
+
     if (id === "new") {
-      await $inventarioController.crearItemInventario(item);
+      respuesta = await $inventarioController.crearItemInventario(item);
     } else {
-      await $inventarioController.actualizarItemInventario(id, item);
+      respuesta = await $inventarioController.actualizarItemInventario(
+        id,
+        item,
+      );
     }
 
-    navigate("/inventory"); // volver al inventario
+    if (respuesta.success) {
+      alert("Guardado correctamente");
+      navigate("/inventory");
+    } else {
+      alert("Error al guardar. Código: " + respuesta.status);
+    }
   }
 
   return (
