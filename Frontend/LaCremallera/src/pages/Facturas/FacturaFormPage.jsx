@@ -130,30 +130,37 @@ function FacturaFormPage() {
 
     const handleOnAddItem = (evento) => {
         evento.preventDefault();
-        let targetId=selectedAddTrabajo;
-        // console.log("handleOnAddItem target id: "+targetId);
+        let targetId=parseInt(selectedAddTrabajo);
+        console.log("handleOnAddItem target id: "+targetId);
         if(targetId==0){
-            // console.log("añadiendo default");
-            targetId=getTrabajoOptions()[0].trabajoId;
+            console.log("añadiendo default");
+            targetId=parseInt(getTrabajoOptions()[0].trabajoId);
         }
-        // console.log("handleOnAddItem Añadiendo item id: "+targetId);
+        console.log("handleOnAddItem Añadiendo item id: "+targetId);
 
+        //si ya esta añadido no hacer nada
+
+        if (trabajosRemove.indexOf(targetId)!=-1) {
+            console.log("Quitando de lista de quitar trabajos")
+            //si al lista de trabajos a quitar contiene el id a quitar entonces revertimos esa operación
+            let updateremove = [...trabajosRemove];
+            updateremove.splice(updateremove.indexOf(targetId), 1);
+            setTrabajosRemove(updateremove);
+            return;
+        }
         //asumimos que items ya presentes en la lista de trabajos original o la de añadir no se pueden seleccionar
         if (trabajosAdd.indexOf(targetId)==-1) {
             //si la lista de trabajos a añadir no contiene el trabajo seleccionado
+            console.log("Añadiendo a lista de añadir trabajos")
             //se añade
             let update = [...trabajosAdd];
             update.push(targetId);
             setTrabajosAdd(update);
+            return;
         }
 
-        if (trabajosRemove.indexOf(targetId)!=-1) {
-            //si al lista de trabajos a quitar contiene el id a quitar entonces revertimos esa operación
-            let update = [...trabajosRemove];
-            update.splice(update.indexOf(targetId), 1);
-            setTrabajosRemove(update);
-        }
-
+        //actualizar la variable
+        setSelectTrabajo(parseInt(getTrabajoOptions()[0].trabajoId));
     }
 
     const handleOnRemoveItem = (trabajoId) => {
@@ -163,6 +170,7 @@ function FacturaFormPage() {
             let update = [...trabajosRemove];
             update.push(trabajoId);
             setTrabajosRemove(update);
+            return;
         }
 
         if (trabajosAdd.indexOf(trabajoId) != -1) {
@@ -170,6 +178,7 @@ function FacturaFormPage() {
             let update = [...trabajosAdd];
             update.splice(update.indexOf(trabajoId), 1);
             setTrabajosAdd(update);
+            return;
         }
     }
 
@@ -181,31 +190,31 @@ function FacturaFormPage() {
 
         for(let elementoAdd of trabajosAdd){
             let index=trabajosData.map(el=>el.trabajoId).indexOf(elementoAdd);
-            console.log("Buscando id: "+id+" resultado index= "+index);
+            // console.log("Buscando id: "+id+" resultado index= "+index);
             if(index!=-1){
-                console.log("añadiendo trabajo");
-                console.log(trabajosData[index]);
+                // console.log("añadiendo trabajo");
+                // console.log(trabajosData[index]);
                 listaAnadir.push(trabajosData[index]);
             }
         }
 
         console.log(listaAnadir);
         console.log("Obtener lista sin los que se quitan");
-        let listaQuitados = facturaDatos.trabajos.map((el) => {
-            if (el) {
-                let indexIfDeleteado = trabajosRemove.indexOf(el.trabajoId);
-                if (indexIfDeleteado == -1) {
-                    //si no está en la lista de quitados
-                    return el;
-                }
+        
+        let listaSinQuitados=[];
+
+        for(let t of facturaDatos.trabajos){
+            let indexDeleteado=trabajosRemove.indexOf(t.trabajoId);
+            if(indexDeleteado==-1){
+                //si no está entre los deleteados
+                listaSinQuitados.push(t);
             }
+        }
 
-        });
-
-        console.log(listaQuitados);
+        console.log(listaSinQuitados);
 
         // let fullList = [...listaQuitados, ...listaAnadir];
-        let fullList = [...facturaDatos.trabajos, ...listaAnadir];
+        let fullList = [...listaSinQuitados, ...listaAnadir];
         console.log("Get full list item list total:");
         console.log(fullList);
 
