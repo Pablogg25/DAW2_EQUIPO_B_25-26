@@ -35,6 +35,10 @@ function FacturaFormPage() {
 
     //array trabajos a añadir
     //array trabajos a eliminar
+    // contienen los ids
+    const [selectedAddTrabajo, setSelectTrabajo] = useState(0);
+    const [trabajosAdd, setTrabajosAdd] = useState([]);
+    const [trabajosRemove, setTrabajosRemove] = useState([]);
 
     const navegar = useNavigate();
 
@@ -117,12 +121,112 @@ function FacturaFormPage() {
         setFacturaDatos(actualizar);
     }
 
-    const handleOnAddItem=()=>{
+    const handleOnAddSelect = (evento) => {
+        // console.log("Selected trabajo para añadir");
+        const { name, value } = evento.target;
+        setSelectTrabajo(value);
 
     }
 
-    const handleOnRemoveItem=(trabajoId)=>{
+    const handleOnAddItem = (evento) => {
+        evento.preventDefault();
+        let targetId=selectedAddTrabajo;
+        // console.log("handleOnAddItem target id: "+targetId);
+        if(targetId==0){
+            // console.log("añadiendo default");
+            targetId=getTrabajoOptions()[0].trabajoId;
+        }
+        // console.log("handleOnAddItem Añadiendo item id: "+targetId);
 
+        //asumimos que items ya presentes en la lista de trabajos original o la de añadir no se pueden seleccionar
+        if (trabajosAdd.indexOf(targetId)==-1) {
+            //si la lista de trabajos a añadir no contiene el trabajo seleccionado
+            //se añade
+            let update = [...trabajosAdd];
+            update.push(targetId);
+            setTrabajosAdd(update);
+        }
+
+        if (trabajosRemove.indexOf(targetId)!=-1) {
+            //si al lista de trabajos a quitar contiene el id a quitar entonces revertimos esa operación
+            let update = [...trabajosRemove];
+            update.splice(update.indexOf(targetId), 1);
+            setTrabajosRemove(update);
+        }
+
+    }
+
+    const handleOnRemoveItem = (trabajoId) => {
+        if (trabajosRemove.indexOf(trabajoId) == -1) {
+            //si la lista de trabajos a quitar no contiene el trabajo seleccionado
+            //se añade
+            let update = [...trabajosRemove];
+            update.push(trabajoId);
+            setTrabajosRemove(update);
+        }
+
+        if (trabajosAdd.indexOf(trabajoId) != -1) {
+            //si al lista de trabajos a añadir contiene el id a añadir entonces revertimos esa operación
+            let update = [...trabajosAdd];
+            update.splice(update.indexOf(trabajoId), 1);
+            setTrabajosAdd(update);
+        }
+    }
+
+
+    function getFullItemList() {
+        console.log("Obtener datos de añadir");
+
+        let listaAnadir=[];
+
+        for(let elementoAdd of trabajosAdd){
+            let index=trabajosData.map(el=>el.trabajoId).indexOf(elementoAdd);
+            console.log("Buscando id: "+id+" resultado index= "+index);
+            if(index!=-1){
+                console.log("añadiendo trabajo");
+                console.log(trabajosData[index]);
+                listaAnadir.push(trabajosData[index]);
+            }
+        }
+
+        console.log(listaAnadir);
+        console.log("Obtener lista sin los que se quitan");
+        let listaQuitados = facturaDatos.trabajos.map((el) => {
+            if (el) {
+                let indexIfDeleteado = trabajosRemove.indexOf(el.trabajoId);
+                if (indexIfDeleteado == -1) {
+                    //si no está en la lista de quitados
+                    return el;
+                }
+            }
+
+        });
+
+        console.log(listaQuitados);
+
+        // let fullList = [...listaQuitados, ...listaAnadir];
+        let fullList = [...facturaDatos.trabajos, ...listaAnadir];
+        console.log("Get full list item list total:");
+        console.log(fullList);
+
+        return fullList;
+    }
+
+    function getTrabajoOptions() {
+        let listaOptions = [];
+        let idsEnLista=getFullItemList().map(u => u.trabajoId);
+
+        //por cada trabajo en datos, si no se encuentra en la lista total no se añade
+        for (let t of trabajosData) {
+
+            if (idsEnLista.includes(t.trabajoId) == false) {
+                listaOptions.push(t);
+            }
+        }
+
+        // setSelectTrabajo(listaOptions[0].trabajoId);
+
+        return listaOptions;
     }
 
     useEffect(() => {
@@ -159,7 +263,12 @@ function FacturaFormPage() {
         return calc;
     }
 
-    console.log(facturaDatos);
+    console.log("Lista de trabajos original");
+    console.log(facturaDatos.trabajos);
+    console.log("Trabajos a añadir")
+    console.log(trabajosAdd);
+    console.log("trabajos a quitar");
+    console.log(trabajosRemove);
 
     return (
         <>
@@ -190,7 +299,7 @@ function FacturaFormPage() {
 
                 <div>
                     <div>Pagado:</div>
-                    <input type="checkbox" name="pagado" id="pagado" checked={facturaDatos.pagado==1} onChange={handleOnChange} />
+                    <input type="checkbox" name="pagado" id="pagado" checked={facturaDatos.pagado == 1} onChange={handleOnChange} />
                 </div>
 
                 <div>
@@ -201,9 +310,9 @@ function FacturaFormPage() {
                         trabajos:
                     </div>
 
-                    <select name="trabajos" id="trabajos">
-                        {trabajosData.map((elemento)=>{
-                            return(
+                    <select name="selectTrabajos" id="selectTrabajos" onChange={handleOnAddSelect}>
+                        {(getTrabajoOptions()).map((elemento) => {
+                            return (
                                 <option key={elemento["trabajoId"]} value={elemento["trabajoId"]}>
                                     {elemento["trabajoId"]} - {elemento["descripcion"]} - {elemento["precio"]} €
                                 </option>
@@ -211,15 +320,18 @@ function FacturaFormPage() {
                         })}
                     </select>
                     <div>
-                        <button onClick={()=>{handleOnAddItem();}}>Añadir item</button>
+                        <button onClick={handleOnAddItem}>Añadir item</button>
                     </div>
 
                     <div>Lista items</div>
                     <div>
-                        {facturaDatos["trabajos"].map((elemento) => {
+                        {(getFullItemList()).map((elemento) => {
                             return (<div key={elemento["trabajoId"]}>
-                                {elemento["trabajoId"]} - {elemento["descripcion"]} - {elemento["precio"]} € 
-                                <button onClick={()=>{handleOnRemoveItem(elemento["trabajoId"])}}>-Eliminar-</button>
+                                {elemento["trabajoId"]} - {elemento["descripcion"]} - {elemento["precio"]} €
+                                <button onClick={(evento) => { 
+                                    evento.preventDefault();
+                                    handleOnRemoveItem(elemento["trabajoId"]); 
+                                    }}>-Eliminar-</button>
                             </div>)
                         })}
                     </div>
