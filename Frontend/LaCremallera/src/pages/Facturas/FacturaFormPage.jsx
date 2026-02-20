@@ -131,17 +131,17 @@ function FacturaFormPage() {
     const handleOnAddItem = (evento) => {
         evento.preventDefault();
         let targetId=parseInt(selectedAddTrabajo);
-        console.log("handleOnAddItem target id: "+targetId);
+        // console.log("handleOnAddItem target id: "+targetId);
         if(targetId==0){
-            console.log("añadiendo default");
+            // console.log("añadiendo default");
             targetId=parseInt(getTrabajoOptions()[0].trabajoId);
         }
-        console.log("handleOnAddItem Añadiendo item id: "+targetId);
+        // console.log("handleOnAddItem Añadiendo item id: "+targetId);
 
         //si ya esta añadido no hacer nada
 
         if (trabajosRemove.indexOf(targetId)!=-1) {
-            console.log("Quitando de lista de quitar trabajos")
+            // console.log("Quitando de lista de quitar trabajos");
             //si al lista de trabajos a quitar contiene el id a quitar entonces revertimos esa operación
             let updateremove = [...trabajosRemove];
             updateremove.splice(updateremove.indexOf(targetId), 1);
@@ -151,7 +151,7 @@ function FacturaFormPage() {
         //asumimos que items ya presentes en la lista de trabajos original o la de añadir no se pueden seleccionar
         if (trabajosAdd.indexOf(targetId)==-1) {
             //si la lista de trabajos a añadir no contiene el trabajo seleccionado
-            console.log("Añadiendo a lista de añadir trabajos")
+            // console.log("Añadiendo a lista de añadir trabajos");
             //se añade
             let update = [...trabajosAdd];
             update.push(targetId);
@@ -272,6 +272,23 @@ function FacturaFormPage() {
         return calc;
     }
 
+    function calcularTotalFactura() {
+        let factura=facturaDatos;
+        if (factura["total_calculado"]) {
+            return factura["total_calculado"];
+        }
+        //else está vacío
+        if (!factura["trabajos"]) {
+            return 0;
+        }
+        //else calcular
+        let calc = 0;
+        for (let t of getFullItemList()) {
+            calc += parseFloat(t["precio"]);
+        }
+        return calc;
+    }
+
     console.log("Lista de trabajos original");
     console.log(facturaDatos.trabajos);
     console.log("Trabajos a añadir")
@@ -346,7 +363,7 @@ function FacturaFormPage() {
                     </div>
 
                     <div>
-                        Total: <input type="number" value={getTotalFactura(facturaDatos)} disabled />
+                        Total (€): <input type="number" step={0.01} value={calcularTotalFactura()} disabled />
                     </div>
                 </div>
 
