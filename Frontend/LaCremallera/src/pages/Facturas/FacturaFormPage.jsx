@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import $facturasController from "../../core/TestController/TestFacturasController";
 import $usuariosController from "../../core/TestController/TestUsersController";
+import $ordersController from "../../core/TestController/TestOrdersController";
 
 function FacturaFormPage() {
     const [facturaDatos, setFacturaDatos] = useState({
@@ -30,6 +31,10 @@ function FacturaFormPage() {
 
     })
     const [usuariosData, setUsuariosData] = useState([]);
+    const [trabajosData, setTrabajosData] = useState([]);
+
+    //array trabajos a añadir
+    //array trabajos a eliminar
 
     const navegar = useNavigate();
 
@@ -42,7 +47,7 @@ function FacturaFormPage() {
             let datosUsuario = await $usuariosController.getUsuarios();
             // let datosUsuario = await $usersController.getUsers();
 
-            if (datosUsuario.success) {
+            if (datosUsuario) {
                 setUsuariosData(datosUsuario);
                 // setUsuariosData(datosUsuario.data);
             } else {
@@ -50,11 +55,22 @@ function FacturaFormPage() {
                 navegar("/notificaciones");
             }
 
-            let datos = await $facturasController.getFactura(id);
-
-            setFacturaDatos(datos);
-
         }
+
+        if (trabajosData.length == 0) {
+            let datosTrabajo = await $ordersController.getOrders();
+
+            if (datosTrabajo) {
+                setTrabajosData(datosTrabajo);
+            } else {
+                alert("Ha surgido un error al cargar datos");
+                navegar("/notificaciones");
+            }
+        }
+
+        let datos = await $facturasController.getFactura(id);
+
+        setFacturaDatos(datos);
     }
 
 
@@ -101,6 +117,14 @@ function FacturaFormPage() {
         setFacturaDatos(actualizar);
     }
 
+    const handleOnAddItem=()=>{
+
+    }
+
+    const handleOnRemoveItem=(trabajoId)=>{
+
+    }
+
     useEffect(() => {
         cargarDatos();
     }, []);
@@ -135,6 +159,8 @@ function FacturaFormPage() {
         return calc;
     }
 
+    console.log(facturaDatos);
+
     return (
         <>
             <div>Factura form page</div>
@@ -149,7 +175,7 @@ function FacturaFormPage() {
                         value={facturaDatos.usuarioId}>
                         {usuariosData.map((elemento) => {
                             return (
-                                <option value={elemento["usuarioId"]}>
+                                <option key={elemento["usuarioId"]} value={elemento["usuarioId"]}>
                                     {elemento["nombre"]}
                                 </option>
                             )
@@ -159,19 +185,44 @@ function FacturaFormPage() {
 
                 <div>
                     <div>Fecha</div>
-                    <input type="date" name="fecha" id="fecha" value={facturaDatos.fecha} onChange={handleOnChange}/>
+                    <input type="date" name="fecha" id="fecha" value={facturaDatos.fecha} onChange={handleOnChange} />
                 </div>
 
                 <div>
                     <div>Pagado:</div>
-                    <input type="chekbox" name="pagado" id="pagado" onChange={handleOnChange} />
+                    <input type="checkbox" name="pagado" id="pagado" checked={facturaDatos.pagado==1} onChange={handleOnChange} />
                 </div>
 
                 <div>
                     <div>Objetos</div>
                     <div>Dropdown con trabajos y botón para insertar</div>
 
-                    <div>Lista con los items</div>
+                    <div>
+                        trabajos:
+                    </div>
+
+                    <select name="trabajos" id="trabajos">
+                        {trabajosData.map((elemento)=>{
+                            return(
+                                <option key={elemento["trabajoId"]} value={elemento["trabajoId"]}>
+                                    {elemento["trabajoId"]} - {elemento["descripcion"]} - {elemento["precio"]} €
+                                </option>
+                            )
+                        })}
+                    </select>
+                    <div>
+                        <button onClick={()=>{handleOnAddItem();}}>Añadir item</button>
+                    </div>
+
+                    <div>Lista items</div>
+                    <div>
+                        {facturaDatos["trabajos"].map((elemento) => {
+                            return (<div key={elemento["trabajoId"]}>
+                                {elemento["trabajoId"]} - {elemento["descripcion"]} - {elemento["precio"]} € 
+                                <button onClick={()=>{handleOnRemoveItem(elemento["trabajoId"])}}>-Eliminar-</button>
+                            </div>)
+                        })}
+                    </div>
 
                     <div>
                         Total: <input type="number" value={getTotalFactura(facturaDatos)} disabled />
@@ -180,7 +231,7 @@ function FacturaFormPage() {
 
                 <div>
                     <button type="submit">Enviar datos</button>
-                    <button onClick={()=>{handleOnCancel();}}></button>
+                    <button onClick={() => { handleOnCancel(); }}>Volver</button>
                 </div>
 
             </form>

@@ -27,13 +27,14 @@ function FacturasPage(){
         console.log("On create factura");
 
         //navegar
-        
+        navegar("/facturas/0");
     }
 
     const onEditFactura=(facturaId)=>{
         console.log("On edit factura id: "+facturaId);
 
         //navegar
+        navegar("/facturas/"+facturaId);
     }
 
     const onDeleteFactura=(facturaId)=>{
@@ -52,7 +53,7 @@ function FacturasPage(){
             let index = usuarios.findIndex(p => p.usuarioId == usuarioId);
 
             if (index !== -1) {
-                return usuarios[index];
+                return usuarios[index].nombre;
             }
         }
 
@@ -112,8 +113,8 @@ function FacturasPage(){
                         <div>{elemento["facturaId"]}</div>
                         <div>{getUsuarioName(elemento["usuarioId"])}</div>
                         <div>{elemento["fecha"]}</div>
-                        <div>{elemento["pagado"]}</div>
-                        <div>{getTotalFactura(elemento)}</div>
+                        <div>{(elemento["pagado"]==1)?"pagado":"pendiente"}</div>
+                        <div>{getTotalFactura(elemento)} €</div>
                         <div>{elemento["trabajos"].length}</div>
                         <div>
                             <button onClick={()=>{onEditFactura(elemento["facturaId"])}}>Ver/editar</button>
