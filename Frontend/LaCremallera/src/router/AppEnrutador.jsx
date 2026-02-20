@@ -28,6 +28,9 @@ import NotificacionFormPage from "../pages/Notificaciones/NotificacionFormpage.j
 // seguridad
 import PrivateRoute from "../components/PrivateRoute";
 import RoleRoute from "../components/RoleRoute";
+//facturas
+import FacturasPage from "../pages/Facturas/FacturasPage.jsx";
+import FacturaFormPage from "../pages/Facturas/FacturaFormpage.jsx";
 
 function AppEnrutador() {
   return (
@@ -138,6 +141,12 @@ function AppEnrutador() {
               </RoleRoute>
             }
           />
+
+          {/* to add facturas */}
+
+          <Route path="/facturas" element={<FacturasPage />} />
+          <Route path="/facturas/:id" element={<FacturaFormPage />} />
+
 
           {/* LOGIN (público) */}
           <Route path="/login" element={<LoginPage />} />
