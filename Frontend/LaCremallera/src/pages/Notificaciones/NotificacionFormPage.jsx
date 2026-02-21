@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 // import $notificacionesController from "../../core/TestController/TestNotificacionesController";
 import $notificacionesController from "../../core/NotificacionesController";
 import $usersController from "../../core/UsersController";
 import $ordersController from "../../core/OrdersController";
+import AuthProvider from "../../context/AuthProvider";
 
 function NotificacionFormPage() {
     const [notificacionData, setNotificacionData] = useState({
@@ -21,6 +22,8 @@ function NotificacionFormPage() {
     const [trabajosData, setTrabajosData] = useState([]);
 
     const navegar = useNavigate();
+    //useContext
+    const [usuario]=useContext(AuthProvider);
 
     const { id } = useParams();
 
@@ -43,6 +46,8 @@ function NotificacionFormPage() {
 
         if (trabajosData.length == 0) {
             let datosTrabajo = await $ordersController.getOrders();
+
+            
 
             if (datosTrabajo.success) {
                 setTrabajosData(datosTrabajo.data);
@@ -162,7 +167,9 @@ function NotificacionFormPage() {
 
                 <div>
                     <div>remitente</div>
-                    <select name="remitenteId" id="remitenteId" onChange={handleOnChange}
+                        {/* si estoy creando solo uno mismo peude ser el remitente */}
+                    {
+                        (id!=0)? (<select name="remitenteId" id="remitenteId" onChange={handleOnChange}
                         value={notificacionData.remitenteId}>
                         {usuariosData.map((elemento) => {
                             return (
@@ -171,7 +178,18 @@ function NotificacionFormPage() {
                                 </option>
                             )
                         })}
-                    </select>
+                    </select>):(<select name="remitenteId" id="remitenteId" onChange={handleOnChange}
+                        value={usuario.usuario} disabled={true}>
+                        {usuariosData.map((elemento) => {
+                            return (
+                                <option value={elemento["usuarioId"]}>
+                                    {elemento["nombre"]}
+                                </option>
+                            )
+                        })}
+                    </select>)
+                    }
+                    
                 </div>
 
                 <div>
