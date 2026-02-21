@@ -3,10 +3,29 @@ import apiController from "./ApiController";
 const $notificacionesController = (function () {
     console.log("Inicializar $notificaciones controller");
 
+    //params: {'receptorId':int,'remitenteId':int,'trabajoId':int}
     async function getNotificaciones(params) {
         console.log("notificacionesController: getNotificaciones");
 
-        const requestUrl = apiController.getBaseUrl() + "/notificaciones";
+        let requestUrl = apiController.getBaseUrl() + "/notificaciones";
+
+        //añadir argumentos
+        console.log(params);
+
+        let args='?';
+
+        //añadir cada argumento
+        for(let arg in params){
+            if(args!='?'){
+                args+='&';
+            }
+            args+= arg+'='+params[arg];
+        }
+
+        if(args!='?'){
+            //si tiene argumentos
+            requestUrl+=args;
+        }
 
         try {
             console.log("Realizando petición a: " + requestUrl);

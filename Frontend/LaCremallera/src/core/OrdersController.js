@@ -10,16 +10,21 @@ const $ordersController = (function () {
 
         let requestUrl = apiController.getBaseUrl() + '/trabajos';
 
-        //TODO: gestionar errores y códigos de error
         //añadir argumentos
         console.log(params);
         let args='?';
 
+        //añadir cada argumento
         for(let arg in params){
             if(args!='?'){
                 args+='&';
             }
             args+= arg+'='+params[arg];
+        }
+
+        if(args!='?'){
+            //si tiene argumentos
+            requestUrl+=args;
         }
 
         try {
