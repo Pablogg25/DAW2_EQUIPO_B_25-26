@@ -28,13 +28,13 @@ function OrdersPage() {
 
       if (usuariosData.length == 0) {
         console.log("Cargando datos de usuario");
-        let datosUsuario = await $usersController.getUsers();
+        let datosUsuario = await $usersController.getUsers([]);
         setUsuarioData(datosUsuario.data);
 
       }
       if (prendasData.length == 0) {
         console.log("Cargando datos de prendas");
-        let prendas = await $prendasController.getPrendas()
+        let prendas = await $prendasController.getPrendas([])
         setPrendasData(prendas.data);
       }
 
