@@ -34,6 +34,7 @@ function NotificacionesPage() {
 
              
         }else{
+            console.log("cargando notificaciones admin");
             datos = await $notificacionesController.getNotificaciones([]);
         }
 
