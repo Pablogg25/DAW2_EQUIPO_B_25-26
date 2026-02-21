@@ -4,9 +4,13 @@ const $inventarioController = (function () {
   // -------------------------------------------------------
   // GET /inventario
   // -------------------------------------------------------
-  async function obtenerInventario() {
-    const requestUrl = apiController.getBaseUrl() + "/inventario";
+  //params{'nombre':string}
+  async function obtenerInventario(params) {
+    let requestUrl = apiController.getBaseUrl() + "/inventario";
 
+    if(params['nombre']){
+      requestUrl+='?nombre='+params['nombre'];
+    }
     try {
       const request = await fetch(requestUrl);
       const respuesta = await request.json();

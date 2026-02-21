@@ -3,12 +3,17 @@ import apiController from "./ApiController";
 const $usersController = (function () {
   console.log("Inicializando userscontroller");
 
-  async function getUsers() {
+  //params {'username':string} exacto
+  async function getUsers(params) {
     console.log("usersController getUsers");
 
-    const requestUrl = apiController.getBaseUrl() + "/usuarios";
-
+    let requestUrl = apiController.getBaseUrl() + "/usuarios";
+    console.log(params);
+    if(params['username']){
+      requestUrl+='?username='+params['username'];
+    }
     try {
+      console.log("Realizando petición a: " + requestUrl);
       const request = await fetch(requestUrl);
       const respuesta = await request.json();
 
