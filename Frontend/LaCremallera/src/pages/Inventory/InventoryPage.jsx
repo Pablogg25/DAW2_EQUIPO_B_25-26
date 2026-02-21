@@ -124,7 +124,7 @@ function InventaryPage() {
           return (
             <div
               className={`fila ${bajoStock ? "bajo-stock" : ""}`}
-              key={item.id}
+              key={item.itemId}
             >
               <div className="col">{item.nombre}</div>
 
