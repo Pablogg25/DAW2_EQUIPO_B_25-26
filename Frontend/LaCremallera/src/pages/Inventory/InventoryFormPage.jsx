@@ -23,11 +23,7 @@ function PropsElementoInventoryPage() {
       if (respuesta.success) {
         setItem(respuesta.data);
       } else {
-        if (respuesta.status === 404) {
-          alert("Error 404: El item no existe");
-        } else {
-          alert("Error al cargar el item. Código: " + respuesta.status);
-        }
+        alert("Error al cargar el item. Código: " + respuesta.status);
         navigate("/inventory");
       }
     }
@@ -43,14 +39,25 @@ function PropsElementoInventoryPage() {
 
   // Guardar cambios (crear o actualizar)
   async function guardar() {
+    if (!item.nombre.trim()) {
+      alert("El nombre es obligatorio");
+      return;
+    }
+
+    const datos = {
+      ...item,
+      cantidad: Number(item.cantidad),
+      stock_minimo: Number(item.stock_minimo),
+    };
+
     let respuesta;
 
     if (id === "new") {
-      respuesta = await $inventarioController.crearItemInventario(item);
+      respuesta = await $inventarioController.crearItemInventario(datos);
     } else {
       respuesta = await $inventarioController.actualizarItemInventario(
         id,
-        item,
+        datos,
       );
     }
 

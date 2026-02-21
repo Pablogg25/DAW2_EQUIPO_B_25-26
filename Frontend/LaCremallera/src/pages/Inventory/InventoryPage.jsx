@@ -4,24 +4,47 @@ import { useNavigate } from "react-router-dom";
 
 function InventaryPage() {
   const [inventario, setInventario] = useState([]);
+  const [busqueda, setBusqueda] = useState("");
   const navigate = useNavigate();
 
-  async function cargarInventario() {
-    const respuesta = await $inventarioController.obtenerInventario();
+  // -------------------------------------------------------
+  // Cargar inventario (con o sin búsqueda)
+  // -------------------------------------------------------
+  async function cargarInventario(nombre = "") {
+    const respuesta = await $inventarioController.obtenerInventario({ nombre });
 
     if (respuesta.success) {
       setInventario(respuesta.data);
-    } else {
-      console.error("Error al cargar inventario:", respuesta);
-      alert("Error al cargar inventario. Código: " + respuesta.status);
+      return;
     }
+
+    // Si es búsqueda y no hay resultados → NO es error
+    if (respuesta.status === 404) {
+      setInventario([]);
+      return;
+    }
+
+    // Cualquier otro caso sí es error real
+    console.error("Error al cargar inventario:", respuesta);
+    alert("Error al cargar inventario. Código: " + respuesta.status);
   }
 
   useEffect(() => {
     cargarInventario();
   }, []);
 
-  // Eliminar con confirm
+  // -------------------------------------------------------
+  // Buscar por nombre
+  // -------------------------------------------------------
+  function handleBuscar(e) {
+    const valor = e.target.value;
+    setBusqueda(valor);
+    cargarInventario(valor);
+  }
+
+  // -------------------------------------------------------
+  // Eliminar item
+  // -------------------------------------------------------
   async function eliminarItem(id) {
     const seguro = window.confirm(
       "¿Seguro que quieres eliminar este elemento?",
@@ -32,7 +55,7 @@ function InventaryPage() {
 
     if (respuesta.success) {
       alert("Elemento eliminado correctamente");
-      cargarInventario();
+      cargarInventario(busqueda);
     } else {
       if (respuesta.status === 409) {
         alert(
@@ -50,8 +73,23 @@ function InventaryPage() {
     <div className="container mt-4">
       <h2 className="mb-3">Inventario</h2>
 
+      {/* Buscador */}
+      <input
+        type="text"
+        className="form-control mb-3"
+        placeholder="Buscar por nombre..."
+        value={busqueda}
+        onChange={handleBuscar}
+      />
+
       <div className="d-flex gap-2 mb-3">
-        <button className="btn btn-secondary btn-sm">Volver</button>
+        <button
+          className="btn btn-secondary btn-sm"
+          onClick={() => navigate(-1)}
+        >
+          Volver
+        </button>
+
         <button className="btn btn-primary btn-sm">Realizar pedido</button>
 
         <button
@@ -72,34 +110,55 @@ function InventaryPage() {
           <div className="col">Acciones</div>
         </div>
 
-        {/* Filas dinámicas */}
-        {inventario.map((item) => (
-          <div className="fila" key={item.itemId}>
-            <div className="col">{item.nombre}</div>
-            <div className="col">{item.cantidad}</div>
-            <div className="col">{item.stock_minimo}</div>
-
-            <div className="col descripcion-col">
-              <span className="descripcion-texto">{item.descripcion}</span>
-            </div>
-
-            <div className="col acciones">
-              <button
-                onClick={() => navigate(`/inventory/${item.itemId}`)}
-                className="btn btn-outline-secondary btn-sm me-1"
-              >
-                Ver
-              </button>
-
-              <button
-                className="btn btn-outline-danger btn-sm"
-                onClick={() => eliminarItem(item.itemId)}
-              >
-                Eliminar
-              </button>
-            </div>
+        {/* Si no hay resultados */}
+        {inventario.length === 0 && (
+          <div className="p-3 text-center text-muted">
+            No se ha encontrado ningún elemento del inventario con ese nombre.
           </div>
-        ))}
+        )}
+
+        {/* Filas dinámicas */}
+        {inventario.map((item) => {
+          const bajoStock = item.cantidad <= item.stock_minimo;
+
+          return (
+            <div
+              className={`fila ${bajoStock ? "bajo-stock" : ""}`}
+              key={item.id}
+            >
+              <div className="col">{item.nombre}</div>
+
+              <div className="col">
+                {item.cantidad}
+                {bajoStock && (
+                  <span className="badge bg-danger ms-2">Bajo</span>
+                )}
+              </div>
+
+              <div className="col">{item.stock_minimo}</div>
+
+              <div className="col descripcion-col">
+                <span className="descripcion-texto">{item.descripcion}</span>
+              </div>
+
+              <div className="col acciones">
+                <button
+                  onClick={() => navigate(`/inventory/${item.id}`)}
+                  className="btn btn-outline-secondary btn-sm me-1"
+                >
+                  Ver
+                </button>
+
+                <button
+                  className="btn btn-outline-danger btn-sm"
+                  onClick={() => eliminarItem(item.id)}
+                >
+                  Eliminar
+                </button>
+              </div>
+            </div>
+          );
+        })}
       </div>
 
       {/* Estilos */}
@@ -130,6 +189,10 @@ function InventaryPage() {
           border-bottom: none;
         }
 
+        .bajo-stock {
+          background-color: #ffe5e5;
+        }
+
         .col {
           padding: 4px 8px;
           overflow: hidden;
@@ -150,33 +213,6 @@ function InventaryPage() {
         .acciones {
           display: flex;
           gap: 6px;
-        }
-
-        @media (max-width: 768px) {
-          .fila {
-            grid-template-columns: 1fr;
-            height: auto;
-            padding: 12px;
-          }
-
-          .cabecera {
-            display: none;
-          }
-
-          .col {
-            white-space: normal;
-            text-overflow: initial;
-            overflow: visible;
-            padding: 6px 0;
-          }
-
-          .fila .col::before {
-            content: attr(data-label);
-            font-weight: bold;
-            display: block;
-            margin-bottom: 2px;
-            color: #555;
-          }
         }
       `}</style>
     </div>

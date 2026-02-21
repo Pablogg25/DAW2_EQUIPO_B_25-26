@@ -2,30 +2,48 @@ import apiController from "./ApiController";
 
 const $inventarioController = (function () {
   // -------------------------------------------------------
-  // GET /inventario
+  // GET /inventario  (con filtro opcional por nombre)
   // -------------------------------------------------------
-  //params{'nombre':string}
-  async function obtenerInventario(params) {
+  async function obtenerInventario(params = {}) {
     let requestUrl = apiController.getBaseUrl() + "/inventario";
 
-    if(params['nombre']){
-      requestUrl+='?nombre='+params['nombre'];
+    if (params.nombre && params.nombre.trim() !== "") {
+      requestUrl += "?nombre=" + encodeURIComponent(params.nombre);
     }
+
     try {
       const request = await fetch(requestUrl);
-      const respuesta = await request.json();
+      const contentType = request.headers.get("Content-Type") || "";
 
-      if (request.status === 200) {
-        return { success: true, status: 200, data: respuesta.data };
+      let respuesta = {};
+      if (contentType.includes("application/json")) {
+        respuesta = await request.json();
+      }
+
+      if (request.ok) {
+        return { success: true, status: request.status, data: respuesta.data };
+      }
+
+      if (request.status === 404) {
+        return {
+          success: false,
+          status: 404,
+          message: respuesta.message || "No se encontraron resultados",
+        };
       }
 
       return {
         success: false,
         status: request.status,
-        data: respuesta.message,
+        message: respuesta.message || "Error desconocido",
       };
     } catch (e) {
-      return { success: false, status: 500, data: e };
+      return {
+        success: false,
+        status: 500,
+        message: "Error de red",
+        detalle: e,
+      };
     }
   }
 
@@ -39,17 +57,51 @@ const $inventarioController = (function () {
       const request = await fetch(requestUrl);
       const respuesta = await request.json();
 
-      if (request.status === 200) {
+      if (request.ok) {
         return { success: true, status: 200, data: respuesta.data };
       }
 
       return {
         success: false,
         status: request.status,
-        data: respuesta.message,
+        message: respuesta.message,
       };
     } catch (e) {
-      return { success: false, status: 500, data: e };
+      return {
+        success: false,
+        status: 500,
+        message: "Error de red",
+        detalle: e,
+      };
+    }
+  }
+
+  // -------------------------------------------------------
+  // GET /inventario/bajo-stock
+  // -------------------------------------------------------
+  async function obtenerBajoStock() {
+    const requestUrl = apiController.getBaseUrl() + "/inventario/bajo-stock";
+
+    try {
+      const request = await fetch(requestUrl);
+      const respuesta = await request.json();
+
+      if (request.ok) {
+        return { success: true, status: 200, data: respuesta.data };
+      }
+
+      return {
+        success: false,
+        status: request.status,
+        message: respuesta.message,
+      };
+    } catch (e) {
+      return {
+        success: false,
+        status: 500,
+        message: "Error de red",
+        detalle: e,
+      };
     }
   }
 
@@ -75,10 +127,15 @@ const $inventarioController = (function () {
       return {
         success: false,
         status: request.status,
-        data: respuesta.message,
+        message: respuesta.message,
       };
     } catch (e) {
-      return { success: false, status: 500, data: e };
+      return {
+        success: false,
+        status: 500,
+        message: "Error de red",
+        detalle: e,
+      };
     }
   }
 
@@ -97,17 +154,22 @@ const $inventarioController = (function () {
 
       const respuesta = await request.json();
 
-      if (request.status === 200) {
+      if (request.ok) {
         return { success: true, status: 200, data: respuesta.data };
       }
 
       return {
         success: false,
         status: request.status,
-        data: respuesta.message,
+        message: respuesta.message,
       };
     } catch (e) {
-      return { success: false, status: 500, data: e };
+      return {
+        success: false,
+        status: 500,
+        message: "Error de red",
+        detalle: e,
+      };
     }
   }
 
@@ -118,34 +180,32 @@ const $inventarioController = (function () {
     const requestUrl = apiController.getBaseUrl() + `/inventario/${id}`;
 
     try {
-      const request = await fetch(requestUrl, {
-        method: "DELETE",
-      });
-
+      const request = await fetch(requestUrl);
       const respuesta = await request.json();
 
-      if (request.status === 200) {
-        return { success: true, status: 200, data: respuesta.message };
-      }
-
-      // 409 → FOREIGN KEY (asociado a trabajos)
-      if (request.status === 409) {
-        return { success: false, status: 409, data: respuesta.message };
+      if (request.ok) {
+        return { success: true, status: 200, message: respuesta.message };
       }
 
       return {
         success: false,
         status: request.status,
-        data: respuesta.message,
+        message: respuesta.message,
       };
     } catch (e) {
-      return { success: false, status: 500, data: e };
+      return {
+        success: false,
+        status: 500,
+        message: "Error de red",
+        detalle: e,
+      };
     }
   }
 
   return {
     obtenerInventario,
     obtenerItemInventario,
+    obtenerBajoStock,
     crearItemInventario,
     actualizarItemInventario,
     eliminarItemInventario,
