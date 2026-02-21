@@ -3,17 +3,36 @@ import apiController from "./ApiController";
 const $notificacionesController = (function () {
     console.log("Inicializar $notificaciones controller");
 
+    //params: {'receptorId':int,'remitenteId':int,'trabajoId':int}
     async function getNotificaciones(params) {
         console.log("notificacionesController: getNotificaciones");
 
-        const requestUrl = apiController.getBaseUrl() + "/notificaciones";
+        let requestUrl = apiController.getBaseUrl() + "/notificaciones";
+
+        //añadir argumentos
+        console.log(params);
+
+        let args='?';
+
+        //añadir cada argumento
+        for(let arg in params){
+            if(args!='?'){
+                args+='&';
+            }
+            args+= arg+'='+params[arg];
+        }
+
+        if(args!='?'){
+            //si tiene argumentos
+            requestUrl+=args;
+        }
 
         try {
             console.log("Realizando petición a: " + requestUrl);
             const request = await fetch(requestUrl);
+                const respuesta = await request.json();
 
             if (request.status == 200) {
-                const respuesta = await request.json();
 
                 console.log("OrdersController respuesta OK 200");
                 // console.log(respuesta);
@@ -22,7 +41,6 @@ const $notificacionesController = (function () {
             }
 
             if(request.status==404){
-                const respuesta = await request.json();
 
                 console.log("OrdersController respuesta NOT FOUND 404");
                 // console.log(respuesta);
@@ -32,7 +50,7 @@ const $notificacionesController = (function () {
 
             //else error
             console.log("error al obtener datos");
-            return { "data": null, "status": request.status, "success": false };
+            return { "data": respuesta.message, "status": request.status, "success": false };
 
 
         } catch (e) {
@@ -52,8 +70,8 @@ const $notificacionesController = (function () {
             console.log("Realizando petición a: " + requestUrl);
             const request = await fetch(requestUrl);
 
-            if (request.status == 200) {
                 const respuesta = await request.json();
+            if (request.status == 200) {
 
                 console.log("notificacionesController respuesta OK 200");
                 // console.log(respuesta);
@@ -62,7 +80,6 @@ const $notificacionesController = (function () {
             }
 
             if(request.status==404){
-                const respuesta = await request.json();
 
                 console.log("OrdersController respuesta NOT FOUND 404");
                 // console.log(respuesta);
@@ -72,7 +89,7 @@ const $notificacionesController = (function () {
 
             //else error
             console.log("error al obtener datos");
-            return { "data": null, "status": request.status, "success": false };
+            return { "data": respuesta.message, "status": request.status, "success": false };
 
 
         } catch (e) {

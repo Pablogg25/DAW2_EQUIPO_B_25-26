@@ -87,8 +87,8 @@ class UsuariosController extends Controller
             $usuario->direccion = $request->direccion;
             $usuario->username = $request->username;
             $usuario->rol = $request->rol ?? 'cliente';
-            $usuario->password = $request->password; 
-            
+            $usuario->password = $request->password;
+
             // El mutator del modelo lo encripta automáticamente bcrypt
             $usuario->save();
 

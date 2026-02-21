@@ -3,10 +3,15 @@ import apiController from "./ApiController";
 const $prendasController = (function () {
     console.log("PrendasController inicializado");
 
+    //params {'usuarioId'=int}
     async function getPrendas(params) {
         console.log("Prendas controler getPrendas");
 
-        const requestUrl = apiController.getBaseUrl() + "/prendas";
+        let requestUrl = apiController.getBaseUrl() + "/prendas";
+
+        if(params['usuarioId']){
+            requestUrl+='?usuarioId='+params['usuarioId'];
+        }
 
         try {
             console.log("Realizando petición a: " + requestUrl);
