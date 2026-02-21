@@ -3,12 +3,26 @@ import apiController from "./ApiController";
 const $facturasController = (function () {
     console.log("Inicializar $facturas controller");
 
+    //params{'trabajoId':int,'usuarioId':int}
     async function getFacturas(params) {
         console.log("facturas controller: getFacturas");
 
-        const requestUrl = apiController.getBaseUrl() + "/facturas";
+        let requestUrl = apiController.getBaseUrl() + "/facturas";
 
+        let args = '?';
 
+        //añadir cada argumento
+        for (let arg in params) {
+            if (args != '?') {
+                args += '&';
+            }
+            args += arg + '=' + params[arg];
+        }
+
+        if (args != '?') {
+            //si tiene argumentos
+            requestUrl += args;
+        }
         try {
             console.log("realizando petición a: " + requestUrl);
             const request = await fetch(requestUrl);
@@ -22,7 +36,7 @@ const $facturasController = (function () {
                 return { "data": respuesta.data, "status": 200, "success": true };
             }
 
-            if(request.status==404){
+            if (request.status == 404) {
                 const respuesta = await request.json();
 
                 console.log("facturas respuesta NOT FOUND 404");
@@ -52,7 +66,7 @@ const $facturasController = (function () {
             console.log("realizando petición a: " + requestUrl);
             const request = await fetch(requestUrl);
 
-                const respuesta = await request.json();
+            const respuesta = await request.json();
             if (request.status == 200) {
 
                 console.log("facturas controller respuesta OK 200");
@@ -61,7 +75,7 @@ const $facturasController = (function () {
                 return { "data": respuesta.data, "status": 200, "success": true };
             }
 
-            if(request.status==404){
+            if (request.status == 404) {
 
                 console.log("facturas respuesta NOT FOUND 404");
                 // console.log(respuesta);
@@ -122,7 +136,7 @@ const $facturasController = (function () {
 
     async function updateFactura(facturaObj) {
         console.log("facturas controller: updatefactura ");
-        const requestUrl = apiController.getBaseUrl() + "/facturas/"+facturaObj.facturaId;
+        const requestUrl = apiController.getBaseUrl() + "/facturas/" + facturaObj.facturaId;
 
         console.log("Realizando petición a: " + requestUrl);
         try {
@@ -161,14 +175,14 @@ const $facturasController = (function () {
 
         const requestUrl = apiController.getBaseUrl() + "/facturas/" + facturaId;
         try {
-            const requestBody={
-                method:"DELETE",
-                headers:{
-                    "Content-type":"application/json; charset=UTF-8",
+            const requestBody = {
+                method: "DELETE",
+                headers: {
+                    "Content-type": "application/json; charset=UTF-8",
                 },
             };
             console.log("realizando petición a: " + requestUrl);
-            const request = await fetch(requestUrl,requestBody);
+            const request = await fetch(requestUrl, requestBody);
 
             if (request.status == 200) {
                 const respuesta = await request.json();
@@ -178,7 +192,7 @@ const $facturasController = (function () {
 
                 return { "data": respuesta.data, "status": 200, "success": true };
             }
-            if(request.status==404){
+            if (request.status == 404) {
                 console.log("Respuesta 404: NOT FOUND");
                 // return {estado:404,data:datos,success:false};
             }
@@ -196,16 +210,16 @@ const $facturasController = (function () {
         }
     }
 
-    async function asociarTrabajo(facturaId,trabajoId) {
-        console.log("facturas controller: asociar trabajo "+trabajoId+" a factura "+facturaId);
-        const requestUrl = apiController.getBaseUrl() + "/facturas/"+facturaId+"/asociar-trabajo";
+    async function asociarTrabajo(facturaId, trabajoId) {
+        console.log("facturas controller: asociar trabajo " + trabajoId + " a factura " + facturaId);
+        const requestUrl = apiController.getBaseUrl() + "/facturas/" + facturaId + "/asociar-trabajo";
 
         console.log("Realizando petición a: " + requestUrl);
         try {
             const requestBody = {
                 method: "PUT",
                 body: JSON.stringify({
-                    'trabajoId':trabajoId,
+                    'trabajoId': trabajoId,
                 }),
                 headers: {
                     "Content-type": "application/json; charset=UTF-8",
@@ -234,16 +248,16 @@ const $facturasController = (function () {
         }
     }
 
-    async function desasociarTrabajo(facturaId,trabajoId) {
-        console.log("facturas controller: asociar trabajo "+trabajoId+" a factura "+facturaId);
-        const requestUrl = apiController.getBaseUrl() + "/facturas/"+facturaId+"/desasociar-trabajo";
+    async function desasociarTrabajo(facturaId, trabajoId) {
+        console.log("facturas controller: asociar trabajo " + trabajoId + " a factura " + facturaId);
+        const requestUrl = apiController.getBaseUrl() + "/facturas/" + facturaId + "/desasociar-trabajo";
 
         console.log("Realizando petición a: " + requestUrl);
         try {
             const requestBody = {
                 method: "PUT",
                 body: JSON.stringify({
-                    'trabajoId':trabajoId,
+                    'trabajoId': trabajoId,
                 }),
                 headers: {
                     "Content-type": "application/json; charset=UTF-8",
@@ -272,7 +286,7 @@ const $facturasController = (function () {
         }
     }
 
-    return{
+    return {
         getFacturas,
         getFactura,
         createFactura,
@@ -283,5 +297,5 @@ const $facturasController = (function () {
     }
 })();
 
-window.$facturasController=$facturasController;
+window.$facturasController = $facturasController;
 export default $facturasController;
