@@ -4,12 +4,23 @@ import apiController from "./ApiController";
 const $ordersController = (function () {
     console.log("Inicializando ordersController");
 
-    async function getOrders() {
+    // argumentos: {'empleadoId':int,'estado':string,'prendaId':int} exactos
+    async function getOrders(params) {
         console.log("ordersController: getOrders");
 
-        const requestUrl = apiController.getBaseUrl() + '/trabajos';
+        let requestUrl = apiController.getBaseUrl() + '/trabajos';
 
         //TODO: gestionar errores y códigos de error
+        //añadir argumentos
+        console.log(params);
+        let args='?';
+
+        for(let arg in params){
+            if(args!='?'){
+                args+='&';
+            }
+            args+= arg+'='+params[arg];
+        }
 
         try {
             console.log("Realizando petición a: " + requestUrl);
@@ -25,6 +36,9 @@ const $ordersController = (function () {
             }
 
             //else error
+            if(request.status==404){
+                console.log("Orders controller respuesta NOT FOUND 404")
+            }
             console.log("error al obtener datos");
             return { "data": respuesta.message, "status": request.status, "success": false };
 

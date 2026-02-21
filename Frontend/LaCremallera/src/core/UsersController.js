@@ -8,11 +8,12 @@ const $usersController = (function () {
     console.log("usersController getUsers");
 
     let requestUrl = apiController.getBaseUrl() + "/usuarios";
-
+    console.log(params);
     if(params['username']){
       requestUrl+='?username='+params['username'];
     }
     try {
+      console.log("Realizando petición a: " + requestUrl);
       const request = await fetch(requestUrl);
       const respuesta = await request.json();
 
