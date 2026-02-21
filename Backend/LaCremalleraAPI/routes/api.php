@@ -13,7 +13,6 @@ use App\Http\Middleware\Cors;
 // Todas las rutas de API con middleware CORS
 Route::middleware(Cors::class)->group(function () {
 
-    // -------------------- Usuarios --------------------
     Route::prefix('usuarios')->group(function () {
         Route::post('/login', [UsuariosController::class, 'checkPassword']); // Login
         Route::get('/', [UsuariosController::class, 'index']); // Listar usuarios
@@ -24,7 +23,6 @@ Route::middleware(Cors::class)->group(function () {
         Route::delete('/{id}', [UsuariosController::class, 'destroy']); // Eliminar usuario
     });
 
-    // -------------------- Trabajos --------------------
     Route::prefix('trabajos')->group(function () {
         Route::get('/', [TrabajosController::class, 'index']);
         Route::get('/{id}', [TrabajosController::class, 'show']);
@@ -35,7 +33,6 @@ Route::middleware(Cors::class)->group(function () {
         Route::post('/{id}/consumos', [TrabajosController::class, 'asociarConsumo']);
     });
 
-    // -------------------- Prendas --------------------
     Route::prefix('prendas')->group(function () {
         Route::get('/', [PrendasController::class, 'index']);
         Route::get('/{id}', [PrendasController::class, 'show']);
@@ -44,7 +41,6 @@ Route::middleware(Cors::class)->group(function () {
         Route::delete('/{id}', [PrendasController::class, 'destroy']);
     });
 
-    // -------------------- Notificaciones --------------------
     Route::prefix('notificaciones')->group(function () {
         Route::get('/', [NotificacionesController::class, 'index']);
         Route::get('/{id}', [NotificacionesController::class, 'show']);
@@ -53,7 +49,6 @@ Route::middleware(Cors::class)->group(function () {
         Route::delete('/{id}', [NotificacionesController::class, 'destroy']);
     });
 
-    // -------------------- Inventario --------------------
     Route::prefix('inventario')->group(function () {
         Route::get('/', [InventarioController::class, 'index']);
         Route::get('/bajo-stock', [InventarioController::class, 'bajoStock']);
@@ -63,7 +58,6 @@ Route::middleware(Cors::class)->group(function () {
         Route::delete('/{id}', [InventarioController::class, 'destroy']);
     });
 
-    // -------------------- Facturas --------------------
     Route::prefix('facturas')->group(function () {
         Route::get('/', [FacturasController::class, 'index']);
         Route::get('/{id}', [FacturasController::class, 'show']);
@@ -75,7 +69,6 @@ Route::middleware(Cors::class)->group(function () {
         Route::get('/{id}/calcular-total', [FacturasController::class, 'calcularTotal']);
     });
 
-    // -------------------- Calendario / Eventos --------------------
     Route::prefix('eventos')->group(function () {
         Route::get('/', [CalendarioController::class, 'index']);
         Route::get('/{id}', [CalendarioController::class, 'show']);
@@ -84,7 +77,6 @@ Route::middleware(Cors::class)->group(function () {
         Route::delete('/{id}', [CalendarioController::class, 'destroy']);
     });
 
-    // -------------------- CORS Preflight --------------------
     Route::options('{any}', function () {
         return response()->json([], 200);
     })->where('any', '.*');

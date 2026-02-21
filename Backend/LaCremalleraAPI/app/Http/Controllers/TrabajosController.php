@@ -44,6 +44,24 @@ class TrabajosController extends Controller
         ]);
     }
 
+    // trabajo restriccion de roles 
+    // public function index(Request $request)
+    // {
+    //     $user = $request->user();
+
+    //     if ($user->role === 'admin') {
+    //         return Trabajos::all();
+    //     }
+
+    //     if ($user->role === 'empleado') {
+    //         return Trabajos::where('empleado_id', $user->id)->get();
+    //     }
+
+    //     if ($user->role === 'cliente') {
+    //         return Trabajos::where('cliente_id', $user->id)->get();
+    //     }
+    // }
+
     public function show($id)
     {
         $trabajo = Trabajos::find($id);

@@ -260,7 +260,7 @@ sudo git clone https://github.com/Pablogg25/DAW2_EQUIPO_B_25-26.git
 
 cd DAW2_EQUIPO_B_25-26/Backend/LaCremalleraAPI
 
-sudo chown -R www-data:www-data .
+sudo chown -R www-data:www-data 
 
 ```
 
