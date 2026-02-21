@@ -21,12 +21,12 @@ function PrendasPage() {
         //si datos de usuario no estan inicializados cargar y cachear:
         if (usuarios.length == 0) {
             console.log("Cargando datos de usuarios");
-            let datosUsuario = await $usersController.getUsers();
+            let datosUsuario = await $usersController.getUsers([]);
             setUsuarios(datosUsuario.data);
 
         }
         console.log("Cargando datos de prendas")
-        let datos = await $prendasController.getPrendas();
+        let datos = await $prendasController.getPrendas([]);
         setPrendas(datos.data);
 
         //si success guardar, sino dar aviso

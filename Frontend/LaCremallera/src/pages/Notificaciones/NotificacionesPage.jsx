@@ -4,8 +4,9 @@ import $notificacionesController from "../../core/NotificacionesController";
 import $usersController from "../../core/UsersController";
 import $ordersController from "../../core/OrdersController";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import AuthProvider from "../../context/AuthProvider";
 
 function NotificacionesPage() {
 
@@ -17,10 +18,27 @@ function NotificacionesPage() {
 
     const navegar = useNavigate();
 
+    //useContext
+    const [usuario]=useContext(AuthProvider);
+
     const cargarDatos = async () => {
         console.log("Cargando datos");
 
-        let datos = await $notificacionesController.getNotificaciones();
+        let datos;
+
+        if(usuario.rol!="admin"){
+            console.log("Cargando notificaciones de empleado");
+            datos = await $notificacionesController.getNotificaciones({
+                "receptorId":usuario.usuarioId,"remitenteId":usuario.usuarioId,
+            });
+
+             
+        }else{
+            console.log("cargando notificaciones admin");
+            datos = await $notificacionesController.getNotificaciones([]);
+        }
+
+        
         if (datos.success) {
             setNotificaciones(datos.data);
         } else {

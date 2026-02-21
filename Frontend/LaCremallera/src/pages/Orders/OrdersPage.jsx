@@ -1,13 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect,useContext } from "react";
 import { useNavigate } from "react-router-dom";
-// import $ordersController from "../../core/TestController/TestOrdersController";
-import $ordersController from "../../core/OrdersController";
 import "./OrdersPage.css";
 
-// import $usuariosController from "../../core/TestController/TestUsersController";
+import $ordersController from "../../core/OrdersController";
 import $usersController from "../../core/UsersController";
-// import $prendasController from "../../core/TestController/TestPrendasController";
 import $prendasController from "../../core/PrendasController";
+import AuthProvider from "../../context/AuthProvider";
 
 function OrdersPage() {
   const [orders, setOrders] = useState([]);
@@ -16,9 +14,16 @@ function OrdersPage() {
   const [prendasData, setPrendasData] = useState([]);
 
   const navegar = useNavigate();
+    const [usuario]=useContext(AuthProvider);
 
   const cargarDatos = async () => {
-    let datos = await $ordersController.getOrders();
+    let datos;
+
+    if(usuario.rol!="admin"){
+      datos = await $ordersController.getOrders({'empleadoId':usuario.usuarioId});
+    }else{
+      datos = await $ordersController.getOrders();
+    }
 
     if (datos.success) {
       console.log("DATOS RECIVIDOS");
