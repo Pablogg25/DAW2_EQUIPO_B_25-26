@@ -28,16 +28,21 @@ import NotificacionFormPage from "../pages/Notificaciones/NotificacionFormpage.j
 // seguridad
 import PrivateRoute from "../components/PrivateRoute";
 import RoleRoute from "../components/RoleRoute";
-//facturas
+
+// facturas
 import FacturasPage from "../pages/Facturas/FacturasPage.jsx";
 import FacturaFormPage from "../pages/Facturas/FacturaFormpage.jsx";
+
+// calendario (NUEVO)
+import CalendarPage from "../pages/Calendar/CalendarPage.jsx";
+import CalendarFormPage from "../pages/Calendar/CalendarFormPage.jsx";
 
 function AppEnrutador() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<AppLayout />}>
-          {/* HOME (solo logueados) */}
+          {/* HOME */}
           <Route
             index
             element={
@@ -47,7 +52,7 @@ function AppEnrutador() {
             }
           />
 
-          {/* INVENTARIO (empleado o admin) */}
+          {/* INVENTARIO */}
           <Route
             path="/inventory"
             element={
@@ -66,7 +71,7 @@ function AppEnrutador() {
             }
           />
 
-          {/* TRABAJOS (empleado o admin) */}
+          {/* TRABAJOS */}
           <Route
             path="/orders"
             element={
@@ -85,7 +90,7 @@ function AppEnrutador() {
             }
           />
 
-          {/* PRENDAS (empleado o admin) */}
+          {/* PRENDAS */}
           <Route
             path="/prendas"
             element={
@@ -104,7 +109,7 @@ function AppEnrutador() {
             }
           />
 
-          {/* USUARIOS (solo admin) */}
+          {/* USUARIOS */}
           <Route
             path="/users"
             element={
@@ -123,7 +128,7 @@ function AppEnrutador() {
             }
           />
 
-          {/* NOTIFICACIONES (empleado o admin) */}
+          {/* NOTIFICACIONES */}
           <Route
             path="/notificaciones"
             element={
@@ -142,13 +147,45 @@ function AppEnrutador() {
             }
           />
 
-          {/* to add facturas */}
+          {/* FACTURAS */}
+          <Route
+            path="/facturas"
+            element={
+              <RoleRoute roles={["empleado", "admin"]}>
+                <FacturasPage />
+              </RoleRoute>
+            }
+          />
 
-          <Route path="/facturas" element={<FacturasPage />} />
-          <Route path="/facturas/:id" element={<FacturaFormPage />} />
+          <Route
+            path="/facturas/:id"
+            element={
+              <RoleRoute roles={["empleado", "admin"]}>
+                <FacturaFormPage />
+              </RoleRoute>
+            }
+          />
 
+          {/* CALENDARIO (NUEVO) */}
+          <Route
+            path="/calendar"
+            element={
+              <RoleRoute roles={["empleado", "admin"]}>
+                <CalendarPage />
+              </RoleRoute>
+            }
+          />
 
-          {/* LOGIN (público) */}
+          <Route
+            path="/calendar/:id"
+            element={
+              <RoleRoute roles={["empleado", "admin"]}>
+                <CalendarFormPage />
+              </RoleRoute>
+            }
+          />
+
+          {/* LOGIN */}
           <Route path="/login" element={<LoginPage />} />
 
           {/* ERROR */}

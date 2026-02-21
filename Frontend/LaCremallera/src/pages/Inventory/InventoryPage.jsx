@@ -18,13 +18,11 @@ function InventaryPage() {
       return;
     }
 
-    // Si es búsqueda y no hay resultados → NO es error
     if (respuesta.status === 404) {
       setInventario([]);
       return;
     }
 
-    // Cualquier otro caso sí es error real
     console.error("Error al cargar inventario:", respuesta);
     alert("Error al cargar inventario. Código: " + respuesta.status);
   }
@@ -143,7 +141,7 @@ function InventaryPage() {
 
               <div className="col acciones">
                 <button
-                  onClick={() => navigate(`/inventory/${item.id}`)}
+                  onClick={() => navigate(`/inventory/${item.itemId}`)}
                   className="btn btn-outline-secondary btn-sm me-1"
                 >
                   Ver
@@ -151,7 +149,7 @@ function InventaryPage() {
 
                 <button
                   className="btn btn-outline-danger btn-sm"
-                  onClick={() => eliminarItem(item.id)}
+                  onClick={() => eliminarItem(item.itemId)}
                 >
                   Eliminar
                 </button>

@@ -6,7 +6,7 @@ function NavBar() {
       {/* ICONO A LA IZQUIERDA */}
       <NavLink className="navbar-brand d-flex align-items-center" to="/">
         <img
-          src="../../public/icono-app-3(sin fondo).png"
+          src="/icono-app-3(sin fondo).png"
           alt="logo"
           width="32"
           height="32"
@@ -55,6 +55,13 @@ function NavBar() {
           <li className="nav-item">
             <NavLink to="/notificaciones" className="nav-link">
               Notificaciones
+            </NavLink>
+          </li>
+
+          {/* NUEVO: CALENDARIO */}
+          <li className="nav-item">
+            <NavLink to="/calendar" className="nav-link">
+              Calendario
             </NavLink>
           </li>
         </ul>

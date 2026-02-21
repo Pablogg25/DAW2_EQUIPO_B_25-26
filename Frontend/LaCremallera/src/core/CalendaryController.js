@@ -2,17 +2,21 @@ import apiController from "./ApiController";
 
 const $calendarioController = (function () {
   // -------------------------------------------------------
-  // GET /calendario  (con filtros opcionales)
-  // filtros = { usuarioId: 1, empleadoId: 2, trabajoId: 3 }
+  // GET /eventos  (con filtros opcionales)
   // -------------------------------------------------------
   async function getCalendarios(filtros = {}) {
-    let requestUrl = apiController.getBaseUrl() + "/calendario";
+    let requestUrl = apiController.getBaseUrl() + "/eventos";
 
-    // Construcción manual del querystring (básico)
-    let query = [];
-    if (filtros.usuarioId) query.push("usuarioId=" + filtros.usuarioId);
-    if (filtros.empleadoId) query.push("empleadoId=" + filtros.empleadoId);
-    if (filtros.trabajoId) query.push("trabajoId=" + filtros.trabajoId);
+    const query = [];
+
+    if (filtros.usuarioId)
+      query.push("usuarioId=" + encodeURIComponent(filtros.usuarioId));
+
+    if (filtros.empleadoId)
+      query.push("empleadoId=" + encodeURIComponent(filtros.empleadoId));
+
+    if (filtros.trabajoId)
+      query.push("trabajoId=" + encodeURIComponent(filtros.trabajoId));
 
     if (query.length > 0) {
       requestUrl += "?" + query.join("&");
@@ -20,51 +24,75 @@ const $calendarioController = (function () {
 
     try {
       const request = await fetch(requestUrl);
-      const respuesta = await request.json();
+      const contentType = request.headers.get("Content-Type") || "";
 
-      if (request.status === 200) {
-        return { success: true, status: 200, data: respuesta.data };
+      let respuesta = {};
+      if (contentType.includes("application/json")) {
+        respuesta = await request.json();
+      }
+
+      if (request.ok) {
+        return { success: true, status: request.status, data: respuesta.data };
+      }
+
+      // 404 → No hay eventos (caso normal)
+      if (request.status === 404) {
+        return {
+          success: false,
+          status: 404,
+          message: respuesta.message || "No hay eventos",
+        };
       }
 
       return {
         success: false,
         status: request.status,
-        data: respuesta.message,
+        message: respuesta.message || "Error desconocido",
       };
     } catch (e) {
-      return { success: false, status: 500, data: e };
+      return {
+        success: false,
+        status: 500,
+        message: "Error de red",
+        detalle: e,
+      };
     }
   }
 
   // -------------------------------------------------------
-  // GET /calendario/:id
+  // GET /eventos/:id
   // -------------------------------------------------------
   async function getCalendario(id) {
-    const requestUrl = apiController.getBaseUrl() + "/calendario/" + id;
+    const requestUrl = apiController.getBaseUrl() + "/eventos/" + id;
 
     try {
       const request = await fetch(requestUrl);
       const respuesta = await request.json();
 
-      if (request.status === 200) {
+      if (request.ok) {
         return { success: true, status: 200, data: respuesta.data };
       }
 
       return {
         success: false,
         status: request.status,
-        data: respuesta.message,
+        message: respuesta.message,
       };
     } catch (e) {
-      return { success: false, status: 500, data: e };
+      return {
+        success: false,
+        status: 500,
+        message: "Error de red",
+        detalle: e,
+      };
     }
   }
 
   // -------------------------------------------------------
-  // POST /calendario
+  // POST /eventos
   // -------------------------------------------------------
   async function createCalendario(obj) {
-    const requestUrl = apiController.getBaseUrl() + "/calendario";
+    const requestUrl = apiController.getBaseUrl() + "/eventos";
 
     try {
       const request = await fetch(requestUrl, {
@@ -82,18 +110,23 @@ const $calendarioController = (function () {
       return {
         success: false,
         status: request.status,
-        data: respuesta.message,
+        message: respuesta.message,
       };
     } catch (e) {
-      return { success: false, status: 500, data: e };
+      return {
+        success: false,
+        status: 500,
+        message: "Error de red",
+        detalle: e,
+      };
     }
   }
 
   // -------------------------------------------------------
-  // PUT /calendario/:id
+  // PUT /eventos/:id
   // -------------------------------------------------------
   async function updateCalendario(id, obj) {
-    const requestUrl = apiController.getBaseUrl() + "/calendario/" + id;
+    const requestUrl = apiController.getBaseUrl() + "/eventos/" + id;
 
     try {
       const request = await fetch(requestUrl, {
@@ -104,25 +137,30 @@ const $calendarioController = (function () {
 
       const respuesta = await request.json();
 
-      if (request.status === 200) {
+      if (request.ok) {
         return { success: true, status: 200, data: respuesta.data };
       }
 
       return {
         success: false,
         status: request.status,
-        data: respuesta.message,
+        message: respuesta.message,
       };
     } catch (e) {
-      return { success: false, status: 500, data: e };
+      return {
+        success: false,
+        status: 500,
+        message: "Error de red",
+        detalle: e,
+      };
     }
   }
 
   // -------------------------------------------------------
-  // DELETE /calendario/:id
+  // DELETE /eventos/:id
   // -------------------------------------------------------
   async function deleteCalendario(id) {
-    const requestUrl = apiController.getBaseUrl() + "/calendario/" + id;
+    const requestUrl = apiController.getBaseUrl() + "/eventos/" + id;
 
     try {
       const request = await fetch(requestUrl, {
@@ -131,17 +169,22 @@ const $calendarioController = (function () {
 
       const respuesta = await request.json();
 
-      if (request.status === 200) {
-        return { success: true, status: 200, data: respuesta.message };
+      if (request.ok) {
+        return { success: true, status: 200, message: respuesta.message };
       }
 
       return {
         success: false,
         status: request.status,
-        data: respuesta.message,
+        message: respuesta.message,
       };
     } catch (e) {
-      return { success: false, status: 500, data: e };
+      return {
+        success: false,
+        status: 500,
+        message: "Error de red",
+        detalle: e,
+      };
     }
   }
 
