@@ -1,8 +1,6 @@
 import { useState, useEffect, act } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-// import $prendasController from "../../core/TestController/TestPrendasController";
-// import $usuariosController from "../../core/TestController/TestUsersController";
 import $prendasController from "../../core/PrendasController";
 import $usersController from "../../core/UsersController";
 
@@ -25,7 +23,7 @@ function PrendaFormPage() {
     const cargarDatos = async () => {
         console.log("Cargando Datos");
 
-        let datosUsuario = await $usersController.getUsers();
+        let datosUsuario = await $usersController.getUsers([]);
 
         setUsuariosData(datosUsuario.data);
 

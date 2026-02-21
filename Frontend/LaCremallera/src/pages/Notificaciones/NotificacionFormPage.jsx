@@ -167,7 +167,7 @@ function NotificacionFormPage() {
 
                 <div>
                     <div>remitente</div>
-                        {/* si estoy creando solo uno mismo peude ser el remitente */}
+                        {/* si estoy creando solo uno mismo puede ser el remitente */}
                     {
                         (id!=0)? (<select name="remitenteId" id="remitenteId" onChange={handleOnChange}
                         value={notificacionData.remitenteId}>

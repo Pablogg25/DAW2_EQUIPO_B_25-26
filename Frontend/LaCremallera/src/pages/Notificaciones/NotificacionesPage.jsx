@@ -29,8 +29,10 @@ function NotificacionesPage() {
         if(usuario.rol!="admin"){
             console.log("Cargando notificaciones de empleado");
             datos = await $notificacionesController.getNotificaciones({
-                "receptorId":usuario.usuarioId,
+                "receptorId":usuario.usuarioId,"remitenteId":usuario.usuarioId,
             });
+
+             
         }else{
             datos = await $notificacionesController.getNotificaciones([]);
         }
