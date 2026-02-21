@@ -81,7 +81,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/notificaciones', [NotificacionesController::class, 'store'])
         ->middleware('role:admin,empleado');
 
-
     Route::get('/eventos', [CalendarioController::class, 'index']);
 
     Route::post('/eventos', [CalendarioController::class, 'store'])

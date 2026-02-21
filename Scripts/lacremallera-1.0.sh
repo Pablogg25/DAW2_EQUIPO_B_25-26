@@ -166,3 +166,4 @@ sudo systemctl restart nginx
 echo " INSTALACIÓN COMPLETADA"
 echo "Frontend disponible en: http://$SERVER_IP"
 echo "API disponible en: http://$SERVER_IP/api"
+
