@@ -2,8 +2,10 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import $ordersController from "../../core/OrdersController";
-import $usuariosController from "../../core/TestController/TestUsersController";
-import $prendasController from "../../core/TestController/TestPrendasController";
+// import $usuariosController from "../../core/TestController/TestUsersController";
+import $usersController from "../../core/UsersController";
+import $prendasController from "../../core/PrendasController";
+import $inventarioController from "../../core/InventoryController";
 
 
 function OrderFormPage() {
@@ -16,16 +18,39 @@ function OrderFormPage() {
     const [usuariosData, setUsuarioData] = useState([]);
     const [prendasData, setPrendasData] = useState([]);
 
+    //consumos {"success":true,"data":[{"trabajoId":1,"itemId":1,"cantidad_usada":2}]}
+    const [consumoDatos, setConsumoDatos] = useState([]);
+    const [inventarioData, setInventarioData] = useState([]);
+
     const { id } = useParams();
+    const [nuevoConsumo,setNuevoConsumo]=useState({trabajoId:id,itemId:0,cantidad_usada:0})
 
     const cargarDatos = async () => {
-        console.log("cargando datos");
+        console.log("cargando datos OrderFormPage");
         if (id != 0) {
+            // console.log("Modo edit / ver");
             //modo edit
             let datos = await $ordersController.getOrder(id);
             console.log(datos);
             if (datos.success) {
                 setOrderData(datos.data);
+
+                //cargar consumos
+                // console.log("Realizando petición a consumos");
+
+                let requestConsumo = await $ordersController.getConsumos(id);
+
+                if (requestConsumo.success) {
+                    // console.log("datos de request consumos"),
+                    // console.log(requestConsumo.data);
+                    setConsumoDatos(requestConsumo.data)
+                } else {
+                    // console.log("No se han cargaod bien los consumos");
+                    alert("Error, ha surgido un error al procesar su petición.\nCodigo de error: " + datos.status);
+
+                    navegar("/orders");
+                }
+
             } else {
                 alert("Error, ha surgido un error al procesar su petición.\nCodigo de error: " + datos.status);
 
@@ -36,15 +61,44 @@ function OrderFormPage() {
         //else modo create
 
         //TODO, cargar empleados y prendas por ids
-        setUsuarioData(await $usuariosController.getUsuarios());
-        setPrendasData(await $prendasController.getPrendas());
+        let datosUsuario = await $usersController.getUsers([]);
+        if (datosUsuario.success) {
+            setUsuarioData(datosUsuario.data);
+        } else {
+            alert("Error, ha surgido un error al procesar su petición.\nCodigo de error: " + datosUsuario.status);
+
+            navegar("/orders");
+        }
+
+        let datosPrenda = await $prendasController.getPrendas([]);
+
+        if (datosPrenda.success) {
+            setPrendasData(datosPrenda.data);
+        } else {
+            alert("Error, ha surgido un error al procesar su petición.\nCodigo de error: " + datosUsuario.status);
+
+            navegar("/orders");
+        }
+
+        let datosInventario = await $inventarioController.obtenerInventario([]);
+
+        if (datosInventario.success) {
+            setInventarioData(datosInventario.data);
+            //establecer consumo al primer elemento de la lista por defecto
+            setNuevoConsumo({trabajoId:id,itemId:datosInventario.data[0].itemId,cantidad_usada:0});
+        } else {
+            alert("Error, ha surgido un error al procesar su petición.\nCodigo de error: " + datosUsuario.status);
+
+            navegar("/orders");
+        }
+
     }
 
     const navegar = useNavigate();
 
     const handleOnSubmit = (evento) => {
         evento.preventDefault();
-        console.log("OrdersFormPage: onsubmit")
+        console.log("OrdersFormPage: onsubmit");
 
         enviarDatos();
     }
@@ -76,6 +130,33 @@ function OrderFormPage() {
 
     }
 
+    //formulario consumos
+    const handleOnSubmitConsumos = (evento) => {
+        evento.preventDefault();
+        console.log("OrderFormPage handle on submit consumos");
+        enviarDatosConsumo();
+    }
+
+    const enviarDatosConsumo = async () => {
+        console.log("Enviar datos de consumo");
+
+        let result = await $ordersController.asociarConsumo(id, nuevoConsumo);
+
+        if (result.success) {
+            alert("Datos guardados correctamente");
+            cargarDatos();
+        } else {
+            alert("Error, ha surgido un error al procesar su petición.\nCodigo de error: " + result.status);
+
+        }
+    }
+
+    const handleOnChangeConsumo = (evento) => {
+        const { name, value } = evento.target;
+        let actualizar = { ...consumoDatos, [name]: value };
+        setNuevoConsumo(actualizar);
+    }
+
     const handleOnCancel = (evento) => {
         evento.preventDefault();
         navegar("/orders");
@@ -91,6 +172,15 @@ function OrderFormPage() {
     useEffect(() => {
         cargarDatos(id);
     }, [id]);
+
+    function getNombreItem(itemId) {
+        let index = inventarioData.findIndex(p => p.itemId == itemId);
+
+        if (index !== -1) {
+            return inventarioData[index].nombre;
+        }
+        return "n/a";
+    }
 
 
     return (
@@ -152,6 +242,35 @@ function OrderFormPage() {
                 <div>
                     <button type="submit">Enviar datos</button>
                     <button onClick={handleOnCancel}>Cancelar</button>
+                </div>
+            </form>
+
+            <form onSubmit={handleOnSubmitConsumos}>
+                {/* dropdown con items de inventario */}
+                <select name="itemId" id="itemId" value={nuevoConsumo.itemId} onChange={handleOnChangeConsumo}>
+                    {inventarioData.map((elemento) => {
+                        return (
+                            <option key={elemento["itemId"]} value={elemento["itemId"]}>{elemento["nombre"]}</option>
+                        )
+                    })}
+                </select>
+                <div>
+                    Cantidad usada:
+                    <input type="number" name="cantidad_usada" id="cantidad_usada" min={0} value={nuevoConsumo.cantidad_usada} onChange={handleOnChangeConsumo} />
+                </div>
+                <button type="submit">Añadir consumo</button>
+                {/* lista consumos */}
+                <div>
+                    {/* //consumos {"success":true,"data":[{"trabajoId":1,"itemId":1,"cantidad_usada":2}]} */}
+
+                    <div>Lista de consumos</div>
+                    {
+                        consumoDatos.map((elemento) => {
+                            return (<div key={elemento["itemId"]+"-"+elemento["trabajoId"]+"-"+elemento["cantidad_usada"]}>
+                                {getNombreItem(elemento["itemId"])} - usado: {elemento["cantidad_usada"]}
+                                </div>)
+                        })
+                    }
                 </div>
             </form>
         </div>

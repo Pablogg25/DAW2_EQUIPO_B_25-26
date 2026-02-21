@@ -206,12 +206,92 @@ const $ordersController = (function () {
         }
     }
 
+    async function getConsumos(trabajoId){
+        console.log("ordersController: getOrders");
+
+        let requestUrl = apiController.getBaseUrl() + '/trabajos/'+trabajoId+'/consumos';
+
+        try {
+            console.log("Realizando petición a: " + requestUrl);
+            
+            const request = await fetch(requestUrl);
+            const respuesta = await request.json();
+
+            if (request.status == 200) {
+
+                console.log("OrdersController consumos respuesta OK 200");
+                // console.log(respuesta);
+
+                return { "data": respuesta.data, "status": 200, "success": true };
+            }
+
+            //else error
+            if(request.status==404){
+                console.log("Orders controller respuesta NOT FOUND 404")
+            }
+            console.log("error al obtener datos");
+            return { "data": respuesta.message, "status": request.status, "success": false };
+
+
+        } catch (e) {
+            console.log("Excepción en petición:");
+            console.log(e);
+
+            return { "data": e, "success": false };
+        }
+    }
+
+    async function asociarConsumo(trabajoId,consumoObj){
+        //consumo: {itemid,cantidad_usada}
+        console.log("ordersController: getOrders");
+
+        let requestUrl = apiController.getBaseUrl() + '/trabajos/'+trabajoId+'/consumos';
+
+        try {
+            console.log("Realizando petición a: " + requestUrl);
+            
+            const requestBody = {
+                method: "POST",
+                body: JSON.stringify(consumoObj),
+                headers: {
+                    "Content-type": "application/json; charset=UTF-8",
+                },
+            }
+            const request = await fetch(requestUrl,requestBody);
+            const respuesta = await request.json();
+
+            if (request.status == 201) {
+
+                console.log("OrdersController respuesta CREATED 201");
+                // console.log(respuesta);
+
+                return { "data": respuesta.data, "status": 201, "success": true };
+            }
+
+            //else error
+            if(request.status==404){
+                console.log("Orders controller respuesta NOT FOUND 404")
+            }
+            console.log("error al obtener datos");
+            return { "data": respuesta.message, "status": request.status, "success": false };
+
+
+        } catch (e) {
+            console.log("Excepción en petición:");
+            console.log(e);
+
+            return { "data": e, "success": false };
+        }
+    }
+
     return {
         getOrders,
         getOrder,
         createOrder,
         updateOrder,
         deleteOrder,
+        getConsumos,
+        asociarConsumo,
     };
 })();
 
