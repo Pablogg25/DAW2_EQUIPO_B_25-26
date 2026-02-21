@@ -11,8 +11,8 @@ import UserFormPage from "../pages/Users/UserFormPage.jsx";
 import LoginPage from "../pages/LoginPage.jsx";
 
 // inventario
-import InventaryPage from "../pages/Inventory/InventaryPage.jsx";
-import PropsElementoInventoryPage from "../pages/Inventory/PropsElementoInventoryPage.jsx";
+import InventaryPage from "../pages/Inventory/InventoryPage.jsx";
+import PropsElementoInventoryPage from "../pages/Inventory/InventoryFormPage.jsx";
 
 // pedidos
 import OrderFormPage from "../pages/Orders/OrderFormPage.jsx";
