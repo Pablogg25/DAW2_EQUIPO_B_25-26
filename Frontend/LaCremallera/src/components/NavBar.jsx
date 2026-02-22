@@ -6,7 +6,7 @@ function NavBar() {
       {/* ICONO A LA IZQUIERDA */}
       <NavLink className="navbar-brand d-flex align-items-center" to="/">
         <img
-          src="/icono-app-3(sin fondo).png"
+          src="/logo_circular_full.png"
           alt="logo"
           width="32"
           height="32"
