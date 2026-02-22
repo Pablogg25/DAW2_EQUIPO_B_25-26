@@ -58,6 +58,12 @@ function NavBar() {
             </NavLink>
           </li>
 
+          <li className="nav-item">
+            <NavLink to="/facturas" className="nav-link">
+              Facturas
+            </NavLink>
+          </li>
+
           {/* NUEVO: CALENDARIO */}
           <li className="nav-item">
             <NavLink to="/calendar" className="nav-link">
