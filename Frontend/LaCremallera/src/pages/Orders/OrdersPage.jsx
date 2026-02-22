@@ -1,11 +1,12 @@
-import { useState, useEffect,useContext } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import "./OrdersPage.css";
 
 import $ordersController from "../../core/OrdersController";
 import $usersController from "../../core/UsersController";
 import $prendasController from "../../core/PrendasController";
-import AuthProvider from "../../context/AuthProvider";
+// import { AuthContext } from "../../context/AuthProvider";
+import { AuthContext } from "../../context/AuthContext";
 
 function OrdersPage() {
   const [orders, setOrders] = useState([]);
@@ -14,14 +15,14 @@ function OrdersPage() {
   const [prendasData, setPrendasData] = useState([]);
 
   const navegar = useNavigate();
-    const [usuario]=useContext(AuthProvider);
+  const { usuario } = useContext(AuthContext);
 
   const cargarDatos = async () => {
     let datos;
 
-    if(usuario.rol!="admin"){
-      datos = await $ordersController.getOrders({'empleadoId':usuario.usuarioId});
-    }else{
+    if (usuario.rol != "admin") {
+      datos = await $ordersController.getOrders({ 'empleadoId': usuario.usuarioId });
+    } else {
       datos = await $ordersController.getOrders();
     }
 
