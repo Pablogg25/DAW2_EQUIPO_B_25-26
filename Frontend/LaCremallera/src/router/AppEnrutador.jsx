@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import AppLayout from "../components/AppLayout";
 
 // páginas principales
-import HomePage from "../pages/HomePage";
+import HomePage from "../pages/HomePage.jsx";
 import LoginPage from "../pages/LoginPage.jsx";
 import RegisterPage from "../pages/RegisterPage.jsx";
 import ErrorPage from "../pages/ErrorPage.jsx";

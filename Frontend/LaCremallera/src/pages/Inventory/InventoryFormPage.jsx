@@ -70,7 +70,7 @@ function PropsElementoInventoryPage() {
   }
 
   return (
-    <div className="container mt-4">
+    <div className="container mt-4 page-fade">
       <h2>{id === "new" ? "Crear Item" : "Editar Item"}</h2>
 
       <label>Nombre</label>

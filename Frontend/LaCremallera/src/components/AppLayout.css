@@ -1,0 +1,344 @@
+/* Tipografías */
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Roboto:wght@300;400;500&family=Nunito+Sans:wght@400;600&display=swap");
+
+/* Colores base */
+:root {
+  --color-bg: #ffffff;
+  --color-text: #222222;
+  --color-primary: #1f3c44;
+  --color-accent: #ead3d7;
+  --color-border: #e5e5e5;
+}
+
+/* Reset general */
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: "Roboto", sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* NAVBAR */
+.navbar {
+  background-color: var(--color-primary) !important;
+  padding: 0.8rem 1.2rem;
+}
+
+.navbar-brand {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 600;
+  font-size: 1.3rem;
+}
+
+.nav-link {
+  color: white !important;
+  font-family: "Nunito Sans", sans-serif;
+  font-weight: 500;
+  margin-left: 1rem;
+}
+
+.nav-link.active {
+  border-bottom: 2px solid var(--color-accent);
+}
+
+/* TÍTULOS */
+h1,
+h2,
+h3,
+h4 {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+/* BOTONES */
+.btn {
+  font-family: "Nunito Sans", sans-serif;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+}
+
+.btn-primary {
+  background-color: var(--color-primary);
+  border: none;
+}
+
+.btn-primary:hover {
+  background-color: #162c33;
+}
+
+.btn-success {
+  background-color: var(--color-accent);
+  color: var(--color-primary);
+  border: none;
+}
+
+.btn-success:hover {
+  background-color: #d8b9c0;
+}
+
+/* INPUTS Y FORMULARIOS */
+input,
+textarea,
+select {
+  border-radius: 6px !important;
+  border: 1px solid var(--color-border) !important;
+  padding: 0.6rem !important;
+  font-family: "Roboto", sans-serif;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--color-primary) !important;
+  box-shadow: 0 0 0 2px rgba(31, 60, 68, 0.2) !important;
+}
+
+/* TARJETAS / PANEL LATERAL */
+.card,
+.panel {
+  background: white;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+/* TABLAS */
+.tableRow {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  padding: 0.8rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.tableRow div {
+  padding: 0.3rem;
+}
+
+/* TABLAS GENERALES (para Inventory, Facturas, Prendas, etc.) */
+
+.tabla-div {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  overflow: hidden;
+  background: white;
+}
+
+/* Fila base */
+.fila {
+  display: grid;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--color-border);
+  align-items: center;
+  height: 52px;
+  font-family: "Roboto", sans-serif;
+  font-size: 0.95rem;
+}
+
+/* Variantes según número de columnas */
+.fila.cols-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+.fila.cols-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+.fila.cols-4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+.fila.cols-5 {
+  grid-template-columns: repeat(5, 1fr);
+}
+.fila.cols-6 {
+  grid-template-columns: repeat(6, 1fr);
+}
+.fila.cols-7 {
+  grid-template-columns: repeat(7, 1fr);
+}
+
+/* Notificaciones: última columna más ancha */
+.fila.cols-9 {
+  grid-template-columns: repeat(8, 1fr) 1.8fr;
+}
+
+/* Cabecera */
+.cabecera {
+  background: var(--color-accent);
+  font-weight: 600;
+  color: var(--color-primary);
+  font-family: "Montserrat", sans-serif;
+}
+
+/* Última fila sin borde */
+.fila:last-child {
+  border-bottom: none;
+}
+
+/* Bajo stock */
+.bajo-stock {
+  background-color: #ffe5e5;
+}
+
+/* Columnas */
+.col {
+  padding: 4px 8px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* Acciones */
+.acciones {
+  display: flex;
+  gap: 8px;
+}
+
+.acciones button {
+  font-family: "Nunito Sans", sans-serif;
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+.acciones .btn-edit {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+.acciones .btn-delete {
+  background-color: #d9534f;
+  color: white;
+}
+
+/* Login */
+/* CONTENEDOR GENERAL */
+.login-container {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, var(--color-primary), #2f5963);
+  padding: 20px;
+}
+
+/* TARJETA */
+.login-card {
+  background: white;
+  width: 100%;
+  max-width: 380px;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  animation: fadeIn 0.4s ease;
+}
+
+/* TÍTULO */
+.login-title {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-family: "Montserrat", sans-serif;
+  color: var(--color-primary);
+}
+
+/* INPUTS */
+.login-card input {
+  border-radius: 6px !important;
+  padding: 0.7rem !important;
+}
+
+/* ANIMACIÓN */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Animacion paginas */
+/* Animación suave al cargar cada página */
+.page-fade {
+  animation: fadeInPage 0.25s ease-out;
+}
+
+@keyframes fadeInPage {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* HomePage */
+.home-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.home-title {
+  font-family: "Montserrat", sans-serif;
+  font-size: 2.4rem;
+  color: var(--color-primary);
+}
+
+.home-subtitle {
+  font-size: 1.1rem;
+  opacity: 0.8;
+}
+
+.home-role {
+  margin-top: 0.5rem;
+  font-size: 1rem;
+  color: var(--color-primary);
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.dash-card {
+  background: white;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 1.5rem;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.dash-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+}
+
+.dash-card.clickable {
+  cursor: pointer;
+}
+
+.dash-number {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin: 0;
+}
+
+.empresa-section {
+  background: white;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 2rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}

@@ -77,7 +77,7 @@ function CalendarPage() {
   }
 
   return (
-    <div className="container mt-4">
+    <div className="container mt-4 page-fade">
       <h2>Calendario</h2>
 
       <button

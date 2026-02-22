@@ -41,22 +41,36 @@ function LoginPage() {
   };
 
   return (
-    <div>
-      <h2>Login</h2>
+    <div className="login-container">
+      <div className="login-card">
+        <h2 className="login-title">Iniciar sesión</h2>
 
-      <form onSubmit={handleOnSubmit}>
-        <div>
-          Usuario:
-          <input type="text" name="username" onChange={handleOnChange} />
-        </div>
+        <form onSubmit={handleOnSubmit}>
+          <div className="mb-3">
+            <label className="form-label">Usuario</label>
+            <input
+              type="text"
+              name="username"
+              onChange={handleOnChange}
+              className="form-control"
+            />
+          </div>
 
-        <div>
-          Contraseña:
-          <input type="password" name="password" onChange={handleOnChange} />
-        </div>
+          <div className="mb-3">
+            <label className="form-label">Contraseña</label>
+            <input
+              type="password"
+              name="password"
+              onChange={handleOnChange}
+              className="form-control"
+            />
+          </div>
 
-        <button type="submit">Entrar</button>
-      </form>
+          <button type="submit" className="btn btn-primary w-100 mt-3">
+            Entrar
+          </button>
+        </form>
+      </div>
     </div>
   );
 }

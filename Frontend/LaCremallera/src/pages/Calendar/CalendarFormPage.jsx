@@ -80,7 +80,7 @@ function CalendarFormPage() {
   }
 
   return (
-    <div className="container mt-4">
+    <div className="container mt-4 page-fade">
       <h2>{id === "new" ? "Crear evento" : "Editar evento"}</h2>
 
       <label>Título</label>

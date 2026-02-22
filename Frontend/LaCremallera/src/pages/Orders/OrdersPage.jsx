@@ -1,6 +1,5 @@
 import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import "./OrdersPage.css";
 
 import $ordersController from "../../core/OrdersController";
 import $usersController from "../../core/UsersController";
@@ -21,7 +20,9 @@ function OrdersPage() {
     let datos;
 
     if (usuario.rol != "admin") {
-      datos = await $ordersController.getOrders({ 'empleadoId': usuario.usuarioId });
+      datos = await $ordersController.getOrders({
+        empleadoId: usuario.usuarioId,
+      });
     } else {
       datos = await $ordersController.getOrders();
     }
@@ -36,15 +37,12 @@ function OrdersPage() {
         console.log("Cargando datos de usuario");
         let datosUsuario = await $usersController.getUsers([]);
         setUsuarioData(datosUsuario.data);
-
       }
       if (prendasData.length == 0) {
         console.log("Cargando datos de prendas");
-        let prendas = await $prendasController.getPrendas([])
+        let prendas = await $prendasController.getPrendas([]);
         setPrendasData(prendas.data);
       }
-
-
     } else {
       console.log("ERROR: un error inesperado surgió al cargar datos");
       alert("Ha surgido un error al cargar datos. Compruebe logs.");
@@ -54,43 +52,42 @@ function OrdersPage() {
   const onCreateOrder = () => {
     console.log("on create order");
     navegar("/orders/0");
-  }
+  };
 
   const onEditOrder = (orderId) => {
     console.log("OnEditOrder id:" + orderId);
     if (orderId) {
       navegar("/orders/" + orderId);
-
     }
-  }
+  };
 
   const onDeleteOrder = async (orderId) => {
     console.log("OnDeleteOrder: " + orderId);
     //añadir diálogo de confirmación antes de borrar
     if (orderId) {
       if (confirm("¿Desea borrar el trabajo?")) {
-        console.log("Eliminando trabajo")
+        console.log("Eliminando trabajo");
         let response = await $ordersController.deleteOrder(orderId);
         if (response.success) {
           await cargarDatos();
-
         } else {
           if (response.estado == 409) {
-            alert("Error 409: No se puede eliminar el trabajo debido a que depende de otro elemento");
+            alert(
+              "Error 409: No se puede eliminar el trabajo debido a que depende de otro elemento",
+            );
           } else {
-            alert("Error, ha surgido un error al procesar su petición.\nCodigo de error: " + response.estado);
-
+            alert(
+              "Error, ha surgido un error al procesar su petición.\nCodigo de error: " +
+                response.estado,
+            );
           }
-
         }
-
       }
     }
-
-  }
+  };
 
   function getEmpleadoName(empleadoId) {
-    let index = usuariosData.findIndex(p => p.usuarioId == empleadoId);
+    let index = usuariosData.findIndex((p) => p.usuarioId == empleadoId);
 
     if (index !== -1) {
       return usuariosData[index].nombre;
@@ -99,7 +96,7 @@ function OrdersPage() {
   }
 
   function getPrendaName(prendaId) {
-    let index = prendasData.findIndex(p => p.prendaId == prendaId);
+    let index = prendasData.findIndex((p) => p.prendaId == prendaId);
 
     if (index !== -1) {
       return prendasData[index].tipo;
@@ -112,73 +109,76 @@ function OrdersPage() {
   }, []);
 
   return (
-    <div>
-      <div>OrdersPage (trabajos)</div>
+    <div className="container mt-4 page-fade">
+      <h2 className="mb-3">Trabajos</h2>
 
-      <div>
-        <button onClick={() => { onCreateOrder() }}>Crear order</button>
-      </div>
+      <button className="btn btn-success mb-3" onClick={() => onCreateOrder()}>
+        Crear trabajo
+      </button>
 
-      <div>
-        {/* lista */}
-        <div className="tableRow">
-          {/* headers */}
-          <div>
+      <div className="tabla-div">
+        {/* CABECERA */}
+        <div className="fila cabecera cols-9">
+          <div className="col">
             <strong>Id</strong>
           </div>
-          <div>
+          <div className="col">
             <strong>Descripción</strong>
           </div>
-          <div>
+          <div className="col">
             <strong>Prenda</strong>
           </div>
-          <div>
+          <div className="col">
             <strong>Empleado</strong>
           </div>
-          <div>
-            <strong>Fecha de inicio</strong>
+          <div className="col">
+            <strong>Fecha inicio</strong>
           </div>
-          <div>
-            <strong>Fecha de entrega</strong>
+          <div className="col">
+            <strong>Fecha entrega</strong>
           </div>
-          <div>
+          <div className="col">
             <strong>Precio</strong>
           </div>
-          <div>
-            <strong>estado</strong>
+          <div className="col">
+            <strong>Estado</strong>
           </div>
-          <div>
-            <strong>operaciones</strong>
+          <div className="col">
+            <strong>Operaciones</strong>
           </div>
         </div>
 
-        <div>
-          {
-            orders.map((elemento) => {
-              return (
-                <div key={elemento["trabajoId"]} className="tableRow">
-                  <div>{elemento["trabajoId"]}</div>
-                  <div>{elemento["descripcion"]}</div>
-                  <div>{getPrendaName(elemento["prendaId"])}</div>
-                  <div>{getEmpleadoName(elemento["empleadoId"])}</div>
-                  <div>{elemento["fecha_inicio"]}</div>
-                  <div>{elemento["fecha_entrega"]}</div>
-                  <div>{elemento["precio"]}</div>
-                  <div>{elemento["estado"]}</div>
-                  <div>
-                    <button onClick={() => { onEditOrder(elemento["trabajoId"]) }}>Ver/Editar</button>
-                    <button onClick={() => { onDeleteOrder(elemento["trabajoId"]) }}>Eliminar</button>
-                  </div>
-                </div>
-              );
-            })
-          }
-        </div>
+        {/* FILAS */}
+        {orders.map((elemento) => (
+          <div key={elemento["trabajoId"]} className="fila cols-9">
+            <div className="col">{elemento["trabajoId"]}</div>
+            <div className="col">{elemento["descripcion"]}</div>
+            <div className="col">{getPrendaName(elemento["prendaId"])}</div>
+            <div className="col">{getEmpleadoName(elemento["empleadoId"])}</div>
+            <div className="col">{elemento["fecha_inicio"]}</div>
+            <div className="col">{elemento["fecha_entrega"]}</div>
+            <div className="col">{elemento["precio"]}</div>
+            <div className="col">{elemento["estado"]}</div>
 
+            <div className="col acciones">
+              <button
+                className="btn-edit"
+                onClick={() => onEditOrder(elemento["trabajoId"])}
+              >
+                Ver/Editar
+              </button>
+
+              <button
+                className="btn-delete"
+                onClick={() => onDeleteOrder(elemento["trabajoId"])}
+              >
+                Eliminar
+              </button>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
-
-
   );
 }
 

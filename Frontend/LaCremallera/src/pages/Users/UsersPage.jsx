@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-import "./UsersPage.css";
 import $usersController from "../../core/UsersController";
 
 function UsersPage() {
@@ -19,24 +18,23 @@ function UsersPage() {
       setUsers(datos.data);
     } else {
       console.log("ERROR: un error inesperado surgió al cargar datos");
-      alert("Ha surgido un error al cargar datos. "+datos.data);
-
+      alert("Ha surgido un error al cargar datos. " + datos.data);
     }
-  }
+  };
 
   const onCreateUser = () => {
     console.log("On create user");
     //TODO: crear formulario de propiedades
     navegar("/users/0");
-  }
+  };
 
   const onEditUser = (userId) => {
     console.log("On edit user id: " + userId);
     if (userId) {
       //navegar al formulario
-      navegar("/users/"+userId);
+      navegar("/users/" + userId);
     }
-  }
+  };
 
   const onDeleteUser = async (userId) => {
     console.log("on delete user: " + userId);
@@ -46,94 +44,94 @@ function UsersPage() {
         console.log("Eliminando usuario");
         //realizar petición de borrado
 
-        let result=await $usersController.deleteUser(userId);
+        let result = await $usersController.deleteUser(userId);
 
         //if success
-        if(!result.success){
+        if (!result.success) {
           alert("ERROR, no se ha podido procesar su petición");
-          alert("ERROR: "+result.data);
-        }else{
+          alert("ERROR: " + result.data);
+        } else {
           cargarDatos();
         }
       }
     }
-  }
+  };
 
   useEffect(() => {
     cargarDatos();
-  }, [])
-
+  }, []);
 
   return (
-    <div>
-      <div>usersPage</div>
-      <div>Lista para realizar crud sobre usuarios</div>
+    <div className="container mt-4 page-fade">
+      <h2 className="mb-2">Usuarios</h2>
+      <p className="text-muted mb-3">Lista para realizar CRUD sobre usuarios</p>
 
+      <button className="btn btn-success mb-3" onClick={() => onCreateUser()}>
+        Crear Usuario
+      </button>
 
-      <div>
-        <button onClick={() => {
-          onCreateUser();
-        }}>Crear Usuario</button>
-      </div>
-
-      <div>
-        {/* lista usuarios */}
-        <div className="tableRow">
-          <div>
+      <div className="tabla-div">
+        {/* Cabecera */}
+        <div className="fila cabecera cols-9">
+          <div className="col">
             <strong>Id</strong>
           </div>
-          <div>
-            <strong>nombre</strong>
+          <div className="col">
+            <strong>Nombre</strong>
           </div>
-          <div>
-            <strong>teléfono</strong>
+          <div className="col">
+            <strong>Teléfono</strong>
           </div>
-          <div>
-            <strong>email</strong>
+          <div className="col">
+            <strong>Email</strong>
           </div>
-          <div>
-            <strong>dirección</strong>
+          <div className="col">
+            <strong>Dirección</strong>
           </div>
-          <div>
-            <strong>username</strong>
+          <div className="col">
+            <strong>Username</strong>
           </div>
-          <div>
-            <strong>rol</strong>
+          <div className="col">
+            <strong>Rol</strong>
           </div>
-          <div>
-            <strong>fecha_registro</strong>
+          <div className="col">
+            <strong>Fecha registro</strong>
           </div>
-          <div>
+          <div className="col">
             <strong>Operaciones</strong>
           </div>
         </div>
 
-        {/* filas */}
+        {/* Filas */}
+        {users.map((elemento) => (
+          <div key={elemento["usuarioId"]} className="fila cols-9">
+            <div className="col">{elemento["usuarioId"]}</div>
+            <div className="col">{elemento["nombre"]}</div>
+            <div className="col">{elemento["telefono"]}</div>
+            <div className="col">{elemento["email"]}</div>
+            <div className="col">{elemento["direccion"]}</div>
+            <div className="col">{elemento["username"]}</div>
+            <div className="col">{elemento["rol"]}</div>
+            <div className="col">{elemento["fecha_registro"]}</div>
 
-        {
-          users.map((elemento) => {
-            return (
-              <div key={elemento["usuarioId"]} className="tableRow">
-                <div>{elemento["usuarioId"]}</div>
-                <div>{elemento["nombre"]}</div>
-                <div>{elemento["telefono"]}</div>
-                <div>{elemento["email"]}</div>
-                <div>{elemento["direccion"]}</div>
-                <div>{elemento["rol"]}</div>
-                <div>{elemento["fecha_registro"]}</div>
-                <div>
-                  <button onClick={() => { onEditUser(elemento["usuarioId"]); }}>Ver/editar</button>
-                  <button onClick={() => { onDeleteUser(elemento["usuarioId"]); }}>Eliminar</button>
-                </div>
-              </div>
-            );
-          }
-          )
-        }
-        <div>
-        </div>
+            <div className="col acciones">
+              <button
+                className="btn-edit"
+                onClick={() => onEditUser(elemento["usuarioId"])}
+              >
+                Ver/editar
+              </button>
+
+              <button
+                className="btn-delete"
+                onClick={() => onDeleteUser(elemento["usuarioId"])}
+              >
+                Eliminar
+              </button>
+            </div>
+          </div>
+        ))}
       </div>
-
     </div>
   );
 }

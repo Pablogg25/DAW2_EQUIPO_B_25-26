@@ -100,7 +100,7 @@ function InventaryPage() {
 
       <div className="tabla-div">
         {/* Cabecera */}
-        <div className="fila cabecera">
+        <div className="fila cabecera cols-5">
           <div className="col">Nombre</div>
           <div className="col">Cantidad</div>
           <div className="col">Stock Mínimo</div>
@@ -121,7 +121,7 @@ function InventaryPage() {
 
           return (
             <div
-              className={`fila ${bajoStock ? "bajo-stock" : ""}`}
+              className={`fila cols-5 ${bajoStock ? "bajo-stock" : ""}`}
               key={item.itemId}
             >
               <div className="col">{item.nombre}</div>
@@ -158,61 +158,6 @@ function InventaryPage() {
           );
         })}
       </div>
-
-      {/* Estilos */}
-      <style>{`
-        .tabla-div {
-          display: flex;
-          flex-direction: column;
-          border: 1px solid #ccc;
-          border-radius: 6px;
-          overflow: hidden;
-        }
-
-        .fila {
-          display: grid;
-          grid-template-columns: 2fr 1fr 1fr 3fr 1fr;
-          padding: 10px;
-          border-bottom: 1px solid #ddd;
-          align-items: center;
-          height: 48px;
-        }
-
-        .cabecera {
-          background: #f5f5f5;
-          font-weight: bold;
-        }
-
-        .fila:last-child {
-          border-bottom: none;
-        }
-
-        .bajo-stock {
-          background-color: #ffe5e5;
-        }
-
-        .col {
-          padding: 4px 8px;
-          overflow: hidden;
-          white-space: nowrap;
-          text-overflow: ellipsis;
-        }
-
-        .descripcion-col {
-          overflow: hidden;
-        }
-
-        .descripcion-texto {
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
-
-        .acciones {
-          display: flex;
-          gap: 6px;
-        }
-      `}</style>
     </div>
   );
 }
