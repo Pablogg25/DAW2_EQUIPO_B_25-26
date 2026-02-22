@@ -18,6 +18,7 @@ const $usersController = (function () {
       const respuesta = await request.json();
 
       if (request.status === 200) {
+        console.log("usersController respuesta 200 OK");
         return { data: respuesta.data, status: 200, success: true };
       }
 

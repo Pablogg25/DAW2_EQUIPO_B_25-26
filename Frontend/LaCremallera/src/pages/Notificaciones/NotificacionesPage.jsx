@@ -44,13 +44,14 @@ function NotificacionesPage() {
 
     if (usuarios.length == 0) {
       console.log("Cargando datos de usuario");
-      let datosUsuario = $usersController.getUsers();
+      let datosUsuario = await $usersController.getUsers();
+      // console.log(datosUsuario);
       setUsuarios(datosUsuario.data);
     }
 
     if (trabajos.length == 0) {
       console.log("Cargando datos de trabajos");
-      let datosTrabajo = $ordersController.getOrders();
+      let datosTrabajo = await $ordersController.getOrders();
       setTrabajos(datosTrabajo.data);
     }
   };
@@ -97,12 +98,17 @@ function NotificacionesPage() {
 
   function getUsuarioName(usuarioId) {
     if (usuarios) {
+      console.log("Buscando nombre de usuario id: "+usuarioId);
       let index = usuarios.findIndex((p) => p.usuarioId == usuarioId);
 
       if (index !== -1) {
-        return usuarios[index];
+        console.log("Encontrado:");
+        console.log(usuarios[index]);
+        return usuarios[index]["nombre"];
       }
+      return "not found";
     }
+    return "n/a"
   }
 
   return (
