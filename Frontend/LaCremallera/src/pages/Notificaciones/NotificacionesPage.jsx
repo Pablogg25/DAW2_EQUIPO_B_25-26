@@ -61,8 +61,8 @@ function NotificacionesPage() {
     navegar("/notificaciones/0");
   };
 
-  const onEditNotificacion = (notificacionId) => {
-    console.log("On edit Notificacion id: " + notificacionId);
+  const onViewNotificacion = (notificacionId) => {
+    console.log("On view Notificacion id: " + notificacionId);
     navegar("/notificaciones/" + notificacionId);
   };
 
@@ -179,9 +179,9 @@ function NotificacionesPage() {
             <div className="col acciones">
               <button
                 className="btn-edit"
-                onClick={() => onEditNotificacion(elemento["notificacionId"])}
+                onClick={() => onViewNotificacion(elemento["notificacionId"])}
               >
-                Ver/editar
+                Ver
               </button>
 
               <button

@@ -39,7 +39,7 @@ function NotificacionFormPage() {
       } else {
         alert(
           "Error, ha surgido un error al procesar su petición.\nCodigo de error: " +
-            datosUsuario.status,
+          datosUsuario.status,
         );
 
         navegar("/notificaciones");
@@ -54,7 +54,7 @@ function NotificacionFormPage() {
       } else {
         alert(
           "Error, ha surgido un error al procesar su petición.\nCodigo de error: " +
-            datosTrabajo.status,
+          datosTrabajo.status,
         );
 
         navegar("/notificaciones");
@@ -68,7 +68,7 @@ function NotificacionFormPage() {
       } else {
         alert(
           "Error, ha surgido un error al procesar su petición.\nCodigo de error: " +
-            datosNot.status,
+          datosNot.status,
         );
       }
     }
@@ -87,12 +87,7 @@ function NotificacionFormPage() {
 
     let result;
 
-    if (id != 0) {
-      console.log("Modo update");
-
-      let datos = { ...notificacionData, ["notificacionId"]: id };
-      result = await $notificacionesController.updateNotificacion(datos);
-    } else {
+    if (id == 0) {
       console.log("Modo create");
       result =
         await $notificacionesController.createNotificacion(notificacionData);
@@ -111,7 +106,7 @@ function NotificacionFormPage() {
       } else {
         alert(
           "Error, ha surgido un error al procesar su petición.\nCodigo de error: " +
-            result.estado,
+          result.estado,
         );
       }
     }
@@ -160,6 +155,7 @@ function NotificacionFormPage() {
             onChange={handleOnChange}
             value={notificacionData.receptorId}
             className="form-select"
+            disabled={id != 0}
           >
             {usuariosData.map((elemento) => (
               <option key={elemento["usuarioId"]} value={elemento["usuarioId"]}>
@@ -179,7 +175,7 @@ function NotificacionFormPage() {
               id="remitenteId"
               onChange={handleOnChange}
               value={notificacionData.remitenteId}
-              className="form-select"
+              className="form-select" disabled
             >
               {usuariosData.map((elemento) => (
                 <option
@@ -219,7 +215,8 @@ function NotificacionFormPage() {
             id="trabajoId"
             onChange={handleOnChange}
             value={notificacionData.trabajoId}
-            className="form-select"
+            className="form-select" 
+            disabled={id != 0}
           >
             {trabajosData.map((elemento) => (
               <option key={elemento["trabajoId"]} value={elemento["trabajoId"]}>
@@ -238,6 +235,7 @@ function NotificacionFormPage() {
             onChange={handleOnChange}
             value={notificacionData.tipo}
             className="form-select"
+            disabled={id != 0}
           >
             <option value="notificacion">notificacion</option>
             <option value="recordatorio_entrega">recordatorio_entrega</option>
@@ -256,6 +254,7 @@ function NotificacionFormPage() {
             onChange={handleOnChange}
             value={notificacionData.asunto}
             className="form-control"
+            disabled={id != 0}
           />
         </div>
 
@@ -268,6 +267,7 @@ function NotificacionFormPage() {
             onChange={handleOnChange}
             value={notificacionData.mensaje}
             className="form-control"
+            disabled={id != 0}
           />
         </div>
 
@@ -282,14 +282,21 @@ function NotificacionFormPage() {
             onChange={handleOnChange}
             disabled
             className="form-control"
+
           />
         </div>
 
-        {/* Botones */}
+        {/* Botones Solo se muestra el botón de enviar datos si estamos en modo crear*/}
         <div className="d-flex gap-3">
-          <button type="submit" className="btn btn-success">
+          {(id != 0) ? ("") :
+            (
+              <button type="submit" className="btn btn-success">
+                Enviar datos
+              </button>)
+          }
+          {/* <button type="submit" className="btn btn-success">
             Enviar datos
-          </button>
+          </button> */}
 
           <button
             type="button"
