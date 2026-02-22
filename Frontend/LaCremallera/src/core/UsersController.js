@@ -4,7 +4,7 @@ const $usersController = (function () {
   console.log("Inicializando userscontroller");
 
   //params {'username':string} exacto
-  async function getUsers(params) {
+  async function getUsers(params={}) {
     console.log("usersController getUsers");
 
     let requestUrl = apiController.getBaseUrl() + "/usuarios";
