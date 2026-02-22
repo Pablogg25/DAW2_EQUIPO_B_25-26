@@ -462,9 +462,7 @@ function FacturaFormPage() {
           <button
             type="button"
             className="btn btn-secondary"
-            onClick={() => {
-              handleOnCancel();
-            }}
+            onClick={handleOnCancel}
           >
             Volver
           </button>
