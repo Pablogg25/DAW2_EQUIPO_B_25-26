@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><project name="Untitled Gantt Project" company="" webLink="http://" view-date="2026-02-03" view-index="0" gantt-divider-location="351" resource-divider-location="300" version="3.3.3322" locale="es_ES">
+<?xml version="1.0" encoding="UTF-8"?><project name="Untitled Gantt Project" company="" webLink="http://" view-date="2026-02-03" view-index="0" gantt-divider-location="351" resource-divider-location="300" version="3.3.3316" locale="es_ES">
     <description/>
     <view zooming-state="default:2" id="gantt-chart">
         <field id="tpd3" name="Nombre" width="200" order="0"/>
@@ -66,9 +66,13 @@
             <task id="28" uid="1cc64451a4934b3caf4c406264658df7" name="SWAGGER de la API" color="#6633ff" meeting="false" start="2026-02-09" duration="1" complete="0" expand="true"/>
             <task id="24" uid="d6c350d325b744d6abcd7ddfc4314fe1" name="Comprobacion API" color="#6633ff" meeting="false" start="2026-02-09" duration="2" complete="0" expand="true"/>
         </task>
-        <task id="25" uid="5b0205574f2c4c7ea6673beb9b5121e1" name="Laravel" color="#3333ff" meeting="false" start="2026-02-09" duration="5" complete="0" expand="true">
+        <task id="25" uid="5b0205574f2c4c7ea6673beb9b5121e1" name="Bankend - API Laravel" color="#3333ff" meeting="false" start="2026-02-09" duration="5" complete="0" expand="true">
             <task id="26" uid="41a70335f08146369b5cd89b40b4aebe" name="Reestructuracion del Proyecto" color="#6633ff" meeting="false" start="2026-02-09" duration="2" complete="0" expand="true"/>
             <task id="27" uid="d6b6425397d946e9aa087812b941ce00" name="Funcionamiento del proyecto" color="#6633ff" meeting="false" start="2026-02-09" duration="5" complete="0" expand="true"/>
+        </task>
+        <task id="29" uid="42d5ae91678b42248d3f766f1c3a4aff" name="Fontend - Aplicacion WEB" color="#3333ff" meeting="false" start="2026-02-09" duration="5" complete="0" expand="true">
+            <task id="30" uid="f6b389b9a8114f3abb1221513529a153" name="Estructuracion del Proyecto" color="#6633ff" meeting="false" start="2026-02-09" duration="4" complete="0" expand="true"/>
+            <task id="31" uid="ab52758f71644b9db4a6e8de347cc3d3" name="Pruebas del Proyecto" color="#6633ff" meeting="false" start="2026-02-12" duration="2" complete="0" expand="true"/>
         </task>
     </tasks>
     <resources/>
