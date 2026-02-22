@@ -24,7 +24,7 @@ function UserFormPage() {
 
             if (datos.success) {
                 console.log(datos);
-                setUserData(datos.data[0]);
+                setUserData(datos.data);
             } else {
                 alert("ERROR, "+datos);
                 navegar("/users");
