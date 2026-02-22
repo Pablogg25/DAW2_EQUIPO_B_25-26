@@ -6,7 +6,8 @@ import $ordersController from "../../core/OrdersController";
 
 import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import AuthProvider from "../../context/AuthProvider";
+// import AuthProvider from "../../context/AuthProvider";
+import { AuthContext } from "../../context/AuthContext";
 
 function NotificacionesPage() {
 
@@ -19,7 +20,7 @@ function NotificacionesPage() {
     const navegar = useNavigate();
 
     //useContext
-    const [usuario]=useContext(AuthProvider);
+    const { usuario } = useContext(AuthContext);
 
     const cargarDatos = async () => {
         console.log("Cargando datos");
