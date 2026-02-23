@@ -163,11 +163,11 @@ Este diagrama es la referencia para la implementación de la base de datos en My
 
 ## 🗓 Cronograma del proyecto
 
-- **Fase 1 — Análisis y diseño:** [fechas]
-- **Fase 2 — Backend / API:** [fechas]
-- **Fase 3 — Frontend / UI:** [fechas]
-- **Fase 4 — Integración, pruebas y despliegue:** [fechas]
-- **Entrega final:** [fecha]
+- **Fase 1 — Análisis y diseño:** [15/12/2025] al [16/12/2025]
+- **Fase 2 — Backend / API:** [16/12/2025] al [23/12/2025]
+- **Fase 3 — Frontend / UI:** [09/02/2026] al [13/02/2026]
+- **Fase 4 — Integración, pruebas y despliegue:** [16/02/2026] al [23/02/2026]
+- **Entrega final:** [05/03/2026]
 
 ---
 
@@ -190,36 +190,46 @@ Licencia a definir por el equipo (probablemente MIT).
   Gustavo Rodrigo Bautista Pocuhuanca - gbautistap01@educantabria.es
   GitHub: https://github.com/Hansdreams
   Pablo Nuñez -
-  GitHub: 
+  GitHub: https://github.com/PnunezS28
   Sergio Lopez -
-  GitHub: 
+  GitHub: https://github.com/SergioLI04
 
 ---
 
-# Despliegue de API Laravel en EC2 con Nginx, PHP y MySQL
+# Despliegue de API Laravel (Backend) y Aplicación Web (Frontend) en EC2 con Nginx, PHP y MySQL
 
-Descripción de los pasos para crear un servidor EC2 en AWS y desplegar la API **LaCremalleraAPI** usando **Nginx, PHP 8.3 y MySQL**.
+Guía para crear un servidor **EC2 en AWS** y desplegar:
+
+- API Laravel (Backend)
+- Aplicación Web React con Vite (Frontend)
+- Servidor Nginx
+- PHP 8.3
+- MySQL
 
 ---
 
-## Creación de la EC2
+# Creación de la EC2
 
-- Datos de la EC2:
+Datos de la instancia:
 
-| Propiedad         | Valor                                          |
-| ----------------- | ---------------------------------------------- |
-| AMI utilizada     | Ubuntu Server 24.04 LTS (HVM), SSD Volume Type |
-| Tipo de instancia | t3.micro                                       |
-| IP Elástica       | 3.229.92.23                                    |
-| Puertos abiertos  | 22, 80, 443                                    |
+| Propiedad | Valor |
+|-----------|------|
+| AMI utilizada | Ubuntu Server 24.04 LTS (HVM), SSD Volume Type |
+| Tipo de instancia | t3.micro |
+| IP Pública | 44.223.237.222 |
+| Puertos abiertos | 22 (SSH), 80 (HTTP), 443 (HTTPS) |
 
-## Actualización del sistema
+---
+
+# Actualización del sistema
 
 ```bash
 sudo apt update && sudo apt upgrade -y
 ```
 
-## Instalación de PHP y extensiones necesarias
+---
+
+# Instalación de PHP y extensiones necesarias
 
 ```bash
 sudo apt install php php-cli php-fpm php-mysql php-xml php-mbstring php-curl php-zip unzip curl -y
@@ -227,7 +237,9 @@ sudo apt install php php-cli php-fpm php-mysql php-xml php-mbstring php-curl php
 php -v
 ```
 
-## Instalación de Composer
+---
+
+# Instalación de Composer
 
 ```bash
 curl -sS https://getcomposer.org/installer -o composer-setup.php
@@ -237,65 +249,165 @@ sudo php composer-setup.php --install-dir=/usr/local/bin --filename=composer
 composer --version
 ```
 
-## Instalación del MySQL
+---
+
+# Instalación de MySQL
 
 ```bash
 sudo apt install mysql-server -y
 
 sudo mysql -u root -p
+```
 
+Crear base de datos:
+
+```sql
 CREATE DATABASE la_cremallera CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
 CREATE USER 'admin'@'%' IDENTIFIED BY 'admin';
+
 GRANT ALL PRIVILEGES ON la_cremallera.* TO 'admin'@'%';
+
 FLUSH PRIVILEGES;
 EXIT;
 ```
 
-## Clonación del proyecto y permisos
+---
+
+# Clonación del proyecto
 
 ```bash
 cd /var/www
 
 sudo git clone https://github.com/Pablogg25/DAW2_EQUIPO_B_25-26.git
-
-cd DAW2_EQUIPO_B_25-26/Backend/LaCremalleraAPI
-
-sudo chown -R www-data:www-data 
-
 ```
 
-## Instalación de dependencias y configuración de la API
+---
+
+# Configuración del Backend (Laravel API)
+
+Ir al backend:
 
 ```bash
-sudo apt update && sudo apt upgrade -y
+cd /var/www/DAW2_EQUIPO_B_25-26/Backend/LaCremalleraAPI
+```
 
+Asignar permisos:
+
+```bash
+sudo chown -R www-data:www-data .
+sudo chmod -R 775 storage
+sudo chmod -R 775 bootstrap/cache
+```
+
+Instalar dependencias:
+
+```bash
 composer install
+```
 
+Configurar variables de entorno:
+
+```bash
+cp .env.example .env
+php artisan key:generate
+```
+
+Configurar la base de datos en `.env`:
+
+```env
+DB_DATABASE=la_cremallera
+DB_USERNAME=admin
+DB_PASSWORD=admin
+```
+
+Ejecutar migraciones:
+
+```bash
 php artisan migrate
-
 php artisan migrate --seed
 ```
 
-## Instalación y configuración de Nginx
+---
+
+# Instalación del Frontend
+
+Ir al frontend:
+
+```bash
+cd /var/www/DAW2_EQUIPO_B_25-26/Frontend/LaCremallera
+```
+
+Instalar Node.js y npm:
+
+```bash
+sudo apt install nodejs npm -y
+```
+
+Verificar versiones:
+
+```bash
+node -v
+npm -v
+```
+
+Instalar dependencias:
+
+```bash
+npm install
+```
+
+Construir la aplicación:
+
+```bash
+npm run build
+```
+
+Esto generará la carpeta:
+
+```
+dist/
+```
+
+---
+
+# Instalación y configuración de Nginx
+
+Instalar Nginx:
 
 ```bash
 sudo apt install nginx -y
+```
 
-sudo nano /etc/nginx/sites-available/lacremallera.com
+Crear archivo de configuración:
 
+```bash
+sudo nano /etc/nginx/sites-available/lacremallera
+```
+
+Configuración para servir **Frontend + API**:
+
+```nginx
 server {
     listen 80;
     server_name 44.223.237.222;
 
-    root /var/www/DAW2_EQUIPO_B_25-26/Backend/LaCremalleraAPI/public;
-
-    index index.php index.html index.htm;
+    # FRONTEND
+    root /var/www/DAW2_EQUIPO_B_25-26/Frontend/LaCremallera/dist;
+    index index.html;
 
     location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    # API LARAVEL
+    location /api {
+        root /var/www/DAW2_EQUIPO_B_25-26/Backend/LaCremalleraAPI/public;
         try_files $uri $uri/ /index.php?$query_string;
     }
 
     location ~ \.php$ {
+        root /var/www/DAW2_EQUIPO_B_25-26/Backend/LaCremalleraAPI/public;
         include snippets/fastcgi-php.conf;
         fastcgi_pass unix:/var/run/php/php8.3-fpm.sock;
     }
@@ -309,22 +421,126 @@ server {
 }
 ```
 
-## Activar el sitio y reiniciar Nginx
+---
+
+# Activar el sitio
 
 ```bash
 sudo ln -s /etc/nginx/sites-available/lacremallera /etc/nginx/sites-enabled/
+```
 
+Eliminar sitio por defecto:
+
+```bash
+sudo rm /etc/nginx/sites-enabled/default
+```
+
+Verificar configuración:
+
+```bash
 sudo nginx -t
+```
 
+Reiniciar Nginx:
+
+```bash
 sudo systemctl restart nginx
 ```
 
-## Nginx y php8.3-fpm se inician automaticamente cuando arranque el EC2
+---
+
+# Iniciar servicios automáticamente
 
 ```bash
 sudo systemctl enable nginx
 sudo systemctl enable php8.3-fpm
+```
+
+---
+
+# Estructura final del servidor
 
 ```
+/var/www/DAW2_EQUIPO_B_25-26
+│
+├── Backend
+│   └── LaCremalleraAPI
+│       └── public
+│
+└── Frontend
+    └── LaCremallera
+        └── dist
+```
+
+---
+
+# Pruebas
+
+Probar API:
+
+```
+http://44.223.237.222/api/usuarios
+```
+
+Probar Frontend:
+
+```
+http://44.223.237.222
+```
+
+---
+
+# Problemas comunes
+
+## El build del frontend se queda bloqueado
+
+Solución:
+
+```bash
+rm -rf node_modules
+rm package-lock.json
+npm install
+npm run build
+```
+
+También puede ser falta de memoria en la instancia EC2.
+
+---
+
+## La API devuelve error 404
+
+Revisar configuración de Nginx:
+
+```bash
+sudo nano /etc/nginx/sites-available/lacremallera
+```
+
+Revisar logs:
+
+```bash
+sudo tail -f /var/log/nginx/lacremallera_error.log
+```
+
+Verificar que PHP-FPM esté activo:
+
+```bash
+sudo systemctl status php8.3-fpm
+```
+
+---
+
+## Reiniciar servicios
+
+```bash
+sudo systemctl restart nginx
+sudo systemctl restart php8.3-fpm
+```
+
+---
+
+# Autor
+
+Proyecto: **La Cremallera**  
+Despliegue realizado en **AWS EC2 con Ubuntu Server**
 
 © 2025/26 — Proyecto DAW2 — Equipo B — **La Cremallera**
