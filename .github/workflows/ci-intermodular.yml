@@ -1,1 +1,34 @@
+name: CI Proyecto Intermodular Equipo B PHP y JS
 
+on:
+  push:
+    branches: ["develop"] 
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch: 
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest 
+
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Configurar PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+
+      - name: Análisis estático de PHP
+        run: |
+          echo "Buscando errores de sintaxis en los archivos PHP..."
+          find . -name "*.php" -exec php -l {} \;
+
+      - name: Mostrar rama actual
+        run: echo "El workflow se ha ejecutado correctamente en la rama ${{ github.ref }}"
