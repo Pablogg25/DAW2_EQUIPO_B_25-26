@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-import $facturasController from "../../core/TestController/TestFacturasController";
-import $usuariosController from "../../core/TestController/TestUsersController";
+// import $facturasController from "../../core/TestController/TestFacturasController";
+import $facturasController from "../../core/FacturasController";
+// import $usuariosController from "../../core/TestController/TestUsersController";
+import $usersController from "../../core/UsersController";
 
 function FacturasPage() {
   const [facturas, setFacturas] = useState([]);
@@ -13,12 +15,22 @@ function FacturasPage() {
   const cargarDatos = async () => {
     console.log("Cargando datos");
 
-    let datos = await $facturasController.getFacturas();
+    let datos = await $facturasController.getFacturas({});
 
-    setFacturas(datos);
+    if(datos.success){
+      setFacturas(datos.data);
+    }else{
+      alert("Ha surgido un error al procesar su petición");
+    }
+    
 
-    let datosUsuario = await $usuariosController.getUsuarios();
-    setUsuarios(datosUsuario);
+    let datosUsuario = await $usersController.getUsers();
+    if(datosUsuario.success){
+      setUsuarios(datosUsuario.data);
+    }else{
+      alert("Ha surgido un error al procesar su petición");
+    }
+    
   };
 
   const onCreateFactura = () => {
