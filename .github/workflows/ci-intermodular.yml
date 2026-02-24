@@ -1,15 +1,15 @@
-name: CI Proyecto Intermodular Equipo B PHP y JS
+name: CI Proyecto Intermodular Equipo B
 
 on:
   push:
-    branches: ["develop"] 
+    branches: ["**"] 
   pull_request:
-    branches: ["main"]
+    branches: ["main"] 
   workflow_dispatch: 
 
 jobs:
   build-and-test:
-    runs-on: ubuntu-latest 
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout del código
