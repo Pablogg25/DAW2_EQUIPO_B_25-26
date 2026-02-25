@@ -68,20 +68,6 @@ class UsuariosController extends Controller
         ]);
     }
 
-    
-    // public function show($id, Request $request)
-    // {
-    //     $auth = $request->user();
-
-    //     if ($auth->role !== 'admin' && $auth->id != $id) {
-    //         return response()->json([
-    //             'error' => 'No autorizado'
-    //         ], 403);
-    //     }
-
-    //     return Usuarios::findOrFail($id);
-    // }
-
     public function store(Request $request)
     {
         $request->validate([
