@@ -7,13 +7,15 @@ import $usersController from "../../core/UsersController";
 function FacturasPage() {
   const [facturas, setFacturas] = useState([]);
   const [usuarios, setUsuarios] = useState([]);
+  
+  const [busqueda, setBusqueda] = useState(-1);
 
   const navegar = useNavigate();
 
-  const cargarDatos = async () => {
+  const cargarDatos = async (filtro=-1) => {
     console.log("Cargando datos");
 
-    let datos = await $facturasController.getFacturas({});
+    let datos = await $facturasController.getFacturas({usuarioId:filtro});
 
     if(datos.success){
       setFacturas(datos.data);
@@ -30,6 +32,16 @@ function FacturasPage() {
     }
     
   };
+
+  //filtro
+  // -------------------------------------------------------
+  // Buscar por id
+  // -------------------------------------------------------
+  function handleBuscar(e) {
+    const valor = e.target.value;
+    setBusqueda(valor);
+    cargarDatos(valor);
+  }
 
   const onCreateFactura = () => {
     console.log("On create factura");
@@ -80,6 +92,26 @@ function FacturasPage() {
   return (
     <div className="container mt-4 page-fade">
       <h2 className="mb-3">Facturas</h2>
+
+      {/* Buscador */}
+      <div>
+        <div>
+          Buscar por usuarios
+        </div>
+        
+        <select className="form-control mb-3"
+          value={busqueda}
+          onChange={handleBuscar}>
+          <option value={-1}>n/a</option>
+          {
+            usuarios.map((elemento) => {
+              return (
+                <option value={elemento["usuarioId"]}>{elemento["nombre"]}</option>
+              );
+            })
+          }
+        </select>
+      </div>
 
       <button
         className="btn btn-success mb-3"

@@ -22,7 +22,7 @@ function NotificacionesPage() {
   //useContext
   const { usuario } = useContext(AuthContext);
 
-  const cargarDatos = async () => {
+  const cargarDatos = async (filtro = -1) => {
     console.log("Cargando datos");
 
     let datos;
@@ -32,11 +32,11 @@ function NotificacionesPage() {
       datos = await $notificacionesController.getNotificaciones({
         receptorId: usuario.usuarioId,
         remitenteId: usuario.usuarioId,
-        trabajoId:busqueda
+        trabajoId: filtro
       });
     } else {
       console.log("cargando notificaciones admin");
-      datos = await $notificacionesController.getNotificaciones({trabajoId:busqueda});
+      datos = await $notificacionesController.getNotificaciones({ trabajoId: filtro });
     }
 
     if (datos.success) {
@@ -97,7 +97,7 @@ function NotificacionesPage() {
           } else {
             alert(
               "Error, ha surgido un error al procesar su petición.\nCodigo de error: " +
-                result.estado,
+              result.estado,
             );
           }
         }
@@ -111,7 +111,7 @@ function NotificacionesPage() {
 
   function getUsuarioName(usuarioId) {
     if (usuarios) {
-      console.log("Buscando nombre de usuario id: "+usuarioId);
+      console.log("Buscando nombre de usuario id: " + usuarioId);
       let index = usuarios.findIndex((p) => p.usuarioId == usuarioId);
 
       if (index !== -1) {
@@ -136,7 +136,7 @@ function NotificacionesPage() {
         <div>
           Buscar por trabajo
         </div>
-        
+
         <select className="form-control mb-3"
           value={busqueda}
           onChange={handleBuscar}>

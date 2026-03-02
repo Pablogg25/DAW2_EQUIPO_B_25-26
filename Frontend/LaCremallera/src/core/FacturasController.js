@@ -13,10 +13,14 @@ const $facturasController = (function () {
 
         //añadir cada argumento
         for (let arg in params) {
-            if (args != '?') {
-                args += '&';
+
+            if (arg != -1) {
+                if (args != '?') {
+                    args += '&';
+                }
+                args += arg + '=' + params[arg];
             }
-            args += arg + '=' + params[arg];
+
         }
 
         if (args != '?') {
