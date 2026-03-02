@@ -29,9 +29,10 @@ const $facturasController = (function () {
         }
         try {
             const requestBody = {
+                method:"GET",
                 headers: {
                     "Content-type": "application/json; charset=UTF-8",
-                    "Authorization": "Bearer " + authToken,
+                    "Authorization": `Bearer ${authToken}`,
                 },
             };
             console.log("realizando petición a: " + requestUrl);

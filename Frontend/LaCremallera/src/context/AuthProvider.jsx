@@ -6,8 +6,8 @@ function AuthProvider({ children }) {
   const [token, setToken] = useState(null);
 
   function login(userData) {
-    console.log("Auth provider, saving data: ");
-    console.log(userData);
+    // console.log("Auth provider, saving data: ");
+    // console.log(userData);
     setUsuario(userData.user);
     setToken(userData.token)
   }
@@ -18,7 +18,7 @@ function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ usuario, login, logout }}>
+    <AuthContext.Provider value={{ usuario, token, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

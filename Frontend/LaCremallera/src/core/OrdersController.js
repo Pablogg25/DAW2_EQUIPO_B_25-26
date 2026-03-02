@@ -35,14 +35,18 @@ const $ordersController = (function () {
 
         try {
             const requestBody = {
+                method:"GET",
                 headers: {
+                    "Authorization": `Bearer ${authToken}`,
                     "Content-type": "application/json; charset=UTF-8",
-                    "Authorization": "Bearer " + authToken,
                 },
             };
+            console.log(requestBody);
             console.log("Realizando petición a: " + requestUrl);
             const request = await fetch(requestUrl,requestBody);
             const respuesta = await request.json();
+
+            console.log(request);
 
             if (request.status == 200) {
 
