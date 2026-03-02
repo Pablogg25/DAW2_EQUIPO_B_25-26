@@ -82,15 +82,6 @@ function InventaryPage() {
 
       <div className="d-flex gap-2 mb-3">
         <button
-          className="btn btn-secondary btn-sm"
-          onClick={() => navigate(-1)}
-        >
-          Volver
-        </button>
-
-        <button className="btn btn-primary btn-sm">Realizar pedido</button>
-
-        <button
           className="btn btn-success btn-sm"
           onClick={() => navigate("/inventory/new")}
         >

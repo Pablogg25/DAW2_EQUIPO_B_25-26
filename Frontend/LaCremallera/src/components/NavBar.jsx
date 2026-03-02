@@ -1,9 +1,34 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import { useContext, useState } from "react";
+import { AuthContext } from "../context/AuthContext";
 
 function NavBar() {
+  const { usuario, logout } = useContext(AuthContext);
+  const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const handlePerfil = () => {
+    if (!usuario) return;
+
+    // Igual que en UsersPage: usas usuarioId, no id
+    const id = usuario.usuarioId;
+
+    if (id) {
+      setOpen(false);
+      navigate("/users/" + id);
+    } else {
+      console.log("El usuario no tiene usuarioId:", usuario);
+      alert("No se ha podido obtener el id del usuario");
+    }
+  };
+
+  const handleLogout = () => {
+    setOpen(false);
+    logout();
+  };
+
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark px-3">
-      {/* ICONO A LA IZQUIERDA */}
       <NavLink className="navbar-brand d-flex align-items-center" to="/">
         <img
           src="/logo_circular_full.png"
@@ -15,7 +40,6 @@ function NavBar() {
         La Cremallera
       </NavLink>
 
-      {/* BOTÓN HAMBURGUESA */}
       <button
         className="navbar-toggler"
         type="button"
@@ -25,7 +49,6 @@ function NavBar() {
         <span className="navbar-toggler-icon"></span>
       </button>
 
-      {/* MENÚ */}
       <div className="collapse navbar-collapse" id="mainNavbar">
         <ul className="navbar-nav ms-auto">
           <li className="nav-item">
@@ -64,12 +87,40 @@ function NavBar() {
             </NavLink>
           </li>
 
-          {/* NUEVO: CALENDARIO */}
           <li className="nav-item">
             <NavLink to="/calendar" className="nav-link">
               Calendario
             </NavLink>
           </li>
+
+          {usuario && (
+            <li className="nav-item ms-3 position-relative">
+              <button
+                className="btn btn-secondary"
+                onClick={() => setOpen(!open)}
+              >
+                {usuario.nombre || usuario.username || "Usuario"}
+              </button>
+
+              {open && (
+                <div
+                  className="position-absolute bg-white rounded shadow p-2"
+                  style={{ right: 0, top: "100%", minWidth: "150px" }}
+                >
+                  <button className="dropdown-item" onClick={handlePerfil}>
+                    Perfil
+                  </button>
+
+                  <button
+                    className="dropdown-item text-danger"
+                    onClick={handleLogout}
+                  >
+                    Cerrar sesión
+                  </button>
+                </div>
+              )}
+            </li>
+          )}
         </ul>
       </div>
     </nav>
