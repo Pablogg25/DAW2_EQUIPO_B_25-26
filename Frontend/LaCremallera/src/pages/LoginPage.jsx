@@ -4,7 +4,7 @@ import $usersController from "../core/UsersController";
 import { AuthContext } from "../context/AuthContext";
 
 function LoginPage() {
-  const [userCred, setUserCred] = useState({ username: "", password: "" });
+  const [userCred, setUserCred] = useState({ login: "", password: "" });
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
 
@@ -14,24 +14,24 @@ function LoginPage() {
     const response = await $usersController.loginUser(userCred);
 
     if (response.success) {
-      if (response.data === true) {
-        // Obtener datos del usuario
-        const userData = await $usersController.getUserByUsername(
-          userCred.username,
-        );
+      // Obtener datos del usuario
+      const userData = response;
+      // console.log(userData);
 
-        if (userData.success) {
-          login(userData.data); // Guardar usuario en contexto
-          alert("Login correcto");
-          navigate("/");
-        } else {
-          alert("No se pudo obtener la información del usuario");
-        }
+      if (userData.success) {
+        login(userData); // Guardar usuario en contexto
+        alert("Login correcto");
+        navigate("/");
       } else {
-        alert("Credenciales incorrectas");
+        alert("No se pudo obtener la información del usuario");
       }
     } else {
-      alert("Error en login. Código: " + response.status);
+      if (response.status == 401) {
+        alert("Credenciales incorrectas");
+      } else {
+        alert("Error en login. Código: " + response.status);
+      }
+
     }
   };
 
@@ -50,7 +50,7 @@ function LoginPage() {
             <label className="form-label">Usuario</label>
             <input
               type="text"
-              name="username"
+              name="login"
               onChange={handleOnChange}
               className="form-control"
             />

@@ -118,7 +118,7 @@ const $usersController = (function () {
       const respuesta = await request.json();
 
       if (request.status === 200) {
-        return { data: respuesta.valid, status: 200, success: true };
+        return { data: respuesta.data, status: 200, success: true };
       }
 
       return {
