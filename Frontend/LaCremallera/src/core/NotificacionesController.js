@@ -12,25 +12,29 @@ const $notificacionesController = (function () {
         //añadir argumentos
         console.log(params);
 
-        let args='?';
+        let args = '?';
 
         //añadir cada argumento
-        for(let arg in params){
-            if(args!='?'){
-                args+='&';
+        for (let arg in params) {
+
+            if ( params[arg]!==-1) {
+                if (args != '?') {
+                    args += '&';
+                }
+                args += arg + '=' + params[arg];
             }
-            args+= arg+'='+params[arg];
+
         }
 
-        if(args!='?'){
+        if (args != '?') {
             //si tiene argumentos
-            requestUrl+=args;
+            requestUrl += args;
         }
 
         try {
             console.log("Realizando petición a: " + requestUrl);
             const request = await fetch(requestUrl);
-                const respuesta = await request.json();
+            const respuesta = await request.json();
 
             if (request.status == 200) {
 
@@ -40,7 +44,7 @@ const $notificacionesController = (function () {
                 return { "data": respuesta.data, "status": 200, "success": true };
             }
 
-            if(request.status==404){
+            if (request.status == 404) {
 
                 console.log("OrdersController respuesta NOT FOUND 404");
                 // console.log(respuesta);
@@ -70,7 +74,7 @@ const $notificacionesController = (function () {
             console.log("Realizando petición a: " + requestUrl);
             const request = await fetch(requestUrl);
 
-                const respuesta = await request.json();
+            const respuesta = await request.json();
             if (request.status == 200) {
 
                 console.log("notificacionesController respuesta OK 200");
@@ -79,7 +83,7 @@ const $notificacionesController = (function () {
                 return { "data": respuesta.data, "status": 200, "success": true };
             }
 
-            if(request.status==404){
+            if (request.status == 404) {
 
                 console.log("OrdersController respuesta NOT FOUND 404");
                 // console.log(respuesta);
@@ -197,14 +201,14 @@ const $notificacionesController = (function () {
             }
             if (respuesta.status == 404) {
                 console.log("Respuesta 404: NOT FOUND");
-                return { estado: 404, data: datos.message, detalles:datos.detalle, success: false };
+                return { estado: 404, data: datos.message, detalles: datos.detalle, success: false };
             }
-            if(respuesta.status==409){
+            if (respuesta.status == 409) {
                 console.log("respuesta 409 CONSTRAINT");
-                return { estado: 409, data: datos.message, detalles:datos.detalle, success: false };
+                return { estado: 409, data: datos.message, detalles: datos.detalle, success: false };
 
             }
-            return { estado: respuesta.status, data: datos.message, detalles:datos.detalle, success: false };
+            return { estado: respuesta.status, data: datos.message, detalles: datos.detalle, success: false };
 
         } catch (e) {
             console.log("$negocioApi: Resultado error");

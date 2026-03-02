@@ -9,9 +9,9 @@ const $usersController = (function () {
 
     let requestUrl = apiController.getBaseUrl() + "/usuarios";
     console.log(params);
-    if (params["username"]) {
-      requestUrl += "?username=" + params["username"];
-    }
+    if(params['username'] && params['username'].trim() !== ""){
+      requestUrl+='?username='+params['username'];
+    } 
     try {
       console.log("Realizando petición a: " + requestUrl);
       const request = await fetch(requestUrl);

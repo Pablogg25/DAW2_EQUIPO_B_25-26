@@ -5,22 +5,39 @@ import $usersController from "../../core/UsersController";
 
 function UsersPage() {
   const [users, setUsers] = useState([]);
+  const [busqueda, setBusqueda] = useState("");
 
   const navegar = useNavigate();
 
-  const cargarDatos = async () => {
+  const cargarDatos = async (nombre = "") => {
     console.log("Cargando datos");
 
-    let datos = await $usersController.getUsers();
+    let datos = await $usersController.getUsers({'username':nombre});
 
     if (datos.success) {
       console.log("DATOS RECIVIDOS");
       setUsers(datos.data);
     } else {
-      console.log("ERROR: un error inesperado surgió al cargar datos");
-      alert("Ha surgido un error al cargar datos. " + datos.data);
+      if(datos.status!=404){
+        console.log("ERROR: un error inesperado surgió al cargar datos");
+        alert("Ha surgido un error al cargar datos. " + datos.data);
+      }
+      
     }
   };
+
+  // -------------------------------------------------------
+  // Buscar por nombre
+  // -------------------------------------------------------
+  function handleBuscar(e) {
+    const valor = e.target.value;
+    setBusqueda(valor);
+    // cargarDatos(valor);
+  }
+
+  function startBusqueda(){
+    cargarDatos(busqueda);
+  }
 
   const onCreateUser = () => {
     console.log("On create user");
@@ -66,6 +83,17 @@ function UsersPage() {
       <h2 className="mb-2">Usuarios</h2>
       <p className="text-muted mb-3">Lista para realizar CRUD sobre usuarios</p>
 
+      {/* Buscador */}
+      <input
+        type="text"
+        className="form-control mb-3"
+        placeholder="Buscar usuario por nombre..."
+        value={busqueda}
+        onChange={handleBuscar}
+      />
+      <button className="btn btn-success mb-3" onClick={()=>{startBusqueda();}}>
+        Aplicar filtro
+      </button>
       <button className="btn btn-success mb-3" onClick={() => onCreateUser()}>
         Crear Usuario
       </button>

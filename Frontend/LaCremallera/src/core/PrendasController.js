@@ -9,7 +9,7 @@ const $prendasController = (function () {
 
         let requestUrl = apiController.getBaseUrl() + "/prendas";
 
-        if(params['usuarioId']){
+        if(params['usuarioId']&&params['usuarioId']!=-1){
             requestUrl+='?usuarioId='+params['usuarioId'];
         }
 

@@ -7,10 +7,11 @@ import $usersController from "../../core/UsersController";
 function PrendasPage() {
   const [prendas, setPrendas] = useState([]);
   const [usuarios, setUsuarios] = useState([]);
+  const [busqueda, setBusqueda] = useState(-1);
 
   const navegar = useNavigate();
 
-  const cargarDatos = async () => {
+  const cargarDatos = async (userId = -1) => {
     console.log("Cargando datos");
 
     //obtener datos de controlador
@@ -22,11 +23,33 @@ function PrendasPage() {
       setUsuarios(datosUsuario.data);
     }
     console.log("Cargando datos de prendas");
-    let datos = await $prendasController.getPrendas([]);
-    setPrendas(datos.data);
+    let datos = await $prendasController.getPrendas({ "usuarioId": userId });
+
+    if(datos.success){
+      console.log("Datos recividos");
+      setPrendas(datos.data);
+    }else{
+      if(datos.status==404){
+        setPrendas([]);
+      }else{
+        console.log("ERROR: un error inesperado surgió al cargar datos");
+        alert("Ha surgido un error al cargar datos. " + datos.status);
+      }
+      
+    }
+    
 
     //si success guardar, sino dar aviso
   };
+
+  // -------------------------------------------------------
+  // Buscar por id
+  // -------------------------------------------------------
+  function handleBuscar(e) {
+    const valor = e.target.value;
+    setBusqueda(valor);
+    cargarDatos(valor);
+  }
 
   const onCreatePrenda = () => {
     console.log("On create Prenda");
@@ -62,7 +85,7 @@ function PrendasPage() {
           } else {
             alert(
               "Error, ha surgido un error al procesar su petición.\nCodigo de error: " +
-                result.estado,
+              result.estado,
             );
           }
         }
@@ -86,6 +109,27 @@ function PrendasPage() {
     <div className="container mt-4 page-fade">
       <h2 className="mb-2">Prendas</h2>
       <p className="text-muted mb-3">Lista para realizar CRUD sobre prendas</p>
+
+      {/* Buscador */}
+      <div>
+        <div>
+          Buscar por usuarios
+        </div>
+        
+        <select className="form-control mb-3"
+          value={busqueda}
+          onChange={handleBuscar}>
+          <option value={-1}>n/a</option>
+          {
+            usuarios.map((elemento) => {
+              return (
+                <option value={elemento["usuarioId"]}>{elemento["nombre"]}</option>
+              );
+            })
+          }
+        </select>
+      </div>
+
 
       <button className="btn btn-success mb-3" onClick={() => onCreatePrenda()}>
         Crear prenda

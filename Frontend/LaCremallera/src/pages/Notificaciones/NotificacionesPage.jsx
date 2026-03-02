@@ -15,12 +15,14 @@ function NotificacionesPage() {
   //datos usuario
   //datos trabajo
 
+  const [busqueda, setBusqueda] = useState(-1);
+
   const navegar = useNavigate();
 
   //useContext
   const { usuario } = useContext(AuthContext);
 
-  const cargarDatos = async () => {
+  const cargarDatos = async (filtro = -1) => {
     console.log("Cargando datos");
 
     let datos;
@@ -30,16 +32,23 @@ function NotificacionesPage() {
       datos = await $notificacionesController.getNotificaciones({
         receptorId: usuario.usuarioId,
         remitenteId: usuario.usuarioId,
+        trabajoId: filtro
       });
     } else {
       console.log("cargando notificaciones admin");
-      datos = await $notificacionesController.getNotificaciones([]);
+      datos = await $notificacionesController.getNotificaciones({ trabajoId: filtro });
     }
 
     if (datos.success) {
       setNotificaciones(datos.data);
     } else {
-      alert("Ha surgido un error al cargar los datos de notificaciones");
+      if(datos.status==404){
+        setNotificaciones([]);
+      }else{
+        alert("Ha surgido un error al cargar los datos de notificaciones");
+        setNotificaciones([]);
+      }
+      
     }
 
     if (usuarios.length == 0) {
@@ -55,6 +64,16 @@ function NotificacionesPage() {
       setTrabajos(datosTrabajo.data);
     }
   };
+
+  //filtro
+  // -------------------------------------------------------
+  // Buscar por id
+  // -------------------------------------------------------
+  function handleBuscar(e) {
+    const valor = e.target.value;
+    setBusqueda(valor);
+    cargarDatos(valor);
+  }
 
   const onCreateNotificacion = () => {
     console.log("On create notificacion");
@@ -84,7 +103,7 @@ function NotificacionesPage() {
           } else {
             alert(
               "Error, ha surgido un error al procesar su petición.\nCodigo de error: " +
-                result.estado,
+              result.estado,
             );
           }
         }
@@ -98,7 +117,7 @@ function NotificacionesPage() {
 
   function getUsuarioName(usuarioId) {
     if (usuarios) {
-      console.log("Buscando nombre de usuario id: "+usuarioId);
+      console.log("Buscando nombre de usuario id: " + usuarioId);
       let index = usuarios.findIndex((p) => p.usuarioId == usuarioId);
 
       if (index !== -1) {
@@ -117,6 +136,26 @@ function NotificacionesPage() {
       <p className="text-muted mb-3">
         Lista para realizar CRUD sobre notificaciones
       </p>
+
+      {/* Buscador */}
+      <div>
+        <div>
+          Buscar por trabajo
+        </div>
+
+        <select className="form-control mb-3"
+          value={busqueda}
+          onChange={handleBuscar}>
+          <option value={-1}>n/a</option>
+          {
+            trabajos.map((elemento) => {
+              return (
+                <option value={elemento["trabajoId"]}>{elemento["descripcion"]}</option>
+              );
+            })
+          }
+        </select>
+      </div>
 
       <button
         className="btn btn-success mb-3"
