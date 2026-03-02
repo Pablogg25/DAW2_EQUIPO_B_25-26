@@ -42,7 +42,13 @@ function NotificacionesPage() {
     if (datos.success) {
       setNotificaciones(datos.data);
     } else {
-      alert("Ha surgido un error al cargar los datos de notificaciones");
+      if(datos.status==404){
+        setNotificaciones([]);
+      }else{
+        alert("Ha surgido un error al cargar los datos de notificaciones");
+        setNotificaciones([]);
+      }
+      
     }
 
     if (usuarios.length == 0) {

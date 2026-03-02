@@ -24,7 +24,20 @@ function PrendasPage() {
     }
     console.log("Cargando datos de prendas");
     let datos = await $prendasController.getPrendas({ "usuarioId": userId });
-    setPrendas(datos.data);
+
+    if(datos.success){
+      console.log("Datos recividos");
+      setPrendas(datos.data);
+    }else{
+      if(datos.status==404){
+        setPrendas([]);
+      }else{
+        console.log("ERROR: un error inesperado surgió al cargar datos");
+        alert("Ha surgido un error al cargar datos. " + datos.status);
+      }
+      
+    }
+    
 
     //si success guardar, sino dar aviso
   };

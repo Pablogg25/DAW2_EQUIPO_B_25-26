@@ -18,8 +18,11 @@ function UsersPage() {
       console.log("DATOS RECIVIDOS");
       setUsers(datos.data);
     } else {
-      console.log("ERROR: un error inesperado surgió al cargar datos");
-      alert("Ha surgido un error al cargar datos. " + datos.data);
+      if(datos.status!=404){
+        console.log("ERROR: un error inesperado surgió al cargar datos");
+        alert("Ha surgido un error al cargar datos. " + datos.data);
+      }
+      
     }
   };
 
@@ -29,7 +32,11 @@ function UsersPage() {
   function handleBuscar(e) {
     const valor = e.target.value;
     setBusqueda(valor);
-    cargarDatos(valor);
+    // cargarDatos(valor);
+  }
+
+  function startBusqueda(){
+    cargarDatos(busqueda);
   }
 
   const onCreateUser = () => {
@@ -84,6 +91,9 @@ function UsersPage() {
         value={busqueda}
         onChange={handleBuscar}
       />
+      <button className="btn btn-success mb-3" onClick={()=>{startBusqueda();}}>
+        Aplicar filtro
+      </button>
       <button className="btn btn-success mb-3" onClick={() => onCreateUser()}>
         Crear Usuario
       </button>

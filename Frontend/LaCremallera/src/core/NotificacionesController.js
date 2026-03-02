@@ -17,7 +17,7 @@ const $notificacionesController = (function () {
         //añadir cada argumento
         for (let arg in params) {
 
-            if (arg != -1) {
+            if ( params[arg]!==-1) {
                 if (args != '?') {
                     args += '&';
                 }

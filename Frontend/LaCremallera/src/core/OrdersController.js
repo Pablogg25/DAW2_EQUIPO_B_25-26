@@ -17,7 +17,8 @@ const $ordersController = (function () {
         //añadir cada argumento
         for (let arg in params) {
 
-            if (arg != "" && arg != -1) {
+            //params.nombre.trim() !== ""
+            if (params[arg].trim().length !== 0 && params[arg].trim() !== "-1") {
                 //añade un caracter de adición si ya hay otros argumentos
                 if (args != '?') {
                     args += '&';

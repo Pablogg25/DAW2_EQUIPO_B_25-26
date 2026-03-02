@@ -20,7 +20,11 @@ function FacturasPage() {
     if(datos.success){
       setFacturas(datos.data);
     }else{
-      alert("Ha surgido un error al procesar su petición");
+      if(datos.status!=404){
+        alert("Ha surgido un error al procesar su petición, "+datos.status);
+      }
+      setFacturas([]);
+      
     }
     
 
