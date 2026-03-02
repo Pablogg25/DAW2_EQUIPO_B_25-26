@@ -15,6 +15,8 @@ function NotificacionesPage() {
   //datos usuario
   //datos trabajo
 
+  const [busqueda, setBusqueda] = useState(-1);
+
   const navegar = useNavigate();
 
   //useContext
@@ -30,10 +32,11 @@ function NotificacionesPage() {
       datos = await $notificacionesController.getNotificaciones({
         receptorId: usuario.usuarioId,
         remitenteId: usuario.usuarioId,
+        trabajoId:busqueda
       });
     } else {
       console.log("cargando notificaciones admin");
-      datos = await $notificacionesController.getNotificaciones([]);
+      datos = await $notificacionesController.getNotificaciones({trabajoId:busqueda});
     }
 
     if (datos.success) {
@@ -55,6 +58,16 @@ function NotificacionesPage() {
       setTrabajos(datosTrabajo.data);
     }
   };
+
+  //filtro
+  // -------------------------------------------------------
+  // Buscar por id
+  // -------------------------------------------------------
+  function handleBuscar(e) {
+    const valor = e.target.value;
+    setBusqueda(valor);
+    cargarDatos(valor);
+  }
 
   const onCreateNotificacion = () => {
     console.log("On create notificacion");
@@ -117,6 +130,26 @@ function NotificacionesPage() {
       <p className="text-muted mb-3">
         Lista para realizar CRUD sobre notificaciones
       </p>
+
+      {/* Buscador */}
+      <div>
+        <div>
+          Buscar por trabajo
+        </div>
+        
+        <select className="form-control mb-3"
+          value={busqueda}
+          onChange={handleBuscar}>
+          <option value={-1}>n/a</option>
+          {
+            trabajos.map((elemento) => {
+              return (
+                <option value={elemento["trabajoId"]}>{elemento["descripcion"]}</option>
+              );
+            })
+          }
+        </select>
+      </div>
 
       <button
         className="btn btn-success mb-3"
