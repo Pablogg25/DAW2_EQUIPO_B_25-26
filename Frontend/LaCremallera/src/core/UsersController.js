@@ -9,7 +9,7 @@ const $usersController = (function () {
 
     let requestUrl = apiController.getBaseUrl() + "/usuarios";
     console.log(params);
-    if(params['username']){
+    if(params['username'] && params['username'].trim() !== ""){
       requestUrl+='?username='+params['username'];
     }
     try {
