@@ -11,19 +11,25 @@ function OrdersPage() {
 
   const [usuariosData, setUsuarioData] = useState([]);
   const [prendasData, setPrendasData] = useState([]);
+  
+  const [busqueda, setBusqueda] = useState({
+    estado:"",
+    prendaId:-1
+  });
 
   const navegar = useNavigate();
   const { usuario } = useContext(AuthContext);
 
-  const cargarDatos = async () => {
+  const cargarDatos = async (filtro={}) => {
     let datos;
 
     if (usuario.rol != "admin") {
       datos = await $ordersController.getOrders({
         empleadoId: usuario.usuarioId,
+        ...filtro
       });
     } else {
-      datos = await $ordersController.getOrders();
+      datos = await $ordersController.getOrders(filtro);
     }
 
     if (datos.success) {
@@ -47,6 +53,24 @@ function OrdersPage() {
       alert("Ha surgido un error al cargar datos. Compruebe logs.");
     }
   };
+
+  //manejar busqueda
+  // -------------------------------------------------------
+  // Buscar por id
+  // -------------------------------------------------------
+  function handleBuscarEstado(e) {
+    const valor = e.target.value;
+    let actualizar={...busqueda,["estado"]:valor}
+    setBusqueda(actualizar);
+    cargarDatos(actualizar);
+  }
+
+  function handleBuscarPrenda(e) {
+    const valor = e.target.value;
+    let actualizar={...busqueda,["prendaId"]:valor}
+    setBusqueda(actualizar);
+    cargarDatos(actualizar);
+  }
 
   const onCreateOrder = () => {
     console.log("on create order");
@@ -110,6 +134,44 @@ function OrdersPage() {
   return (
     <div className="container mt-4 page-fade">
       <h2 className="mb-3">Trabajos</h2>
+
+      {/* Buscador */}
+      <div>
+        <div>
+          Buscar por estado
+        </div>
+        
+        <select className="form-control mb-3"
+          value={busqueda["estado"]}
+          onChange={handleBuscarEstado}>
+          <option value={""}>n/a</option>
+          <option value={"pendiente"}>Pendiente</option>
+          <option value={"en_proceso"}>En proceso</option>
+          <option value={"listo"}>Listo</option>
+          <option value={"entregado"}>Entregado</option>
+          
+        </select>
+      </div>
+
+      {/* Buscador */}
+      <div>
+        <div>
+          Buscar por prenda
+        </div>
+        
+        <select className="form-control mb-3"
+          value={busqueda["prendaId"]}
+          onChange={handleBuscarPrenda}>
+          <option value={-1}>n/a</option>
+          {
+            prendasData.map((elemento) => {
+              return (
+                <option value={elemento["prendaId"]}>{elemento["tipo"]} - {elemento["descripcion"]}</option>
+              );
+            })
+          }
+        </select>
+      </div>
 
       <button className="btn btn-success mb-3" onClick={() => onCreateOrder()}>
         Crear trabajo

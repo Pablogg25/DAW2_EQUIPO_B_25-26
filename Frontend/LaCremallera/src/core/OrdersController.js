@@ -12,19 +12,24 @@ const $ordersController = (function () {
 
         //añadir argumentos
         console.log(params);
-        let args='?';
+        let args = '?';
 
         //añadir cada argumento
-        for(let arg in params){
-            if(args!='?'){
-                args+='&';
+        for (let arg in params) {
+
+            if (arg != "" && arg != -1) {
+                //añade un caracter de adición si ya hay otros argumentos
+                if (args != '?') {
+                    args += '&';
+                }
+                args += arg + '=' + params[arg];
             }
-            args+= arg+'='+params[arg];
+
         }
 
-        if(args!='?'){
+        if (args != '?') {
             //si tiene argumentos
-            requestUrl+=args;
+            requestUrl += args;
         }
 
         try {
@@ -41,7 +46,7 @@ const $ordersController = (function () {
             }
 
             //else error
-            if(request.status==404){
+            if (request.status == 404) {
                 console.log("Orders controller respuesta NOT FOUND 404")
             }
             console.log("error al obtener datos");
@@ -194,7 +199,7 @@ const $ordersController = (function () {
                 console.log("Respuesta 404: NOT FOUND");
                 // return { estado: 404, data: datos, success: false };
             }
-            if(respuesta.status==409){
+            if (respuesta.status == 409) {
                 console.log("Respuesta 409 CONSTRAINT");
             }
             return { estado: respuesta.status, data: datos.message, success: false };
@@ -206,14 +211,14 @@ const $ordersController = (function () {
         }
     }
 
-    async function getConsumos(trabajoId){
+    async function getConsumos(trabajoId) {
         console.log("ordersController: getOrders");
 
-        let requestUrl = apiController.getBaseUrl() + '/trabajos/'+trabajoId+'/consumos';
+        let requestUrl = apiController.getBaseUrl() + '/trabajos/' + trabajoId + '/consumos';
 
         try {
             console.log("Realizando petición a: " + requestUrl);
-            
+
             const request = await fetch(requestUrl);
             const respuesta = await request.json();
 
@@ -226,7 +231,7 @@ const $ordersController = (function () {
             }
 
             //else error
-            if(request.status==404){
+            if (request.status == 404) {
                 console.log("Orders controller respuesta NOT FOUND 404")
             }
             console.log("error al obtener datos");
@@ -241,15 +246,15 @@ const $ordersController = (function () {
         }
     }
 
-    async function asociarConsumo(trabajoId,consumoObj){
+    async function asociarConsumo(trabajoId, consumoObj) {
         //consumo: {itemid,cantidad_usada}
         console.log("ordersController: getOrders");
 
-        let requestUrl = apiController.getBaseUrl() + '/trabajos/'+trabajoId+'/consumos';
+        let requestUrl = apiController.getBaseUrl() + '/trabajos/' + trabajoId + '/consumos';
 
         try {
             console.log("Realizando petición a: " + requestUrl);
-            
+
             const requestBody = {
                 method: "POST",
                 body: JSON.stringify(consumoObj),
@@ -257,7 +262,7 @@ const $ordersController = (function () {
                     "Content-type": "application/json; charset=UTF-8",
                 },
             }
-            const request = await fetch(requestUrl,requestBody);
+            const request = await fetch(requestUrl, requestBody);
             const respuesta = await request.json();
 
             if (request.status == 201) {
@@ -269,7 +274,7 @@ const $ordersController = (function () {
             }
 
             //else error
-            if(request.status==404){
+            if (request.status == 404) {
                 console.log("Orders controller respuesta NOT FOUND 404")
             }
             console.log("error al obtener datos");
