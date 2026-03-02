@@ -180,7 +180,11 @@ const $inventarioController = (function () {
     const requestUrl = apiController.getBaseUrl() + `/inventario/${id}`;
 
     try {
-      const request = await fetch(requestUrl);
+      const request = await fetch(requestUrl, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+      });
+
       const respuesta = await request.json();
 
       if (request.ok) {
