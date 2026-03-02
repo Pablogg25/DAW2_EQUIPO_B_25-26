@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import $ordersController from "../../core/OrdersController";
 import $usersController from "../../core/UsersController";
 import $prendasController from "../../core/PrendasController";
-// import { AuthContext } from "../../context/AuthProvider";
 import { AuthContext } from "../../context/AuthContext";
 
 function OrdersPage() {

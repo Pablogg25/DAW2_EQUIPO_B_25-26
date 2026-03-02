@@ -1,11 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-// import $facturasController from "../../core/TestController/TestFacturasController";
 import $facturasController from "../../core/FacturasController";
-// import $usuariosController from "../../core/TestController/TestUsersController";
 import $usersController from "../../core/UsersController";
-// import $ordersController from "../../core/TestController/TestOrdersController";
 import $ordersController from "../../core/OrdersController";
 
 function FacturaFormPage() {

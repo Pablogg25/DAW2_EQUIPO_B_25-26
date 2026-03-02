@@ -1,9 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-// import $facturasController from "../../core/TestController/TestFacturasController";
 import $facturasController from "../../core/FacturasController";
-// import $usuariosController from "../../core/TestController/TestUsersController";
 import $usersController from "../../core/UsersController";
 
 function FacturasPage() {

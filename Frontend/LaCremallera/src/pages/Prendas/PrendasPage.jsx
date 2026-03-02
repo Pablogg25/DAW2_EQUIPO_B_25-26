@@ -1,9 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-// import $prendasController from "../../core/TestController/TestPrendasController";
 import $prendasController from "../../core/PrendasController";
-// import $usuariosController from "../../core/TestController/TestUsersController";
 import $usersController from "../../core/UsersController";
 
 function PrendasPage() {

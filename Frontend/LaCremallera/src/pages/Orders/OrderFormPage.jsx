@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import $ordersController from "../../core/OrdersController";
-// import $usuariosController from "../../core/TestController/TestUsersController";
 import $usersController from "../../core/UsersController";
 import $prendasController from "../../core/PrendasController";
 import $inventarioController from "../../core/InventoryController";
