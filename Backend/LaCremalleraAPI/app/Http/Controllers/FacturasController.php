@@ -3,262 +3,330 @@
 namespace App\Http\Controllers;
 
 use App\Models\Facturas;
-use App\Models\Trabajos;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 
 class FacturasController extends Controller
 {
+
     public function index(Request $request)
     {
+        try {
 
-        $query = Facturas::with('trabajos');
+            $user = $request->user();
 
-        if ($request->has('trabajoId')) {
-            $query->whereHas('trabajos', function ($q) use ($request) {
-                $q->where('trabajoId', $request->trabajoId);
-            });
+            $query = Facturas::with('trabajos');
+
+            if ($request->has('trabajoId')) {
+                $query->whereHas('trabajos', function ($q) use ($request) {
+                    $q->where('trabajoId', $request->trabajoId);
+                });
+            }
+
+            if ($request->has('usuarioId')) {
+                $query->where('usuarioId', $request->usuarioId);
+            }
+
+            // cliente solo ve las suyas
+            if ($user->rol === 'cliente') {
+                $query->where('usuarioId', $user->usuarioId);
+            }
+
+            $facturas = $query->get();
+
+            if ($facturas->isEmpty()) {
+                return $this->error(
+                    'No se encontraron facturas',
+                    404
+                );
+            }
+
+            return $this->success($facturas);
+        } catch (\Throwable $e) {
+
+            return $this->error(
+                'Error listar facturas',
+                500,
+                $e->getMessage()
+            );
         }
-
-        if ($request->has('usuarioId')) {
-            $query->where('usuarioId', $request->usuarioId);
-        }
-
-        $facturas = $query->get();
-
-        if (($request->has('usuarioId') || $request->has('trabajoId'))
-            && $facturas->isEmpty()
-        ) {
-            return response()->json([
-                'success' => false,
-                'message' => 'No se encontraron facturas con los filtros aplicados.'
-            ], 404);
-        }
-
-        return response()->json([
-            'success' => true,
-            'data' => $facturas
-        ]);
     }
 
-    public function show($id)
+
+    public function show(Request $request, $id)
     {
-        $factura = Facturas::with('trabajos')->find($id);
+        try {
 
-        if (!$factura) {
+            $user = $request->user();
 
-            return response()->json([
-                'success' => false,
-                'message' => 'Factura no encontrada.'
-            ], 404);
+            $factura = Facturas::with('trabajos')->find($id);
+
+            if (!$factura) {
+                return $this->error(
+                    'Factura no encontrada',
+                    404
+                );
+            }
+
+            if (
+                $user->rol === 'cliente' &&
+                $factura->usuarioId != $user->usuarioId
+            ) {
+                return $this->error(
+                    'No autorizado',
+                    403
+                );
+            }
+
+            return $this->success($factura);
+        } catch (\Throwable $e) {
+
+            return $this->error(
+                'Error obtener factura',
+                500,
+                $e->getMessage()
+            );
         }
-
-        return response()->json([
-            'success' => true,
-            'data' => $factura
-        ]);
     }
+
 
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'usuarioId' => 'required|integer|min:1',
-            'fecha' => 'required|date',
-        ]);
-
         try {
+
+            $user = $request->user();
+
+            if (!in_array($user->rol, ['admin', 'empleado'])) {
+                return $this->error(
+                    'No autorizado',
+                    403
+                );
+            }
+
+            $data = $request->validate([
+                'usuarioId' => 'required|integer|min:1',
+                'fecha' => 'required|date',
+            ]);
 
             $factura = Facturas::create($data);
 
-            return response()->json([
-                'success' => true,
-                'data' => $factura
-            ], 201);
-        } catch (\Exception $e) {
+            return $this->success(
+                $factura,
+                'Factura creada',
+                201
+            );
+        } catch (\Throwable $e) {
 
-            return response()->json([
-                'success' => false,
-                'message' => 'Error al crear la factura.',
-                'error' => $e->getMessage()
-            ], 500);
+            return $this->error(
+                'Error crear factura',
+                500,
+                $e->getMessage()
+            );
         }
     }
+
 
     public function update(Request $request, $id)
     {
-        $factura = Facturas::findOrFail($id);
-
-        if (!$factura) {
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Factura no encontrado'
-            ], 404);
-        }
-
-        $data = $request->validate([
-            'usuarioId' => 'required|integer|min:1',
-            'fecha' => 'required|date',
-            'pagado' => 'nullable|boolean',
-            'total_calculado' => 'nullable|numeric',
-        ]);
-
         try {
+
+            $user = $request->user();
+
+            if (!in_array($user->rol, ['admin', 'empleado'])) {
+                return $this->error(
+                    'No autorizado',
+                    403
+                );
+            }
+
+            $factura = Facturas::find($id);
+
+            if (!$factura) {
+                return $this->error(
+                    'Factura no encontrada',
+                    404
+                );
+            }
+
+            $data = $request->validate([
+                'usuarioId' => 'required|integer',
+                'fecha' => 'required|date',
+                'pagado' => 'nullable|boolean',
+                'total_calculado' => 'nullable|numeric',
+            ]);
+
             $factura->update($data);
 
-            return response()->json([
-                'success' => true,
-                'data' => $factura
-            ]);
-        } catch (\Exception $e) {
+            return $this->success(
+                $factura,
+                'Factura actualizada'
+            );
+        } catch (\Throwable $e) {
 
-            return response()->json([
-                'success' => false,
-                'message' => 'Ocurrió un error al actualizar la Factura',
-                'detalle' => $e->getMessage()
-            ], 500);
+            return $this->error(
+                'Error actualizar factura',
+                500,
+                $e->getMessage()
+            );
         }
     }
 
-    public function destroy($id)
+
+    public function destroy(Request $request, $id)
     {
-
-        $factura = Facturas::findOrFail($id);
-
-        if (!$factura) {
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Inventario no encontrado'
-            ], 404);
-        }
-
         try {
+
+            $user = $request->user();
+
+            if ($user->rol !== 'admin') {
+                return $this->error(
+                    'Solo admin',
+                    403
+                );
+            }
+
+            $factura = Facturas::find($id);
+
+            if (!$factura) {
+                return $this->error(
+                    'Factura no encontrada',
+                    404
+                );
+            }
+
             $factura->trabajos()->detach();
             $factura->delete();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Factura eliminada correctamente.'
-            ]);
+            return $this->success(
+                null,
+                'Factura eliminada'
+            );
         } catch (QueryException $e) {
 
-            return response()->json([
-                'success' => false,
-                'message' => 'No se puede eliminar la factura esta asociada.',
-                'detalle' => $e->getMessage()
-            ], 409);
-        } catch (\Exception $e) {
+            return $this->error(
+                'Conflicto BD',
+                409,
+                $e->getMessage()
+            );
+        } catch (\Throwable $e) {
 
-            return response()->json([
-                'success' => false,
-                'message' => 'Ocurrió un error al eliminar la Factura',
-                'detalle' => $e->getMessage()
-            ], 500);
+            return $this->error(
+                'Error eliminar factura',
+                500,
+                $e->getMessage()
+            );
         }
     }
+
 
     public function asociarTrabajo(Request $request, $facturaId)
     {
         try {
+
+            $user = $request->user();
+
+            if ($user->rol !== 'admin') {
+                return $this->error(
+                    'Solo admin',
+                    403
+                );
+            }
+
             $factura = Facturas::findOrFail($facturaId);
 
             $request->validate([
-                'trabajoId' => 'required|integer|exists:trabajos,trabajoId',
+                'trabajoId' => 'required|integer'
             ]);
 
-            $factura->trabajos()->attach($request->trabajoId);
+            $factura->trabajos()->attach(
+                $request->trabajoId
+            );
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Trabajo asociado correctamente.'
-            ]);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return $this->success(
+                null,
+                'Trabajo asociado'
+            );
+        } catch (\Throwable $e) {
 
-            return response()->json([
-                'success' => false,
-                'message' => 'Factura no encontrada.'
-            ], 404);
-        } catch (\Illuminate\Validation\ValidationException $e) {
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Error de validación.',
-                'errors' => $e->errors()
-            ], 422);
-        } catch (\Exception $e) {
-
-            return response()->json([
-                'success' => false,
-                'message' => 'No se pudo asociar el trabajo.',
-                'error' => $e->getMessage()
-            ], 500);
+            return $this->error(
+                'Error asociar',
+                500,
+                $e->getMessage()
+            );
         }
     }
+
 
     public function desasociarTrabajo(Request $request, $facturaId)
     {
         try {
+
+            $user = $request->user();
+
+            if ($user->rol !== 'admin') {
+                return $this->error(
+                    'Solo admin',
+                    403
+                );
+            }
+
             $factura = Facturas::findOrFail($facturaId);
 
             $request->validate([
-                'trabajoId' => 'required|integer|exists:trabajos,trabajoId',
+                'trabajoId' => 'required|integer'
             ]);
 
-            $factura->trabajos()->detach($request->trabajoId);
+            $factura->trabajos()->detach(
+                $request->trabajoId
+            );
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Trabajo desasociado correctamente.'
-            ]);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return $this->success(
+                null,
+                'Trabajo desasociado'
+            );
+        } catch (\Throwable $e) {
 
-            return response()->json([
-                'success' => false,
-                'message' => 'Factura no encontrada.'
-            ], 404);
-        } catch (\Illuminate\Validation\ValidationException $e) {
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Error de validación.',
-                'errors' => $e->errors()
-            ], 422);
-        } catch (\Exception $e) {
-
-            return response()->json([
-                'success' => false,
-                'message' => 'No se pudo desasociar el trabajo.',
-                'error' => $e->getMessage()
-            ], 500);
+            return $this->error(
+                'Error desasociar',
+                500,
+                $e->getMessage()
+            );
         }
     }
 
-    public function calcularTotal($id)
+
+    public function calcularTotal(Request $request, $id)
     {
         try {
 
+            $user = $request->user();
+
+            if (!in_array($user->rol, ['admin', 'empleado'])) {
+                return $this->error(
+                    'No autorizado',
+                    403
+                );
+            }
+
             $factura = Facturas::findOrFail($id);
-            $total = $factura->trabajos()->sum('precio');
+
+            $total = $factura
+                ->trabajos()
+                ->sum('precio');
 
             $factura->total_calculado = $total;
             $factura->save();
 
-            return response()->json([
-                'success' => true,
+            return $this->success([
                 'total' => $total
             ]);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Factura no encontrada.'
-            ], 404);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Error al calcular el total.',
-                'error' => $e->getMessage()
-            ], 500);
+        } catch (\Throwable $e) {
+
+            return $this->error(
+                'Error calcular total',
+                500,
+                $e->getMessage()
+            );
         }
     }
 }

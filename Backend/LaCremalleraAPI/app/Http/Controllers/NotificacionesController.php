@@ -8,167 +8,238 @@ use Illuminate\Database\QueryException;
 
 class NotificacionesController extends Controller
 {
+
     public function index(Request $request)
     {
+        try {
 
-        $query = Notificaciones::query();
+            $user = $request->user();
 
-        if ($request->has('receptorId')) {
-            $query->where('receptorId', $request->receptorId);
+            $query = Notificaciones::query();
+
+            if ($request->has('receptorId')) {
+                $query->where('receptorId', $request->receptorId);
+            }
+
+            if ($request->has('remitenteId')) {
+                $query->where('remitenteId', $request->remitenteId);
+            }
+
+            if ($request->has('trabajoId')) {
+                $query->where('trabajoId', $request->trabajoId);
+            }
+
+            // ownership
+
+            if ($user->rol === 'cliente') {
+                $query->where('receptorId', $user->usuarioId);
+            }
+
+            if ($user->rol === 'empleado') {
+                $query->where(function ($q) use ($user) {
+                    $q->where('receptorId', $user->usuarioId)
+                        ->orWhere('remitenteId', $user->usuarioId);
+                });
+            }
+
+            $notificaciones = $query->get();
+
+            if (
+                ($request->has('receptorId') ||
+                    $request->has('remitenteId') ||
+                    $request->has('trabajoId'))
+                && $notificaciones->isEmpty()
+            ) {
+                return $this->error(
+                    'No se encontraron notificaciones',
+                    404
+                );
+            }
+
+            return $this->success($notificaciones);
+        } catch (\Throwable $e) {
+
+            return $this->error(
+                'Error al listar notificaciones',
+                500,
+                $e->getMessage()
+            );
         }
-
-        if ($request->has('remitenteId')) {
-            $query->where('remitenteId', $request->remitenteId);
-        }
-
-        if ($request->has('trabajoId')) {
-            $query->where('trabajoId', $request->trabajoId);
-        }
-
-        $notificaciones = $query->get();
-
-        if (
-            ($request->has('receptorId') || $request->has('remitenteId') || $request->has('trabajoId'))
-            && $notificaciones->isEmpty()
-        ) {
-            return response()->json([
-                'success' => false,
-                'message' => 'No se encontraron notificaciones con los filtros aplicados.'
-            ], 404);
-        }
-
-        return response()->json([
-            'success' => true,
-            'data' => $notificaciones
-        ]);
     }
 
-    public function show($id)
+
+    public function show(Request $request, $id)
     {
-        $notificacion = Notificaciones::find($id);
+        try {
 
-        if (!$notificacion) {
-            return response()->json([
-                'success' => false,
-                'error' => 'Notificación no encontrada'
-            ], 404);
+            $user = $request->user();
+
+            $notificacion = Notificaciones::find($id);
+
+            if (!$notificacion) {
+                return $this->error(
+                    'Notificación no encontrada',
+                    404
+                );
+            }
+
+            if (
+                $user->rol === 'cliente' &&
+                $notificacion->receptorId != $user->usuarioId
+            ) {
+                return $this->error(
+                    'No autorizado',
+                    403
+                );
+            }
+
+            return $this->success($notificacion);
+        } catch (\Throwable $e) {
+
+            return $this->error(
+                'Error al obtener notificación',
+                500,
+                $e->getMessage()
+            );
         }
-
-        return response()->json([
-            'success' => true,
-            'data' => $notificacion
-        ]);
     }
+
 
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'receptorId' => 'required|integer|min:1',
-            'remitenteId' => 'required|integer|min:1',
-            'trabajoId' => 'nullable|integer|min:1',
-            'tipo' => 'nullable|string|in:' . implode(',', Notificaciones::tiposValidos()),
-            'asunto' => 'nullable|string|max:255',
-            'mensaje' => 'required|string',
-        ]);
-
-        $data['tipo'] = $data['tipo'] ?? 'notificacion';
-        $data['fecha_envio'] = now();
-
         try {
+
+            $user = $request->user();
+
+            if ($user->rol === 'cliente') {
+                return $this->error(
+                    'Cliente no puede crear',
+                    403
+                );
+            }
+
+            $data = $request->validate([
+                'receptorId' => 'required|integer|min:1',
+                'remitenteId' => 'required|integer|min:1',
+                'trabajoId' => 'nullable|integer|min:1',
+                'tipo' => 'nullable|string|in:' . implode(',', Notificaciones::tiposValidos()),
+                'asunto' => 'nullable|string|max:255',
+                'mensaje' => 'required|string',
+            ]);
+
+            $data['tipo'] = $data['tipo'] ?? 'notificacion';
+            $data['fecha_envio'] = now();
 
             $notificacion = Notificaciones::create($data);
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Notificación creada correctamente',
-                'data' => $notificacion
-            ], 201);
-        } catch (\Exception $e) {
+            return $this->success(
+                $notificacion,
+                'Notificación creada',
+                201
+            );
+        } catch (\Throwable $e) {
 
-            return response()->json([
-                'success' => false,
-                'message' => 'Ocurrió un error al crear la notificación',
-                'detalle' => $e->getMessage()
-            ], 500);
+            return $this->error(
+                'Error al crear notificación',
+                500,
+                $e->getMessage()
+            );
         }
     }
+
 
     public function update(Request $request, $id)
     {
-        $notificacion = Notificaciones::find($id);
-
-        if (!$notificacion) {
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Notificación no encontrada'
-            ], 404);
-        }
-
-        $data = $request->validate([
-            'receptorId' => 'required|integer|min:1',
-            'remitenteId' => 'required|integer|min:1',
-            'trabajoId' => 'nullable|integer|min:1',
-            'tipo' => 'nullable|string|in:' . implode(',', Notificaciones::tiposValidos()),
-            'asunto' => 'nullable|string|max:255',
-            'mensaje' => 'required|string',
-        ]);
-
-        $data['tipo'] = $data['tipo'] ?? 'notificacion';
-
         try {
+
+            $user = $request->user();
+
+            if ($user->rol === 'cliente') {
+                return $this->error(
+                    'Cliente no puede actualizar',
+                    403
+                );
+            }
+
+            $notificacion = Notificaciones::find($id);
+
+            if (!$notificacion) {
+                return $this->error(
+                    'Notificación no encontrada',
+                    404
+                );
+            }
+
+            $data = $request->validate([
+                'receptorId' => 'required|integer|min:1',
+                'remitenteId' => 'required|integer|min:1',
+                'trabajoId' => 'nullable|integer|min:1',
+                'tipo' => 'nullable|string|in:' . implode(',', Notificaciones::tiposValidos()),
+                'asunto' => 'nullable|string|max:255',
+                'mensaje' => 'required|string',
+            ]);
+
+            $data['tipo'] = $data['tipo'] ?? 'notificacion';
 
             $notificacion->update($data);
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Notificación actualizada correctamente',
-                'data' => $notificacion
-            ]);
-        } catch (\Exception $e) {
+            return $this->success(
+                $notificacion,
+                'Notificación actualizada'
+            );
+        } catch (\Throwable $e) {
 
-            return response()->json([
-                'success' => false,
-                'message' => 'Ocurrió un error al actualizar la notificación',
-                'detalle' => $e->getMessage()
-            ], 500);
+            return $this->error(
+                'Error al actualizar',
+                500,
+                $e->getMessage()
+            );
         }
     }
 
-    public function destroy($id)
+
+    public function destroy(Request $request, $id)
     {
-        $notificacion = Notificaciones::find($id);
-
-        if (!$notificacion) {
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Notificación no encontrada'
-            ], 404);
-        }
-
         try {
+
+            $user = $request->user();
+
+            if ($user->rol !== 'admin') {
+                return $this->error(
+                    'Solo admin',
+                    403
+                );
+            }
+
+            $notificacion = Notificaciones::find($id);
+
+            if (!$notificacion) {
+                return $this->error(
+                    'No encontrada',
+                    404
+                );
+            }
 
             $notificacion->delete();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Notificación eliminada correctamente'
-            ]);
+            return $this->success(
+                null,
+                'Notificación eliminada'
+            );
         } catch (QueryException $e) {
 
-            return response()->json([
-                'success' => false,
-                'message' => 'No se puede eliminar la notificación debido a un conflicto en la base de datos',
-                'detalle' => $e->getMessage()
-            ], 409);
-        } catch (\Exception $e) {
+            return $this->error(
+                'Conflicto BD',
+                409,
+                $e->getMessage()
+            );
+        } catch (\Throwable $e) {
 
-            return response()->json([
-                'success' => false,
-                'message' => 'Ocurrió un error al eliminar la notificación',
-                'detalle' => $e->getMessage()
-            ], 500);
+            return $this->error(
+                'Error eliminar',
+                500,
+                $e->getMessage()
+            );
         }
     }
 }

@@ -19,4 +19,15 @@ FLUSH PRIVILEGES;
 - Para finalizar arrancar la API
 1. php artisan serve
 
-
+# ULTIMOS CAMBIOS A LA API
+# Comandos para usar la Api con permisos
+1. composer install
+2. composer dump-autoload
+3. php artisan key:generate (se guarda automaticamente en el .env ultima key: APP_KEY=base64:mC78KmHSnQoDVuv/dbxDEvfqR4r8+wtT1X+cEpbrTC0= , verificar si cambia)
+4. php artisan migrate
+5. php artisan migrate --seed
+6. php artisan config:clear
+7. php artisan cache:clear
+8. php artisan route:clear
+9. php artisan optimize:clear
+10. php artisan serve

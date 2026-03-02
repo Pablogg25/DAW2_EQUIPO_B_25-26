@@ -2,29 +2,19 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
-use OpenApi\Annotations as OA;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
-/**
- * @OA\Schema(
- *     schema="Usuario",
- *     type="object",
- *     required={"nombre", "email", "username", "password", "rol"},
- *     @OA\Property(property="usuarioId", type="integer", example=1),
- *     @OA\Property(property="nombre", type="string", example="Juan Pérez"),
- *     @OA\Property(property="telefono", type="string", example="123456789"),
- *     @OA\Property(property="email", type="string", format="email", example="juan@example.com"),
- *     @OA\Property(property="direccion", type="string", example="Calle Falsa 123"),
- *     @OA\Property(property="username", type="string", example="juanperez"),
- *     @OA\Property(property="password", type="string", format="password", example="********"),
- *     @OA\Property(property="rol", type="string", example="admin")
- * )
- */
-class Usuarios extends Model
+class Usuarios extends Authenticatable
 {
+    use HasApiTokens, Notifiable;
+
     protected $table = 'usuarios';
+
     protected $primaryKey = 'usuarioId';
+
     public $timestamps = false;
 
     protected $fillable = [
@@ -41,7 +31,7 @@ class Usuarios extends Model
         'password'
     ];
 
-    // Mutator para encriptar automáticamente la contraseña con bcrypt
+    // Mutator password
     public function setPasswordAttribute($value)
     {
         if (!empty($value)) {
@@ -49,9 +39,19 @@ class Usuarios extends Model
         }
     }
 
-    // Obtener el rol del usuario
-    public function getRolAttribute($value)
+    // Roles
+    public function isAdmin()
     {
-        return $value;
+        return $this->rol === 'admin';
+    }
+
+    public function isEmpleado()
+    {
+        return $this->rol === 'empleado';
+    }
+
+    public function isCliente()
+    {
+        return $this->rol === 'cliente';
     }
 }

@@ -11,148 +11,212 @@ class PrendasController extends Controller
 
     public function index(Request $request)
     {
-        $query = Prendas::query();
+        try {
 
-        if ($request->has('usuarioId')) {
-            $query->where('usuarioId', $request->usuarioId);
+            $user = $request->user();
+
+            if (!in_array($user->rol, ['admin', 'empleado'])) {
+                return $this->error('No autorizado', 403);
+            }
+
+            $query = Prendas::query();
+
+            if ($request->has('usuarioId')) {
+                $query->where('usuarioId', $request->usuarioId);
+            }
+
+            $prendas = $query->get();
+
+            if ($request->has('usuarioId') && $prendas->isEmpty()) {
+                return $this->error(
+                    'No se encontraron prendas',
+                    404
+                );
+            }
+
+            return $this->success($prendas);
+
+        } catch (\Throwable $e) {
+
+            return $this->error(
+                'Error al listar prendas',
+                500,
+                $e->getMessage()
+            );
         }
-
-        $prendas = $query->get();
-
-        if ($request->has('usuarioId') && $prendas->isEmpty()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'No se encontraron la prenda o por el filtro de usuarioId.'
-            ], 404);
-        }
-
-        return response()->json([
-            'success' => true,
-            'data' => $prendas
-        ]);
     }
 
-    public function show($id)
+
+    public function show(Request $request, $id)
     {
-        $prenda = Prendas::find($id);
+        try {
 
-        if (!$prenda) {
+            $user = $request->user();
 
-            return response()->json([
-                'success' => false,
-                'message' => 'Prenda no encontrada'
-            ], 404);
+            $prenda = Prendas::find($id);
+
+            if (!$prenda) {
+                return $this->error(
+                    'Prenda no encontrada',
+                    404
+                );
+            }
+
+            if (
+                $user->rol === 'cliente' &&
+                $prenda->usuarioId != $user->usuarioId
+            ) {
+                return $this->error(
+                    'No autorizado',
+                    403
+                );
+            }
+
+            return $this->success($prenda);
+
+        } catch (\Throwable $e) {
+
+            return $this->error(
+                'Error al obtener prenda',
+                500,
+                $e->getMessage()
+            );
         }
-
-        return response()->json([
-            'success' => true,
-            'data' => $prenda
-        ]);
     }
+
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'usuarioId' => 'required|integer',
-            'tipo' => 'required|string|max:255',
-            'descripcion' => 'nullable|string|max:500',
-            'color' => 'nullable|string|max:50',
-            'talla' => 'nullable|string|max:10',
-        ]);
-
         try {
+
+            $user = $request->user();
+
+            if (!in_array($user->rol, ['admin', 'empleado'])) {
+                return $this->error(
+                    'No autorizado',
+                    403
+                );
+            }
+
+            $validated = $request->validate([
+                'usuarioId' => 'required|integer',
+                'tipo' => 'required|string|max:255',
+                'descripcion' => 'nullable|string|max:500',
+                'color' => 'nullable|string|max:50',
+                'talla' => 'nullable|string|max:10',
+            ]);
 
             $prenda = Prendas::create($validated);
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Prenda creada correctamente',
-                'data' => $prenda
-            ], 201);
-        } catch (\Exception $e) {
+            return $this->success(
+                $prenda,
+                'Prenda creada',
+                201
+            );
 
-            return response()->json([
-                'success' => false,
-                'message' => 'Ocurrió un error al crear la prenda',
-                'detalle' => $e->getMessage()
-            ], 500);
+        } catch (\Throwable $e) {
+
+            return $this->error(
+                'Error al crear prenda',
+                500,
+                $e->getMessage()
+            );
         }
     }
+
 
     public function update(Request $request, $id)
     {
-        $prenda = Prendas::find($id);
-
-        if (!$prenda) {
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Prenda no encontrada'
-            ], 404);
-        }
-
-        $validated = $request->validate([
-            'usuarioId' => 'required|integer',
-            'tipo' => 'required|string|max:255',
-            'descripcion' => 'nullable|string|max:500',
-            'color' => 'nullable|string|max:50',
-            'talla' => 'nullable|string|max:10',
-        ]);
-
         try {
+
+            $user = $request->user();
+
+            if (!in_array($user->rol, ['admin', 'empleado'])) {
+                return $this->error(
+                    'No autorizado',
+                    403
+                );
+            }
+
+            $prenda = Prendas::find($id);
+
+            if (!$prenda) {
+                return $this->error(
+                    'Prenda no encontrada',
+                    404
+                );
+            }
+
+            $validated = $request->validate([
+                'usuarioId' => 'required|integer',
+                'tipo' => 'required|string|max:255',
+                'descripcion' => 'nullable|string|max:500',
+                'color' => 'nullable|string|max:50',
+                'talla' => 'nullable|string|max:10',
+            ]);
 
             $prenda->update($validated);
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Prenda actualizada correctamente',
-                'data' => $prenda
-            ]);
-        } catch (\Exception $e) {
+            return $this->success(
+                $prenda,
+                'Prenda actualizada'
+            );
 
-            return response()->json([
-                'success' => false,
-                'message' => 'Ocurrió un error al actualizar la prenda',
-                'detalle' => $e->getMessage()
-            ], 500);
+        } catch (\Throwable $e) {
+
+            return $this->error(
+                'Error al actualizar',
+                500,
+                $e->getMessage()
+            );
         }
     }
 
-    public function destroy($id)
+
+    public function destroy(Request $request, $id)
     {
-        $prenda = Prendas::find($id);
-
-        if (!$prenda) {
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Prenda no encontrada'
-            ], 404);
-        }
-
         try {
-            // opcional: verificar relaciones futuras antes de borrar
+
+            $user = $request->user();
+
+            if ($user->rol !== 'admin') {
+                return $this->error(
+                    'Solo admin puede eliminar',
+                    403
+                );
+            }
+
+            $prenda = Prendas::find($id);
+
+            if (!$prenda) {
+                return $this->error(
+                    'Prenda no encontrada',
+                    404
+                );
+            }
 
             $prenda->delete();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Prenda eliminada correctamente'
-            ]);
+            return $this->success(
+                null,
+                'Prenda eliminada'
+            );
+
         } catch (QueryException $e) {
 
-            return response()->json([
-                'success' => false,
-                'message' => 'No se puede eliminar la prenda debido a un conflicto en la base de datos',
-                'detalle' => $e->getMessage()
-            ], 409);
-        } catch (\Exception $e) {
+            return $this->error(
+                'Conflicto BD',
+                409,
+                $e->getMessage()
+            );
 
-            return response()->json([
-                'success' => false,
-                'message' => 'Ocurrió un error al eliminar la prenda',
-                'detalle' => $e->getMessage()
-            ], 500);
+        } catch (\Throwable $e) {
+
+            return $this->error(
+                'Error eliminar',
+                500,
+                $e->getMessage()
+            );
         }
     }
 }
