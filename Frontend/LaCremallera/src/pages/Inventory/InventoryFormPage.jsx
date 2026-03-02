@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import $inventarioController from "../../core/InventoryController.js";
+import { AuthContext } from "../../context/AuthContext";
 
 function PropsElementoInventoryPage() {
   const { id } = useParams();
   const navigate = useNavigate();
+    const { usuario,token } = useContext(AuthContext);
 
   const [item, setItem] = useState({
     nombre: "",
@@ -18,7 +20,7 @@ function PropsElementoInventoryPage() {
     async function cargarItem() {
       if (id === "new") return;
 
-      const respuesta = await $inventarioController.obtenerItemInventario(id);
+      const respuesta = await $inventarioController.obtenerItemInventario(token,id);
 
       if (respuesta.success) {
         setItem(respuesta.data);
@@ -53,9 +55,9 @@ function PropsElementoInventoryPage() {
     let respuesta;
 
     if (id === "new") {
-      respuesta = await $inventarioController.crearItemInventario(datos);
+      respuesta = await $inventarioController.crearItemInventario(token,datos);
     } else {
-      respuesta = await $inventarioController.actualizarItemInventario(
+      respuesta = await $inventarioController.actualizarItemInventario(token,
         id,
         datos,
       );

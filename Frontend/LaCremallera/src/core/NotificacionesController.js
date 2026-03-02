@@ -4,7 +4,7 @@ const $notificacionesController = (function () {
     console.log("Inicializar $notificaciones controller");
 
     //params: {'receptorId':int,'remitenteId':int,'trabajoId':int}
-    async function getNotificaciones(params) {
+    async function getNotificaciones(authToken, params = {}) {
         console.log("notificacionesController: getNotificaciones");
 
         let requestUrl = apiController.getBaseUrl() + "/notificaciones";
@@ -17,7 +17,7 @@ const $notificacionesController = (function () {
         //añadir cada argumento
         for (let arg in params) {
 
-            if ( params[arg]!==-1) {
+            if (params[arg] !== -1) {
                 if (args != '?') {
                     args += '&';
                 }
@@ -32,8 +32,14 @@ const $notificacionesController = (function () {
         }
 
         try {
+            const requestBody = {
+                headers: {
+                    "Content-type": "application/json; charset=UTF-8",
+                    "Authorization": "Bearer " + authToken,
+                },
+            };
             console.log("Realizando petición a: " + requestUrl);
-            const request = await fetch(requestUrl);
+            const request = await fetch(requestUrl, requestBody);
             const respuesta = await request.json();
 
             if (request.status == 200) {
@@ -65,14 +71,20 @@ const $notificacionesController = (function () {
         }
     }
 
-    async function getNotificacion(notId) {
+    async function getNotificacion(authToken, notId) {
         console.log("notificacionesController: getNotificacion id: " + notId);
 
         const requestUrl = apiController.getBaseUrl() + "/notificaciones/" + notId;
 
         try {
+            const requestBody = {
+                headers: {
+                    "Content-type": "application/json; charset=UTF-8",
+                    "Authorization": "Bearer " + authToken,
+                },
+            };
             console.log("Realizando petición a: " + requestUrl);
-            const request = await fetch(requestUrl);
+            const request = await fetch(requestUrl, requestBody);
 
             const respuesta = await request.json();
             if (request.status == 200) {
@@ -104,7 +116,7 @@ const $notificacionesController = (function () {
         }
     }
 
-    async function createNotificacion(objNot) {
+    async function createNotificacion(authToken, objNot) {
         console.log("notificacionesController: create notificación");
 
         const requestUrl = apiController.getBaseUrl() + "/notificaciones";
@@ -116,6 +128,7 @@ const $notificacionesController = (function () {
                 body: JSON.stringify(objNot),
                 headers: {
                     "Content-type": "application/json; charset=UTF-8",
+                    "Authorization": "Bearer " + authToken,
                 },
             }
             const request = await fetch(requestUrl, requestBody);
@@ -141,7 +154,7 @@ const $notificacionesController = (function () {
         }
     }
 
-    async function updateNotificacion(objNot) {
+    async function updateNotificacion(authToken, objNot) {
         console.log("notificacionesController: update Notificacion");
 
         const requestUrl = apiController.getBaseUrl() + "/notificaciones/" + objNot.notificacionId;
@@ -153,6 +166,7 @@ const $notificacionesController = (function () {
                 body: JSON.stringify(objNot),
                 headers: {
                     "Content-type": "application/json; charset=UTF-8",
+                    "Authorization": "Bearer " + authToken,
                 },
             }
             const request = await fetch(requestUrl, requestBody);
@@ -178,7 +192,7 @@ const $notificacionesController = (function () {
         }
     }
 
-    async function deleteNotificacion(notId) {
+    async function deleteNotificacion(authToken, notId) {
 
         console.log("notificacionesController: delete Notificacion");
 
@@ -189,6 +203,7 @@ const $notificacionesController = (function () {
                 method: "DELETE",
                 headers: {
                     "Content-type": "application/json; charset=UTF-8",
+                    "Authorization": "Bearer " + authToken,
                 },
             };
             const respuesta = await fetch(requestUrl, requestBody);

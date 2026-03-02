@@ -22,7 +22,7 @@ function NotificacionFormPage() {
 
   const navegar = useNavigate();
   //useContext
-  const { usuario } = useContext(AuthContext);
+  const { usuario, token } = useContext(AuthContext);
 
   const { id } = useParams();
 
@@ -30,7 +30,7 @@ function NotificacionFormPage() {
     console.log("Cargando datos");
 
     if (usuariosData.length == 0) {
-      let datosUsuario = await $usersController.getUsers();
+      let datosUsuario = await $usersController.getUsers(token);
 
       if (datosUsuario.success) {
         setUsuariosData(datosUsuario.data);
@@ -45,7 +45,7 @@ function NotificacionFormPage() {
     }
 
     if (trabajosData.length == 0) {
-      let datosTrabajo = await $ordersController.getOrders();
+      let datosTrabajo = await $ordersController.getOrders(token);
 
       if (datosTrabajo.success) {
         setTrabajosData(datosTrabajo.data);
@@ -60,7 +60,7 @@ function NotificacionFormPage() {
     }
 
     if (id != 0) {
-      let datosNot = await $notificacionesController.getNotificacion(id);
+      let datosNot = await $notificacionesController.getNotificacion(token,id);
       if (datosNot.success) {
         setNotificacionData(datosNot.data);
       } else {
@@ -81,14 +81,14 @@ function NotificacionFormPage() {
   const enviarDatos = async () => {
     console.log("Enviar datos");
 
-    console.log(notificacionData);
+    // console.log(notificacionData);
 
     let result;
 
     if (id == 0) {
       console.log("Modo create");
       result =
-        await $notificacionesController.createNotificacion(notificacionData);
+        await $notificacionesController.createNotificacion(token,notificacionData);
     }
 
     if (result.success) {

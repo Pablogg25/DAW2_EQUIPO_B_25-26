@@ -19,7 +19,7 @@ function LoginPage() {
       // console.log(userData);
 
       if (userData.success) {
-        login(userData); // Guardar usuario en contexto
+        login(userData.data); // Guardar usuario en contexto
         alert("Login correcto");
         navigate("/");
       } else {

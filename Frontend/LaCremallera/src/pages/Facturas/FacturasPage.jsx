@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect,useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../../context/AuthContext";
 
 import $facturasController from "../../core/FacturasController";
 import $usersController from "../../core/UsersController";
@@ -9,13 +10,14 @@ function FacturasPage() {
   const [usuarios, setUsuarios] = useState([]);
   
   const [busqueda, setBusqueda] = useState(-1);
+      const { usuario,token } = useContext(AuthContext);
 
   const navegar = useNavigate();
 
   const cargarDatos = async (filtro=-1) => {
     console.log("Cargando datos");
 
-    let datos = await $facturasController.getFacturas({usuarioId:filtro});
+    let datos = await $facturasController.getFacturas(token,{usuarioId:filtro});
 
     if(datos.success){
       setFacturas(datos.data);
@@ -28,7 +30,7 @@ function FacturasPage() {
     }
     
 
-    let datosUsuario = await $usersController.getUsers();
+    let datosUsuario = await $usersController.getUsers(token);
     if(datosUsuario.success){
       setUsuarios(datosUsuario.data);
     }else{

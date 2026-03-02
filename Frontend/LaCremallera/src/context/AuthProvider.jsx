@@ -6,6 +6,8 @@ function AuthProvider({ children }) {
   const [token, setToken] = useState(null);
 
   function login(userData) {
+    console.log("Auth provider, saving data: ");
+    console.log(userData);
     setUsuario(userData.user);
     setToken(userData.token)
   }

@@ -4,7 +4,7 @@ const $usersController = (function () {
   console.log("Inicializando userscontroller");
 
   //params {'username':string} exacto
-  async function getUsers(params = {}) {
+  async function getUsers(authToken,params = {}) {
     console.log("usersController getUsers");
 
     let requestUrl = apiController.getBaseUrl() + "/usuarios";
@@ -13,8 +13,14 @@ const $usersController = (function () {
       requestUrl+='?username='+params['username'];
     } 
     try {
+      const requestBody = {
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+          "Authorization": "Bearer "+authToken,
+        },
+      };
       console.log("Realizando petición a: " + requestUrl);
-      const request = await fetch(requestUrl);
+      const request = await fetch(requestUrl,requestBody);
       const respuesta = await request.json();
 
       if (request.status === 200) {
@@ -32,11 +38,18 @@ const $usersController = (function () {
     }
   }
 
-  async function getUser(userId) {
+  async function getUser(authToken,userId) {
     const requestUrl = apiController.getBaseUrl() + "/usuarios/" + userId;
 
     try {
-      const request = await fetch(requestUrl);
+      const requestBody = {
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+          "Authorization": "Bearer "+authToken,
+        },
+      };
+      console.log("Realizando petición a: " + requestUrl);
+      const request = await fetch(requestUrl,requestBody);
       const respuesta = await request.json();
 
       if (request.status === 200) {
@@ -53,12 +66,20 @@ const $usersController = (function () {
     }
   }
 
-  async function getUserByUsername(username) {
+  async function getUserByUsername(authToken,username) {
     const requestUrl =
       apiController.getBaseUrl() + "/usuarios?username=" + username;
 
     try {
-      const request = await fetch(requestUrl);
+      const requestBody = {
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+          "Authorization": "Bearer "+authToken,
+        },
+      };
+
+      console.log("Realizando petición a: " + requestUrl);
+      const request = await fetch(requestUrl,requestBody);
       const respuesta = await request.json();
 
       if (request.status === 200) {
@@ -75,7 +96,7 @@ const $usersController = (function () {
     }
   }
 
-  async function createUser(objUser) {
+  async function createUser(authToken,objUser) {
     const requestUrl = apiController.getBaseUrl() + "/usuarios";
 
     try {
@@ -84,9 +105,11 @@ const $usersController = (function () {
         body: JSON.stringify(objUser),
         headers: {
           "Content-type": "application/json; charset=UTF-8",
+          "Authorization": "Bearer "+authToken,
         },
       };
 
+      console.log("Realizando petición a: " + requestUrl);
       const request = await fetch(requestUrl, requestBody);
       const datos = await request.json();
 
@@ -114,6 +137,7 @@ const $usersController = (function () {
         },
       };
 
+      console.log("Realizando petición a: " + requestUrl);
       const request = await fetch(requestUrl, requestBody);
       const respuesta = await request.json();
 
@@ -131,7 +155,7 @@ const $usersController = (function () {
     }
   }
 
-  async function updateUser(objUser, userId) {
+  async function updateUser(authToken,objUser, userId) {
     const requestUrl = apiController.getBaseUrl() + "/usuarios/" + userId;
 
     try {
@@ -140,9 +164,12 @@ const $usersController = (function () {
         body: JSON.stringify(objUser),
         headers: {
           "Content-type": "application/json; charset=UTF-8",
+          
+          "Authorization": "Bearer "+authToken,
         },
       };
 
+      console.log("Realizando petición a: " + requestUrl);
       const request = await fetch(requestUrl, requestBody);
       const datos = await request.json();
 
@@ -156,7 +183,7 @@ const $usersController = (function () {
     }
   }
 
-  async function updatePassword(objPassword, userId) {
+  async function updatePassword(authToken,objPassword, userId) {
     const requestUrl =
       apiController.getBaseUrl() + "/usuarios/" + userId + "/password";
 
@@ -166,9 +193,11 @@ const $usersController = (function () {
         body: JSON.stringify(objPassword),
         headers: {
           "Content-type": "application/json; charset=UTF-8",
+          "Authorization": "Bearer "+authToken,
         },
       };
 
+      console.log("Realizando petición a: " + requestUrl);
       const request = await fetch(requestUrl, requestBody);
       const datos = await request.json();
 
@@ -182,7 +211,7 @@ const $usersController = (function () {
     }
   }
 
-  async function deleteUser(userId) {
+  async function deleteUser(authToken,userId) {
     const requestUrl = apiController.getBaseUrl() + "/usuarios/" + userId;
 
     try {
@@ -190,9 +219,11 @@ const $usersController = (function () {
         method: "DELETE",
         headers: {
           "Content-type": "application/json; charset=UTF-8",
+          "Authorization": "Bearer "+authToken,
         },
       };
 
+      console.log("Realizando petición a: " + requestUrl);
       const respuesta = await fetch(requestUrl, requestBody);
       const datos = await respuesta.json();
 

@@ -4,7 +4,7 @@ const $inventarioController = (function () {
   // -------------------------------------------------------
   // GET /inventario  (con filtro opcional por nombre)
   // -------------------------------------------------------
-  async function obtenerInventario(params = {}) {
+  async function obtenerInventario(authToken, params = {}) {
     let requestUrl = apiController.getBaseUrl() + "/inventario";
 
     if (params.nombre && params.nombre.trim() !== "") {
@@ -12,7 +12,13 @@ const $inventarioController = (function () {
     }
 
     try {
-      const request = await fetch(requestUrl);
+      const requestBody = {
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+          "Authorization": "Bearer " + authToken,
+        },
+      };
+      const request = await fetch(requestUrl, requestBody);
       const contentType = request.headers.get("Content-Type") || "";
 
       let respuesta = {};
@@ -50,11 +56,17 @@ const $inventarioController = (function () {
   // -------------------------------------------------------
   // GET /inventario/:id
   // -------------------------------------------------------
-  async function obtenerItemInventario(id) {
+  async function obtenerItemInventario(authToken,id) {
     const requestUrl = apiController.getBaseUrl() + `/inventario/${id}`;
 
     try {
-      const request = await fetch(requestUrl);
+      const requestBody = {
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+          "Authorization": "Bearer " + authToken,
+        },
+      };
+      const request = await fetch(requestUrl,requestBody);
       const respuesta = await request.json();
 
       if (request.ok) {
@@ -79,11 +91,17 @@ const $inventarioController = (function () {
   // -------------------------------------------------------
   // GET /inventario/bajo-stock
   // -------------------------------------------------------
-  async function obtenerBajoStock() {
+  async function obtenerBajoStock(authToken) {
     const requestUrl = apiController.getBaseUrl() + "/inventario/bajo-stock";
 
     try {
-      const request = await fetch(requestUrl);
+      const requestBody = {
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+          "Authorization": "Bearer " + authToken,
+        },
+      };
+      const request = await fetch(requestUrl,requestBody);
       const respuesta = await request.json();
 
       if (request.ok) {
@@ -108,13 +126,13 @@ const $inventarioController = (function () {
   // -------------------------------------------------------
   // POST /inventario
   // -------------------------------------------------------
-  async function crearItemInventario(item) {
+  async function crearItemInventario(authToken,item) {
     const requestUrl = apiController.getBaseUrl() + "/inventario";
 
     try {
       const request = await fetch(requestUrl, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json","Authorization": "Bearer " + authToken, },
         body: JSON.stringify(item),
       });
 
@@ -142,13 +160,13 @@ const $inventarioController = (function () {
   // -------------------------------------------------------
   // PUT /inventario/:id
   // -------------------------------------------------------
-  async function actualizarItemInventario(id, item) {
+  async function actualizarItemInventario(authToken,id, item) {
     const requestUrl = apiController.getBaseUrl() + `/inventario/${id}`;
 
     try {
       const request = await fetch(requestUrl, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json","Authorization": "Bearer " + authToken, },
         body: JSON.stringify(item),
       });
 
@@ -176,13 +194,13 @@ const $inventarioController = (function () {
   // -------------------------------------------------------
   // DELETE /inventario/:id
   // -------------------------------------------------------
-  async function eliminarItemInventario(id) {
+  async function eliminarItemInventario(authToken,id) {
     const requestUrl = apiController.getBaseUrl() + `/inventario/${id}`;
 
     try {
       const request = await fetch(requestUrl, {
         method: "DELETE",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json","Authorization": "Bearer " + authToken, },
       });
 
       const respuesta = await request.json();

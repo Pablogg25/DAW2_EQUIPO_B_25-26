@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../../context/AuthContext";
 
 import $prendasController from "../../core/PrendasController";
 import $usersController from "../../core/UsersController";
@@ -8,6 +9,7 @@ function PrendasPage() {
   const [prendas, setPrendas] = useState([]);
   const [usuarios, setUsuarios] = useState([]);
   const [busqueda, setBusqueda] = useState(-1);
+  const { usuario,token } = useContext(AuthContext);
 
   const navegar = useNavigate();
 
@@ -19,11 +21,11 @@ function PrendasPage() {
     //si datos de usuario no estan inicializados cargar y cachear:
     if (usuarios.length == 0) {
       console.log("Cargando datos de usuarios");
-      let datosUsuario = await $usersController.getUsers([]);
+      let datosUsuario = await $usersController.getUsers(token,[]);
       setUsuarios(datosUsuario.data);
     }
     console.log("Cargando datos de prendas");
-    let datos = await $prendasController.getPrendas({ "usuarioId": userId });
+    let datos = await $prendasController.getPrendas(token,{ "usuarioId": userId });
 
     if(datos.success){
       console.log("Datos recividos");
@@ -72,7 +74,7 @@ function PrendasPage() {
       //hacer confirm para borrar el usuario y luego recargar datos
 
       if (confirm("¿Seguro que desea eliminar la prenda?")) {
-        let result = await $prendasController.deletePrenda(prendaId);
+        let result = await $prendasController.deletePrenda(token,prendaId);
 
         if (result) {
           cargarDatos();
