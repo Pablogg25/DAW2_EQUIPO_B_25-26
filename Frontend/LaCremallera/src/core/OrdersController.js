@@ -11,7 +11,7 @@ const $ordersController = (function () {
         let requestUrl = apiController.getBaseUrl() + '/trabajos';
 
         //añadir argumentos
-        console.log(params);
+        // console.log(params);
         let args = '?';
 
         //añadir cada argumento
@@ -66,7 +66,7 @@ const $ordersController = (function () {
             if (request.status == 200) {
 
                 console.log("OrdersController respuesta OK 200");
-                console.log(respuesta);
+                // console.log(respuesta);
 
                 return { "data": respuesta.data, "status": 200, "success": true };
             }

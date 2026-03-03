@@ -20,13 +20,13 @@ class FacturasController extends Controller
 
             $query = Facturas::with('trabajos');
 
-            if ($user->rol === 'cliente') {
+            if ($user->rol === 'cliente'||$user->rol === 'empleado') {
                 $query->where('usuarioId', $user->usuarioId);
             }
 
-            if ($user->rol === 'empleado') {
-                $query->where('empleadoId', $user->usuarioId);
-            }
+            // if ($user->rol === 'empleado') {
+            //     $query->where('empleadoId', $user->usuarioId);
+            // }
 
             return $this->success($query->get());
 
