@@ -1,26 +1,33 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import esLocale from "@fullcalendar/core/locales/es";
 import $calendarioController from "../../core/CalendaryController";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../../context/AuthContext";
 
 function CalendarPage() {
   const [eventos, setEventos] = useState([]);
   const [eventosDia, setEventosDia] = useState([]);
   const [fechaSeleccionada, setFechaSeleccionada] = useState(null);
   const navigate = useNavigate();
+  const { usuario } = useContext(AuthContext);
 
-  // -------------------------------------------------------
-  // Cargar eventos del backend
-  // -------------------------------------------------------
+  const rol = usuario?.rol;
+  const usuarioId = usuario?.usuarioId;
+
   async function cargarEventos() {
     const respuesta = await $calendarioController.getCalendarios();
 
+    if (!respuesta.success && respuesta.status === 404) {
+      setEventos([]);
+      return;
+    }
+
     if (respuesta.success) {
       const eventosAdaptados = respuesta.data.map((ev) => ({
-        id: ev.eventoId, // ← CORREGIDO
+        id: ev.eventoId,
         title: ev.titulo,
         start: ev.fecha_inicio,
         end: ev.fecha_fin,
@@ -34,7 +41,6 @@ function CalendarPage() {
 
       setEventos(eventosAdaptados);
     } else {
-      console.warn("No hay eventos o error:", respuesta.message);
       setEventos([]);
     }
   }
@@ -43,34 +49,38 @@ function CalendarPage() {
     cargarEventos();
   }, []);
 
-  // -------------------------------------------------------
-  // Cuando se hace clic en un día
-  // -------------------------------------------------------
   function handleDateClick(info) {
     const fecha = info.dateStr;
     setFechaSeleccionada(fecha);
 
     const filtrados = eventos.filter((ev) => {
-      const soloFecha = ev.start.split(" ")[0];
+      const soloFecha = ev.start.split("T")[0];
       return soloFecha === fecha;
     });
 
     setEventosDia(filtrados);
   }
 
-  // -------------------------------------------------------
-  // Eliminar evento
-  // -------------------------------------------------------
-  async function eliminarEvento(id) {
+  async function eliminarEvento(ev) {
+    if (rol === "cliente") {
+      alert("No tienes permisos para eliminar eventos.");
+      return;
+    }
+
+    if (rol === "empleado" && ev.extendedProps.empleadoId !== usuarioId) {
+      alert("Solo puedes eliminar tus propios eventos.");
+      return;
+    }
+
     const seguro = window.confirm("¿Seguro que quieres eliminar este evento?");
     if (!seguro) return;
 
-    const respuesta = await $calendarioController.deleteCalendario(id);
+    const respuesta = await $calendarioController.deleteCalendario(ev.id);
 
     if (respuesta.success) {
       alert("Evento eliminado");
       cargarEventos();
-      setEventosDia(eventosDia.filter((ev) => ev.id !== id));
+      setEventosDia(eventosDia.filter((e) => e.id !== ev.id));
     } else {
       alert("Error al eliminar. Código: " + respuesta.status);
     }
@@ -88,7 +98,6 @@ function CalendarPage() {
       </button>
 
       <div className="d-flex gap-3">
-        {/* Calendario */}
         <div style={{ flex: 2 }}>
           <FullCalendar
             plugins={[dayGridPlugin, interactionPlugin]}
@@ -100,7 +109,6 @@ function CalendarPage() {
           />
         </div>
 
-        {/* Panel lateral */}
         <div
           style={{
             flex: 1,
@@ -125,26 +133,34 @@ function CalendarPage() {
 
           {eventosDia.map((ev) => (
             <div
-              key={ev.id} // ← CORREGIDO
+              key={ev.id}
               className="border rounded p-2 mb-2"
               style={{ background: "#f9f9f9" }}
             >
               <h5 className="mb-1">{ev.title}</h5>
               <p className="mb-1">{ev.extendedProps.descripcion}</p>
 
-              <button
-                className="btn btn-sm btn-primary me-2"
-                onClick={() => navigate(`/calendar/${ev.id}`)} // ← CORREGIDO
-              >
-                Editar
-              </button>
+              {(rol === "admin" ||
+                (rol === "empleado" &&
+                  ev.extendedProps.empleadoId === usuarioId)) && (
+                <button
+                  className="btn btn-sm btn-primary me-2"
+                  onClick={() => navigate(`/calendar/${ev.id}`)}
+                >
+                  Editar
+                </button>
+              )}
 
-              <button
-                className="btn btn-sm btn-danger"
-                onClick={() => eliminarEvento(ev.id)}
-              >
-                Eliminar
-              </button>
+              {(rol === "admin" ||
+                (rol === "empleado" &&
+                  ev.extendedProps.empleadoId === usuarioId)) && (
+                <button
+                  className="btn btn-sm btn-danger"
+                  onClick={() => eliminarEvento(ev)}
+                >
+                  Eliminar
+                </button>
+              )}
             </div>
           ))}
         </div>

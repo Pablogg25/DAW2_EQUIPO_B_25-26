@@ -1,62 +1,73 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import $calendarioController from "../../core/CalendaryController";
+import { AuthContext } from "../../context/AuthContext";
 
 function CalendarFormPage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { usuario } = useContext(AuthContext);
+
+  const rol = usuario?.rol;
+  const usuarioId = usuario?.usuarioId;
 
   const [evento, setEvento] = useState({
     titulo: "",
     descripcion: "",
     fecha_inicio: "",
     fecha_fin: "",
-    usuarioId: 1,
-    empleadoId: "",
-    trabajoId: "",
+    empleadoId: rol === "empleado" ? usuarioId : null,
+    trabajoId: null,
   });
 
-  // -------------------------------------------------------
-  // Cargar evento si estamos editando
-  // -------------------------------------------------------
   useEffect(() => {
     async function cargar() {
       if (id === "new") return;
 
       const respuesta = await $calendarioController.getCalendario(id);
 
-      if (respuesta.success) {
-        const data = respuesta.data;
-
-        setEvento({
-          titulo: data.titulo ?? "",
-          descripcion: data.descripcion ?? "",
-          fecha_inicio: data.fecha_inicio ?? "",
-          fecha_fin: data.fecha_fin ?? "",
-          usuarioId: data.usuarioId ?? 1,
-          empleadoId: data.empleadoId ?? "",
-          trabajoId: data.trabajoId ?? "",
-        });
-      } else {
+      if (!respuesta.success) {
         alert("Error al cargar evento");
         navigate("/calendar");
+        return;
       }
+
+      const data = respuesta.data;
+
+      if (rol === "cliente") {
+        alert("No tienes permisos para editar eventos.");
+        navigate("/calendar");
+        return;
+      }
+
+      if (rol === "empleado" && data.empleadoId !== usuarioId) {
+        alert("Solo puedes editar tus propios eventos.");
+        navigate("/calendar");
+        return;
+      }
+
+      setEvento({
+        titulo: data.titulo ?? "",
+        descripcion: data.descripcion ?? "",
+        fecha_inicio: data.fecha_inicio ?? "",
+        fecha_fin: data.fecha_fin ?? "",
+        empleadoId: data.empleadoId ?? null,
+        trabajoId: data.trabajoId ?? null,
+      });
     }
 
     cargar();
-  }, [id, navigate]);
+  }, [id, navigate, rol, usuarioId]);
 
-  // -------------------------------------------------------
-  // Manejar cambios
-  // -------------------------------------------------------
   function handleChange(e) {
     const { name, value } = e.target;
-    setEvento({ ...evento, [name]: value });
+
+    setEvento({
+      ...evento,
+      [name]: value === "" ? null : value,
+    });
   }
 
-  // -------------------------------------------------------
-  // Guardar
-  // -------------------------------------------------------
   async function guardar() {
     if (!evento.titulo.trim()) {
       alert("El título es obligatorio");
@@ -118,9 +129,11 @@ function CalendarFormPage() {
         className="form-control mb-3"
       />
 
-      <button className="btn btn-success" onClick={guardar}>
-        Guardar
-      </button>
+      {(rol === "admin" || rol === "empleado" || id === "new") && (
+        <button className="btn btn-success" onClick={guardar}>
+          Guardar
+        </button>
+      )}
 
       <button className="btn btn-secondary ms-2" onClick={() => navigate(-1)}>
         Volver
