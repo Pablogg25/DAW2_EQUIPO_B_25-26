@@ -129,7 +129,7 @@ function CalendarFormPage() {
         className="form-control mb-3"
       />
 
-      {(rol === "admin" || rol === "empleado" || id === "new") && (
+      {(rol === "admin" || rol === "empleado") && (
         <button className="btn btn-success" onClick={guardar}>
           Guardar
         </button>

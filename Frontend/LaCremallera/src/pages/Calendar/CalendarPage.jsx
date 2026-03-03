@@ -11,6 +11,8 @@ function CalendarPage() {
   const [eventos, setEventos] = useState([]);
   const [eventosDia, setEventosDia] = useState([]);
   const [fechaSeleccionada, setFechaSeleccionada] = useState(null);
+  const [mesVisible, setMesVisible] = useState(null);
+
   const navigate = useNavigate();
   const { usuario } = useContext(AuthContext);
 
@@ -20,29 +22,25 @@ function CalendarPage() {
   async function cargarEventos() {
     const respuesta = await $calendarioController.getCalendarios();
 
-    if (!respuesta.success && respuesta.status === 404) {
+    if (!respuesta.success) {
       setEventos([]);
       return;
     }
 
-    if (respuesta.success) {
-      const eventosAdaptados = respuesta.data.map((ev) => ({
-        id: ev.eventoId,
-        title: ev.titulo,
-        start: ev.fecha_inicio,
-        end: ev.fecha_fin,
-        extendedProps: {
-          descripcion: ev.descripcion,
-          usuarioId: ev.usuarioId,
-          empleadoId: ev.empleadoId,
-          trabajoId: ev.trabajoId,
-        },
-      }));
+    const eventosAdaptados = respuesta.data.map((ev) => ({
+      id: ev.eventoId,
+      title: ev.titulo,
+      start: ev.fecha_inicio,
+      end: ev.fecha_fin,
+      extendedProps: {
+        descripcion: ev.descripcion,
+        usuarioId: ev.usuarioId,
+        empleadoId: ev.empleadoId,
+        trabajoId: ev.trabajoId,
+      },
+    }));
 
-      setEventos(eventosAdaptados);
-    } else {
-      setEventos([]);
-    }
+    setEventos(eventosAdaptados);
   }
 
   useEffect(() => {
@@ -50,25 +48,24 @@ function CalendarPage() {
   }, []);
 
   function handleDateClick(info) {
-    const fecha = info.dateStr;
-    setFechaSeleccionada(fecha);
+    const fecha = new Date(info.dateStr);
+    setFechaSeleccionada(info.dateStr);
 
     const filtrados = eventos.filter((ev) => {
-      const soloFecha = ev.start.split("T")[0];
-      return soloFecha === fecha;
+      const fechaEvento = new Date(ev.start);
+      return (
+        fechaEvento.getFullYear() === fecha.getFullYear() &&
+        fechaEvento.getMonth() === fecha.getMonth() &&
+        fechaEvento.getDate() === fecha.getDate()
+      );
     });
 
     setEventosDia(filtrados);
   }
 
   async function eliminarEvento(ev) {
-    if (rol === "cliente") {
-      alert("No tienes permisos para eliminar eventos.");
-      return;
-    }
-
-    if (rol === "empleado" && ev.extendedProps.empleadoId !== usuarioId) {
-      alert("Solo puedes eliminar tus propios eventos.");
+    if (rol !== "admin") {
+      alert("Solo el administrador puede eliminar eventos.");
       return;
     }
 
@@ -86,16 +83,27 @@ function CalendarPage() {
     }
   }
 
+  const eventosMes = eventos.filter((ev) => {
+    if (!mesVisible) return false;
+    const fecha = new Date(ev.start);
+    return (
+      fecha.getFullYear() === mesVisible.year &&
+      fecha.getMonth() + 1 === mesVisible.month
+    );
+  });
+
   return (
     <div className="container mt-4 page-fade">
       <h2>Calendario</h2>
 
-      <button
-        className="btn btn-success mb-3"
-        onClick={() => navigate("/calendar/new")}
-      >
-        Crear evento
-      </button>
+      {(rol === "admin" || rol === "empleado") && (
+        <button
+          className="btn btn-success mb-3"
+          onClick={() => navigate("/calendar/new")}
+        >
+          Crear evento
+        </button>
+      )}
 
       <div className="d-flex gap-3">
         <div style={{ flex: 2 }}>
@@ -105,6 +113,13 @@ function CalendarPage() {
             locale={esLocale}
             events={eventos}
             dateClick={handleDateClick}
+            datesSet={(info) => {
+              const fecha = info.view.currentStart;
+              setMesVisible({
+                year: fecha.getFullYear(),
+                month: fecha.getMonth() + 1,
+              });
+            }}
             height="80vh"
           />
         </div>
@@ -119,50 +134,89 @@ function CalendarPage() {
             overflowY: "auto",
           }}
         >
-          <h4>Eventos del día</h4>
+          <h4>Eventos</h4>
 
           {!fechaSeleccionada && (
-            <p className="text-muted">
-              Haz clic en un día para ver sus eventos.
-            </p>
-          )}
+            <>
+              <p className="text-muted">Eventos del mes actual:</p>
 
-          {fechaSeleccionada && eventosDia.length === 0 && (
-            <p className="text-muted">No hay eventos para este día.</p>
-          )}
-
-          {eventosDia.map((ev) => (
-            <div
-              key={ev.id}
-              className="border rounded p-2 mb-2"
-              style={{ background: "#f9f9f9" }}
-            >
-              <h5 className="mb-1">{ev.title}</h5>
-              <p className="mb-1">{ev.extendedProps.descripcion}</p>
-
-              {(rol === "admin" ||
-                (rol === "empleado" &&
-                  ev.extendedProps.empleadoId === usuarioId)) && (
-                <button
-                  className="btn btn-sm btn-primary me-2"
-                  onClick={() => navigate(`/calendar/${ev.id}`)}
-                >
-                  Editar
-                </button>
+              {eventosMes.length === 0 && (
+                <p className="text-muted">No hay eventos este mes.</p>
               )}
 
-              {(rol === "admin" ||
-                (rol === "empleado" &&
-                  ev.extendedProps.empleadoId === usuarioId)) && (
-                <button
-                  className="btn btn-sm btn-danger"
-                  onClick={() => eliminarEvento(ev)}
+              {eventosMes.map((ev) => (
+                <div
+                  key={ev.id}
+                  className="border rounded p-2 mb-2"
+                  style={{ background: "#f9f9f9" }}
                 >
-                  Eliminar
-                </button>
+                  <h5 className="mb-1">{ev.title}</h5>
+                  <p className="mb-1">{ev.extendedProps.descripcion}</p>
+
+                  {(rol === "admin" ||
+                    (rol === "empleado" &&
+                      ev.extendedProps.empleadoId === usuarioId)) && (
+                    <button
+                      className="btn btn-sm btn-primary me-2"
+                      onClick={() => navigate(`/calendar/${ev.id}`)}
+                    >
+                      Editar
+                    </button>
+                  )}
+
+                  {rol === "admin" && (
+                    <button
+                      className="btn btn-sm btn-danger"
+                      onClick={() => eliminarEvento(ev)}
+                    >
+                      Eliminar
+                    </button>
+                  )}
+                </div>
+              ))}
+            </>
+          )}
+
+          {fechaSeleccionada && (
+            <>
+              <p className="text-muted">Eventos del día {fechaSeleccionada}:</p>
+
+              {eventosDia.length === 0 && (
+                <p className="text-muted">No hay eventos para este día.</p>
               )}
-            </div>
-          ))}
+
+              {eventosDia.map((ev) => (
+                <div
+                  key={ev.id}
+                  className="border rounded p-2 mb-2"
+                  style={{ background: "#f9f9f9" }}
+                >
+                  <h5 className="mb-1">{ev.title}</h5>
+                  <p className="mb-1">{ev.extendedProps.descripcion}</p>
+
+                  {(rol === "admin" ||
+                    (rol === "empleado" &&
+                      ev.extendedProps.empleadoId === usuarioId)) && (
+                    <button
+                      className="btn btn-sm btn-primary me-2"
+                      onClick={() => navigate(`/calendar/${ev.id}`)}
+                    >
+                      Editar
+                    </button>
+                  )}
+
+                  {rol === "admin" && (
+                    <button
+                      className="btn btn-sm btn-danger"
+                      onClick={() => eliminarEvento(ev)}
+                    >
+                      Eliminar
+                    </button>
+                  )}
+                </div>
+              ))}
+            </>
+          )}
         </div>
       </div>
     </div>
