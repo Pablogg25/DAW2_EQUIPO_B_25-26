@@ -4,7 +4,7 @@ const $facturasController = (function () {
     console.log("Inicializar $facturas controller");
 
     //params{'trabajoId':int,'usuarioId':int}
-    async function getFacturas(authToken, params) {
+    async function getFacturas( params) {
         console.log("facturas controller: getFacturas");
 
         let requestUrl = apiController.getBaseUrl() + "/facturas";
@@ -28,6 +28,10 @@ const $facturasController = (function () {
             requestUrl += args;
         }
         try {
+            const authToken = apiController.getAuthToken();
+            if (!authToken) {
+                return { data: "ERROR, NO AUTH TOKEN", success: false };
+            }
             const requestBody = {
                 method:"GET",
                 headers: {
@@ -69,11 +73,15 @@ const $facturasController = (function () {
         }
     }
 
-    async function getFactura(authToken, facturaId) {
+    async function getFactura( facturaId) {
         console.log("facturas controller: getFactura id: " + facturaId);
 
         const requestUrl = apiController.getBaseUrl() + "/facturas/" + facturaId;
         try {
+            const authToken = apiController.getAuthToken();
+            if (!authToken) {
+                return { data: "ERROR, NO AUTH TOKEN", success: false };
+            }
             const requestBody = {
                 headers: {
                     "Content-type": "application/json; charset=UTF-8",
@@ -113,12 +121,16 @@ const $facturasController = (function () {
         }
     }
 
-    async function createFactura(authToken, facturaObj) {
+    async function createFactura( facturaObj) {
         console.log("facturas controller: createFactura ");
         const requestUrl = apiController.getBaseUrl() + "/facturas";
 
         console.log("Realizando petición a: " + requestUrl);
         try {
+            const authToken = apiController.getAuthToken();
+            if (!authToken) {
+                return { data: "ERROR, NO AUTH TOKEN", success: false };
+            }
             const requestBody = {
                 method: "POST",
                 body: JSON.stringify(facturaObj),
@@ -152,12 +164,16 @@ const $facturasController = (function () {
 
     }
 
-    async function updateFactura(authToken, facturaObj) {
+    async function updateFactura( facturaObj) {
         console.log("facturas controller: updatefactura ");
         const requestUrl = apiController.getBaseUrl() + "/facturas/" + facturaObj.facturaId;
 
         console.log("Realizando petición a: " + requestUrl);
         try {
+            const authToken = apiController.getAuthToken();
+            if (!authToken) {
+                return { data: "ERROR, NO AUTH TOKEN", success: false };
+            }
             const requestBody = {
                 method: "PUT",
                 body: JSON.stringify(facturaObj),
@@ -189,11 +205,15 @@ const $facturasController = (function () {
         }
     }
 
-    async function deleteFactura(authToken, facturaId) {
+    async function deleteFactura( facturaId) {
         console.log("facturas controller: deleteFactura id: " + facturaId);
 
         const requestUrl = apiController.getBaseUrl() + "/facturas/" + facturaId;
         try {
+            const authToken = apiController.getAuthToken();
+            if (!authToken) {
+                return { data: "ERROR, NO AUTH TOKEN", success: false };
+            }
             const requestBody = {
                 method: "DELETE",
                 headers: {
@@ -230,12 +250,16 @@ const $facturasController = (function () {
         }
     }
 
-    async function asociarTrabajo(authToken, facturaId, trabajoId) {
+    async function asociarTrabajo( facturaId, trabajoId) {
         console.log("facturas controller: asociar trabajo " + trabajoId + " a factura " + facturaId);
         const requestUrl = apiController.getBaseUrl() + "/facturas/" + facturaId + "/asociar-trabajo";
 
         console.log("Realizando petición a: " + requestUrl);
         try {
+            const authToken = apiController.getAuthToken();
+            if (!authToken) {
+                return { data: "ERROR, NO AUTH TOKEN", success: false };
+            }
             const requestBody = {
                 method: "PUT",
                 body: JSON.stringify({
@@ -269,12 +293,16 @@ const $facturasController = (function () {
         }
     }
 
-    async function desasociarTrabajo(authToken, facturaId, trabajoId) {
+    async function desasociarTrabajo( facturaId, trabajoId) {
         console.log("facturas controller: asociar trabajo " + trabajoId + " a factura " + facturaId);
         const requestUrl = apiController.getBaseUrl() + "/facturas/" + facturaId + "/desasociar-trabajo";
 
         console.log("Realizando petición a: " + requestUrl);
         try {
+            const authToken = apiController.getAuthToken();
+            if (!authToken) {
+                return { data: "ERROR, NO AUTH TOKEN", success: false };
+            }
             const requestBody = {
                 method: "PUT",
                 body: JSON.stringify({

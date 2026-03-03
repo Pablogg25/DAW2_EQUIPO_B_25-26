@@ -4,7 +4,7 @@ const $notificacionesController = (function () {
     console.log("Inicializar $notificaciones controller");
 
     //params: {'receptorId':int,'remitenteId':int,'trabajoId':int}
-    async function getNotificaciones(authToken, params = {}) {
+    async function getNotificaciones( params = {}) {
         console.log("notificacionesController: getNotificaciones");
 
         let requestUrl = apiController.getBaseUrl() + "/notificaciones";
@@ -32,6 +32,10 @@ const $notificacionesController = (function () {
         }
 
         try {
+            const authToken = apiController.getAuthToken();
+            if (!authToken) {
+                return { data: "ERROR, NO AUTH TOKEN", success: false };
+            }
             const requestBody = {
                 method:"GET",
                 headers: {
@@ -72,12 +76,16 @@ const $notificacionesController = (function () {
         }
     }
 
-    async function getNotificacion(authToken, notId) {
+    async function getNotificacion( notId) {
         console.log("notificacionesController: getNotificacion id: " + notId);
 
         const requestUrl = apiController.getBaseUrl() + "/notificaciones/" + notId;
 
         try {
+            const authToken = apiController.getAuthToken();
+            if (!authToken) {
+                return { data: "ERROR, NO AUTH TOKEN", success: false };
+            }
             const requestBody = {
                 headers: {
                     "Content-type": "application/json; charset=UTF-8",
@@ -117,12 +125,16 @@ const $notificacionesController = (function () {
         }
     }
 
-    async function createNotificacion(authToken, objNot) {
+    async function createNotificacion( objNot) {
         console.log("notificacionesController: create notificación");
 
         const requestUrl = apiController.getBaseUrl() + "/notificaciones";
 
         try {
+            const authToken = apiController.getAuthToken();
+            if (!authToken) {
+                return { data: "ERROR, NO AUTH TOKEN", success: false };
+            }
             console.log("Realizando petición a: " + requestUrl);
             const requestBody = {
                 method: "POST",
@@ -155,12 +167,16 @@ const $notificacionesController = (function () {
         }
     }
 
-    async function updateNotificacion(authToken, objNot) {
+    async function updateNotificacion( objNot) {
         console.log("notificacionesController: update Notificacion");
 
         const requestUrl = apiController.getBaseUrl() + "/notificaciones/" + objNot.notificacionId;
 
         try {
+            const authToken = apiController.getAuthToken();
+            if (!authToken) {
+                return { data: "ERROR, NO AUTH TOKEN", success: false };
+            }
             console.log("Realizando petición a: " + requestUrl);
             const requestBody = {
                 method: "PUT",
@@ -193,13 +209,17 @@ const $notificacionesController = (function () {
         }
     }
 
-    async function deleteNotificacion(authToken, notId) {
+    async function deleteNotificacion( notId) {
 
         console.log("notificacionesController: delete Notificacion");
 
         const requestUrl = apiController.getBaseUrl() + "/notificaciones/" + notId;
 
         try {
+            const authToken = apiController.getAuthToken();
+            if (!authToken) {
+                return { data: "ERROR, NO AUTH TOKEN", success: false };
+            }
             const requestBody = {
                 method: "DELETE",
                 headers: {

@@ -22,7 +22,7 @@ function NotificacionFormPage() {
 
   const navegar = useNavigate();
   //useContext
-  const { usuario, token } = useContext(AuthContext);
+  const { usuario } = useContext(AuthContext);
 
   const { id } = useParams();
 
@@ -30,7 +30,7 @@ function NotificacionFormPage() {
     console.log("Cargando datos");
 
     if (usuariosData.length == 0) {
-      let datosUsuario = await $usersController.getUsers(token);
+      let datosUsuario = await $usersController.getUsers();
 
       if (datosUsuario.success) {
         setUsuariosData(datosUsuario.data);
@@ -45,7 +45,7 @@ function NotificacionFormPage() {
     }
 
     if (trabajosData.length == 0) {
-      let datosTrabajo = await $ordersController.getOrders(token);
+      let datosTrabajo = await $ordersController.getOrders();
 
       if (datosTrabajo.success) {
         setTrabajosData(datosTrabajo.data);
@@ -60,7 +60,7 @@ function NotificacionFormPage() {
     }
 
     if (id != 0) {
-      let datosNot = await $notificacionesController.getNotificacion(token,id);
+      let datosNot = await $notificacionesController.getNotificacion(id);
       if (datosNot.success) {
         setNotificacionData(datosNot.data);
       } else {
@@ -88,7 +88,7 @@ function NotificacionFormPage() {
     if (id == 0) {
       console.log("Modo create");
       result =
-        await $notificacionesController.createNotificacion(token,notificacionData);
+        await $notificacionesController.createNotificacion(notificacionData);
     }
 
     if (result.success) {

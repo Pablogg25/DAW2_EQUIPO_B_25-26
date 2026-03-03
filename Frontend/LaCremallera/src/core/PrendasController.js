@@ -4,7 +4,7 @@ const $prendasController = (function () {
     console.log("PrendasController inicializado");
 
     //params {'usuarioId'=int}
-    async function getPrendas(authToken, params = {}) {
+    async function getPrendas(params = {}) {
         console.log("Prendas controler getPrendas");
 
         let requestUrl = apiController.getBaseUrl() + "/prendas";
@@ -14,6 +14,10 @@ const $prendasController = (function () {
         }
 
         try {
+            const authToken = apiController.getAuthToken();
+            if (!authToken) {
+                return { data: "ERROR, NO AUTH TOKEN", success: false };
+            }
             const requestBody = {
                 headers: {
                     "Content-type": "application/json; charset=UTF-8",
@@ -49,12 +53,16 @@ const $prendasController = (function () {
         }
     }
 
-    async function getPrenda(authToken, prendaId) {
+    async function getPrenda(prendaId) {
         console.log("PrendasControler getPrenda id: " + prendaId);
 
         const requestUrl = apiController.getBaseUrl() + "/prendas/" + prendaId;
 
         try {
+            const authToken = apiController.getAuthToken();
+            if (!authToken) {
+                return { data: "ERROR, NO AUTH TOKEN", success: false };
+            }
             const requestBody = {
                 headers: {
                     "Content-type": "application/json; charset=UTF-8",
@@ -87,10 +95,14 @@ const $prendasController = (function () {
         }
     }
 
-    async function createPrenda(authToken, prendaObj) {
+    async function createPrenda(prendaObj) {
         console.log("PrendasControler create prenda");
 
         const requestUrl = apiController.getBaseUrl() + "/prendas";
+        const authToken = apiController.getAuthToken();
+        if (!authToken) {
+            return { data: "ERROR, NO AUTH TOKEN", success: false };
+        }
         const requestBody = {
             method: "POST",
             body: JSON.stringify(prendaObj),
@@ -130,10 +142,14 @@ const $prendasController = (function () {
         }
     }
 
-    async function updatePrenda(authToken, prendaObj, prendaId) {
+    async function updatePrenda(prendaObj, prendaId) {
         console.log("PrendasControler update prenda id: " + prendaId);
 
         const requestUrl = apiController.getBaseUrl() + "/prendas/" + prendaId;
+        const authToken = apiController.getAuthToken();
+        if (!authToken) {
+            return { data: "ERROR, NO AUTH TOKEN", success: false };
+        }
         const requestBody = {
             method: "PUT",
             body: JSON.stringify(prendaObj),
@@ -177,10 +193,14 @@ const $prendasController = (function () {
         }
     }
 
-    async function deletePrenda(authToken, prendaId) {
+    async function deletePrenda(prendaId) {
         console.log("prendasController: delete prenda id: " + prendaId);
 
         try {
+            const authToken = apiController.getAuthToken();
+            if (!authToken) {
+                return { data: "ERROR, NO AUTH TOKEN", success: false };
+            }
             const requestBody = {
                 method: "DELETE",
                 headers: {

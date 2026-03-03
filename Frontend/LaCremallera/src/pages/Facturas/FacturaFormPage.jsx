@@ -1,6 +1,5 @@
-import { useState, useEffect,useContext } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { AuthContext } from "../../context/AuthContext";
 
 import $facturasController from "../../core/FacturasController";
 import $usersController from "../../core/UsersController";
@@ -40,7 +39,6 @@ function FacturaFormPage() {
   const [trabajosAdd, setTrabajosAdd] = useState([]);
   const [trabajosRemove, setTrabajosRemove] = useState([]);
 
-      const { usuario,token } = useContext(AuthContext);
   const navegar = useNavigate();
 
   const { id } = useParams();
@@ -50,7 +48,7 @@ function FacturaFormPage() {
 
     if (usuariosData.length == 0) {
       // let datosUsuario = await $usuariosController.getUsuarios();
-      let datosUsuario = await $usersController.getUsers(token);
+      let datosUsuario = await $usersController.getUsers();
 
       if (datosUsuario.success) {
         setUsuariosData(datosUsuario.data);
@@ -62,7 +60,7 @@ function FacturaFormPage() {
     }
 
     if (trabajosData.length == 0) {
-      let datosTrabajo = await $ordersController.getOrders(token);
+      let datosTrabajo = await $ordersController.getOrders();
 
       if (datosTrabajo.success) {
         setTrabajosData(datosTrabajo.data);
@@ -72,7 +70,7 @@ function FacturaFormPage() {
       }
     }
 
-    let datosFactura = await $facturasController.getFactura(token,id);
+    let datosFactura = await $facturasController.getFactura(id);
 
     if (datosFactura.success) {
       setFacturaDatos(datosFactura.data);
@@ -99,13 +97,13 @@ function FacturaFormPage() {
       console.log("Modo update");
 
       let datos = { ...facturaDatos, ["facturaId"]: id };
-      result = await $facturasController.updateFactura(token,datos);
+      result = await $facturasController.updateFactura(datos);
 
       if (result.success) {
         //se realiza creación correctamente
         for (let add of trabajosAdd) {
           console.log("asociando trabajo id: " + add);
-          let resultAdd = await $facturasController.asociarTrabajo(token,id, add);
+          let resultAdd = await $facturasController.asociarTrabajo(id, add);
 
           if (!resultAdd.success) {
             console.log("error en asociación");
@@ -117,7 +115,7 @@ function FacturaFormPage() {
         }
         for (let rem of trabajosRemove) {
           console.log("desasociando trabajo id: " + rem);
-          let resultAdd = await $facturasController.desasociarTrabajo(token,id, rem);
+          let resultAdd = await $facturasController.desasociarTrabajo(id, rem);
 
           if (!resultAdd.success) {
             console.log("error en desasociado");
@@ -133,12 +131,12 @@ function FacturaFormPage() {
       }
     } else {
       console.log("Modo create");
-      result = await $facturasController.createFactura(token,facturaDatos);
+      result = await $facturasController.createFactura(facturaDatos);
 
       if (result.success) {
         for (let add of trabajosAdd) {
           console.log("asociando trabajo id: " + add);
-          let resultAdd = await $facturasController.asociarTrabajo(token,id, add);
+          let resultAdd = await $facturasController.asociarTrabajo(id, add);
 
           if (!resultAdd.success) {
             console.log("error en asociación");

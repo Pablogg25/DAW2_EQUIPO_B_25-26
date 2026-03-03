@@ -1,6 +1,5 @@
 import { useState, useEffect, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { AuthContext } from "../../context/AuthContext";
 
 import $prendasController from "../../core/PrendasController";
 import $usersController from "../../core/UsersController";
@@ -20,19 +19,18 @@ function PrendaFormPage() {
   const navegar = useNavigate();
 
   const { id } = useParams();
-  const { usuario,token } = useContext(AuthContext);
 
   const cargarDatos = async () => {
     console.log("Cargando Datos");
 
-    let datosUsuario = await $usersController.getUsers(token,[]);
+    let datosUsuario = await $usersController.getUsers([]);
 
     setUsuariosData(datosUsuario.data);
 
     if (id != 0) {
       console.log("modo update");
 
-      let datos = await $prendasController.getPrenda(token,id);
+      let datos = await $prendasController.getPrenda(id);
 
       //comprobar success
       if (datos.success) {
@@ -61,11 +59,11 @@ function PrendaFormPage() {
     if (id != 0) {
       console.log("actualizar");
       let setearPrenda = { ...prendaData, ["prendaId"]: id };
-      result = await $prendasController.updatePrenda(token,setearPrenda);
+      result = await $prendasController.updatePrenda(setearPrenda);
       success = result.success;
     } else {
       console.log("crear");
-      result = await $prendasController.createPrenda(token,prendaData);
+      result = await $prendasController.createPrenda(prendaData);
       success = result.success;
     }
 

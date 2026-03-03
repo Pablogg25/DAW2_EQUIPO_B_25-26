@@ -5,7 +5,7 @@ const $ordersController = (function () {
     console.log("Inicializando ordersController");
 
     // argumentos: {'empleadoId':int,'estado':string,'prendaId':int} exactos
-    async function getOrders(authToken,params={}) {
+    async function getOrders(params = {}) {
         console.log("ordersController: getOrders");
 
         let requestUrl = apiController.getBaseUrl() + '/trabajos';
@@ -34,8 +34,12 @@ const $ordersController = (function () {
         }
 
         try {
+            const authToken = apiController.getAuthToken();
+            if (!authToken) {
+                return { data: "ERROR, NO AUTH TOKEN", success: false };
+            }
             const requestBody = {
-                method:"GET",
+                method: "GET",
                 headers: {
                     "Authorization": `Bearer ${authToken}`,
                     "Content-type": "application/json; charset=UTF-8",
@@ -43,7 +47,7 @@ const $ordersController = (function () {
             };
             console.log(requestBody);
             console.log("Realizando petición a: " + requestUrl);
-            const request = await fetch(requestUrl,requestBody);
+            const request = await fetch(requestUrl, requestBody);
             const respuesta = await request.json();
 
             console.log(request);
@@ -72,7 +76,7 @@ const $ordersController = (function () {
         }
     };
 
-    async function getOrder(authToken,trabajoId) {
+    async function getOrder(trabajoId) {
         console.log("ordersController: getOrder, id:" + trabajoId);
 
         const requestUrl = apiController.getBaseUrl() + '/trabajos/' + trabajoId;
@@ -80,6 +84,10 @@ const $ordersController = (function () {
         //TODO: gestionar errores y códigos de error
 
         try {
+            const authToken = apiController.getAuthToken();
+            if (!authToken) {
+                return { data: "ERROR, NO AUTH TOKEN", success: false };
+            }
             const requestBody = {
                 headers: {
                     "Content-type": "application/json; charset=UTF-8",
@@ -87,7 +95,7 @@ const $ordersController = (function () {
                 },
             };
             console.log("Realizando petición a: " + requestUrl);
-            const request = await fetch(requestUrl,requestBody);
+            const request = await fetch(requestUrl, requestBody);
             const respuesta = await request.json();
 
             if (request.status == 200) {
@@ -111,12 +119,16 @@ const $ordersController = (function () {
         }
     };
 
-    async function createOrder(authToken,objOrder) {
+    async function createOrder(objOrder) {
         console.log("ordersController createOrder ");
 
         const requestUrl = apiController.getBaseUrl() + '/trabajos';
 
         try {
+            const authToken = apiController.getAuthToken();
+            if (!authToken) {
+                return { data: "ERROR, NO AUTH TOKEN", success: false };
+            }
             console.log("Realizando petición a: " + requestUrl);
             const requestBody = {
                 method: "POST",
@@ -149,13 +161,16 @@ const $ordersController = (function () {
         }
     }
 
-    async function updateOrder(authToken,objOrder, trabajoId) {
+    async function updateOrder(objOrder, trabajoId) {
         console.log("ordersController updateOrder ");
 
         const requestUrl = apiController.getBaseUrl() + '/trabajos/' + trabajoId;
 
         try {
-            
+            const authToken = apiController.getAuthToken();
+            if (!authToken) {
+                return { data: "ERROR, NO AUTH TOKEN", success: false };
+            }
             console.log("Realizando petición a: " + requestUrl);
             const requestBody = {
                 method: "PUT",
@@ -194,12 +209,16 @@ const $ordersController = (function () {
         }
     }
 
-    async function deleteOrder(authToken,trabajoId) {
+    async function deleteOrder(trabajoId) {
         console.log("ordersController: deleteOrder");
 
         const requestUrl = apiController.getBaseUrl() + "/trabajos/" + trabajoId;
 
         try {
+            const authToken = apiController.getAuthToken();
+            if (!authToken) {
+                return { data: "ERROR, NO AUTH TOKEN", success: false };
+            }
             console.log("Realizando petición a: " + requestUrl);
             const requestBody = {
                 method: "DELETE",
@@ -232,12 +251,16 @@ const $ordersController = (function () {
         }
     }
 
-    async function getConsumos(authToken,trabajoId) {
+    async function getConsumos(trabajoId) {
         console.log("ordersController: getOrders");
 
         let requestUrl = apiController.getBaseUrl() + '/trabajos/' + trabajoId + '/consumos';
 
         try {
+            const authToken = apiController.getAuthToken();
+            if (!authToken) {
+                return { data: "ERROR, NO AUTH TOKEN", success: false };
+            }
             const requestBody = {
                 headers: {
                     "Content-type": "application/json; charset=UTF-8",
@@ -246,7 +269,7 @@ const $ordersController = (function () {
             };
             console.log("Realizando petición a: " + requestUrl);
 
-            const request = await fetch(requestUrl,requestBody);
+            const request = await fetch(requestUrl, requestBody);
             const respuesta = await request.json();
 
             if (request.status == 200) {
@@ -273,7 +296,7 @@ const $ordersController = (function () {
         }
     }
 
-    async function asociarConsumo(authToken,trabajoId, consumoObj) {
+    async function asociarConsumo(trabajoId, consumoObj) {
         //consumo: {itemid,cantidad_usada}
         console.log("ordersController: getOrders");
 
@@ -281,7 +304,10 @@ const $ordersController = (function () {
 
         try {
             console.log("Realizando petición a: " + requestUrl);
-
+            const authToken = apiController.getAuthToken();
+            if (!authToken) {
+                return { data: "ERROR, NO AUTH TOKEN", success: false };
+            }
             const requestBody = {
                 method: "POST",
                 body: JSON.stringify(consumoObj),
