@@ -1,60 +1,57 @@
 import apiController from "./ApiController";
 
 const $calendarioController = (function () {
-  // -------------------------------------------------------
-  // GET /eventos  (con filtros opcionales)
-  // -------------------------------------------------------
-  async function getCalendarios(authToken,filtros = {}) {
-    let requestUrl = apiController.getBaseUrl() + "/eventos";
+  function getToken() {
+    const t = sessionStorage.getItem("authToken");
+    return t && t !== "null" ? t : null;
+  }
 
-    const query = [];
+  function buildHeaders() {
+    return {
+      "Content-Type": "application/json; charset=UTF-8",
+      Authorization: "Bearer " + getToken(),
+    };
+  }
 
-    if (filtros.usuarioId)
-      query.push("usuarioId=" + encodeURIComponent(filtros.usuarioId));
-
-    if (filtros.empleadoId)
-      query.push("empleadoId=" + encodeURIComponent(filtros.empleadoId));
-
-    if (filtros.trabajoId)
-      query.push("trabajoId=" + encodeURIComponent(filtros.trabajoId));
-
-    if (query.length > 0) {
-      requestUrl += "?" + query.join("&");
-    }
+  async function procesarRespuesta(request) {
+    let respuesta = {};
 
     try {
-      const requestBody = {
-                headers: {
-                    "Content-type": "application/json; charset=UTF-8",
-                    "Authorization": "Bearer " + authToken,
-                },
-            };
-      const request = await fetch(requestUrl,requestBody);
-      const contentType = request.headers.get("Content-Type") || "";
+      respuesta = await request.json();
+    } catch {
+      respuesta = { message: "Respuesta no válida del servidor" };
+    }
 
-      let respuesta = {};
-      if (contentType.includes("application/json")) {
-        respuesta = await request.json();
-      }
-
-      if (request.ok) {
-        return { success: true, status: request.status, data: respuesta.data };
-      }
-
-      // 404 → No hay eventos (caso normal)
-      if (request.status === 404) {
-        return {
-          success: false,
-          status: 404,
-          message: respuesta.message || "No hay eventos",
-        };
-      }
-
+    if (request.ok) {
       return {
-        success: false,
+        success: true,
         status: request.status,
-        message: respuesta.message || "Error desconocido",
+        data: respuesta.data ?? null,
+        message: respuesta.message ?? null,
       };
+    }
+
+    return {
+      success: false,
+      status: request.status,
+      message: respuesta.message ?? "Error desconocido",
+      detalle: respuesta.detalle ?? null,
+    };
+  }
+
+  // -------------------------------------------------------
+  // GET /eventos
+  // -------------------------------------------------------
+  async function getCalendarios() {
+    const url = apiController.getBaseUrl() + "/eventos";
+
+    try {
+      const request = await fetch(url, {
+        method: "GET",
+        headers: buildHeaders(),
+      });
+
+      return procesarRespuesta(request);
     } catch (e) {
       return {
         success: false,
@@ -68,28 +65,16 @@ const $calendarioController = (function () {
   // -------------------------------------------------------
   // GET /eventos/:id
   // -------------------------------------------------------
-  async function getCalendario(authToken,id) {
-    const requestUrl = apiController.getBaseUrl() + "/eventos/" + id;
+  async function getCalendario(id) {
+    const url = apiController.getBaseUrl() + "/eventos/" + id;
 
     try {
-      const requestBody = {
-                headers: {
-                    "Content-type": "application/json; charset=UTF-8",
-                    "Authorization": "Bearer " + authToken,
-                },
-            };
-      const request = await fetch(requestUrl,requestBody);
-      const respuesta = await request.json();
+      const request = await fetch(url, {
+        method: "GET",
+        headers: buildHeaders(),
+      });
 
-      if (request.ok) {
-        return { success: true, status: 200, data: respuesta.data };
-      }
-
-      return {
-        success: false,
-        status: request.status,
-        message: respuesta.message,
-      };
+      return procesarRespuesta(request);
     } catch (e) {
       return {
         success: false,
@@ -103,27 +88,27 @@ const $calendarioController = (function () {
   // -------------------------------------------------------
   // POST /eventos
   // -------------------------------------------------------
-  async function createCalendario(authToken,obj) {
-    const requestUrl = apiController.getBaseUrl() + "/eventos";
+  async function createCalendario(obj) {
+    const url = apiController.getBaseUrl() + "/eventos";
+
+    // El backend solo acepta estos campos:
+    const payload = {
+      titulo: obj.titulo,
+      descripcion: obj.descripcion || null,
+      fecha_inicio: obj.fecha_inicio,
+      fecha_fin: obj.fecha_fin,
+      empleadoId: obj.empleadoId || null,
+      trabajoId: obj.trabajoId || null,
+    };
 
     try {
-      const request = await fetch(requestUrl, {
+      const request = await fetch(url, {
         method: "POST",
-        headers: { "Content-Type": "application/json","Authorization": "Bearer " + authToken, },
-        body: JSON.stringify(obj),
+        headers: buildHeaders(),
+        body: JSON.stringify(payload),
       });
 
-      const respuesta = await request.json();
-
-      if (request.status === 201) {
-        return { success: true, status: 201, data: respuesta.data };
-      }
-
-      return {
-        success: false,
-        status: request.status,
-        message: respuesta.message,
-      };
+      return procesarRespuesta(request);
     } catch (e) {
       return {
         success: false,
@@ -137,27 +122,26 @@ const $calendarioController = (function () {
   // -------------------------------------------------------
   // PUT /eventos/:id
   // -------------------------------------------------------
-  async function updateCalendario(authToken,id, obj) {
-    const requestUrl = apiController.getBaseUrl() + "/eventos/" + id;
+  async function updateCalendario(id, obj) {
+    const url = apiController.getBaseUrl() + "/eventos/" + id;
+
+    const payload = {
+      titulo: obj.titulo,
+      descripcion: obj.descripcion || null,
+      fecha_inicio: obj.fecha_inicio,
+      fecha_fin: obj.fecha_fin,
+      empleadoId: obj.empleadoId || null,
+      trabajoId: obj.trabajoId || null,
+    };
 
     try {
-      const request = await fetch(requestUrl, {
+      const request = await fetch(url, {
         method: "PUT",
-        headers: { "Content-Type": "application/json","Authorization": "Bearer " + authToken, },
-        body: JSON.stringify(obj),
+        headers: buildHeaders(),
+        body: JSON.stringify(payload),
       });
 
-      const respuesta = await request.json();
-
-      if (request.ok) {
-        return { success: true, status: 200, data: respuesta.data };
-      }
-
-      return {
-        success: false,
-        status: request.status,
-        message: respuesta.message,
-      };
+      return procesarRespuesta(request);
     } catch (e) {
       return {
         success: false,
@@ -171,26 +155,16 @@ const $calendarioController = (function () {
   // -------------------------------------------------------
   // DELETE /eventos/:id
   // -------------------------------------------------------
-  async function deleteCalendario(authToken,id) {
-    const requestUrl = apiController.getBaseUrl() + "/eventos/" + id;
+  async function deleteCalendario(id) {
+    const url = apiController.getBaseUrl() + "/eventos/" + id;
 
     try {
-      const request = await fetch(requestUrl, {
+      const request = await fetch(url, {
         method: "DELETE",
-        headers: { "Content-Type": "application/json","Authorization": "Bearer " + authToken, },
+        headers: buildHeaders(),
       });
 
-      const respuesta = await request.json();
-
-      if (request.ok) {
-        return { success: true, status: 200, message: respuesta.message };
-      }
-
-      return {
-        success: false,
-        status: request.status,
-        message: respuesta.message,
-      };
+      return procesarRespuesta(request);
     } catch (e) {
       return {
         success: false,

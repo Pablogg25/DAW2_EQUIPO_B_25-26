@@ -26,7 +26,6 @@ class CalendarioController extends Controller
             $eventos = $query->get();
 
             return $this->success($eventos);
-
         } catch (\Throwable $e) {
             return $this->error('Error al listar eventos', 500, $e->getMessage());
         }
@@ -45,17 +44,11 @@ class CalendarioController extends Controller
 
             if ($user->rol !== 'admin') {
 
-                if ($user->rol === 'cliente' && $evento->usuarioId != $user->usuarioId) {
-                    return $this->error('No autorizado', 403);
-                }
-
-                if ($user->rol === 'empleado' && $evento->empleadoId != $user->usuarioId) {
-                    return $this->error('No autorizado', 403);
-                }
+            if ($user->rol === 'empleado' && $evento->empleadoId != $user->usuarioId) {
+                return $this->error('No autorizado', 403);
             }
 
             return $this->success($evento);
-
         } catch (\Throwable $e) {
             return $this->error('Error al obtener evento', 500, $e->getMessage());
         }
@@ -68,8 +61,8 @@ class CalendarioController extends Controller
             $user = $request->user();
 
             $validated = $request->validate([
-                'titulo' => 'required|string|max:100',
-                'descripcion' => 'nullable|string',
+                'titulo'       => 'required|string|max:100',
+                'descripcion'  => 'nullable|string',
                 'fecha_inicio' => 'required|date',
                 'fecha_fin' => 'required|date|after_or_equal:fecha_inicio',
                 'usuarioId' => 'required|integer',
@@ -85,13 +78,17 @@ class CalendarioController extends Controller
 
             // EMPLEADO → se asigna a sí mismo
             if ($user->rol === 'empleado') {
+                $validated['usuarioId'] = $user->usuarioId;
                 $validated['empleadoId'] = $user->usuarioId;
+            }
+
+            if ($user->rol === 'admin') {
+                $validated['usuarioId'] = $user->usuarioId;
             }
 
             $evento = Calendario::create($validated);
 
             return $this->success($evento, 'Evento creado', 201);
-
         } catch (\Throwable $e) {
             return $this->error('Error al crear evento', 500, $e->getMessage());
         }
@@ -110,18 +107,13 @@ class CalendarioController extends Controller
 
             if ($user->rol !== 'admin') {
 
-                if ($user->rol === 'cliente' && $evento->usuarioId != $user->usuarioId) {
-                    return $this->error('No autorizado', 403);
-                }
-
-                if ($user->rol === 'empleado' && $evento->empleadoId != $user->usuarioId) {
-                    return $this->error('No autorizado', 403);
-                }
+            if ($user->rol === 'empleado' && $evento->empleadoId != $user->usuarioId) {
+                return $this->error('No autorizado', 403);
             }
 
             $validated = $request->validate([
-                'titulo' => 'required|string|max:100',
-                'descripcion' => 'nullable|string',
+                'titulo'       => 'required|string|max:100',
+                'descripcion'  => 'nullable|string',
                 'fecha_inicio' => 'required|date',
                 'fecha_fin' => 'required|date|after_or_equal:fecha_inicio',
                 'usuarioId' => 'required|integer',
@@ -132,7 +124,6 @@ class CalendarioController extends Controller
             $evento->update($validated);
 
             return $this->success($evento, 'Evento actualizado');
-
         } catch (\Throwable $e) {
             return $this->error('Error al actualizar evento', 500, $e->getMessage());
         }
@@ -157,7 +148,6 @@ class CalendarioController extends Controller
             $evento->delete();
 
             return $this->success(null, 'Evento eliminado');
-
         } catch (QueryException $e) {
             return $this->error('Error BD', 409, $e->getMessage());
         } catch (\Throwable $e) {
