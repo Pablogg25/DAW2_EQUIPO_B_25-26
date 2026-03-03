@@ -1,4 +1,4 @@
-import React, { useEffect, useState,useContext } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import $inventarioController from "../../core/InventoryController.js";
 import { AuthContext } from "../../context/AuthContext";
@@ -6,7 +6,9 @@ import { AuthContext } from "../../context/AuthContext";
 function PropsElementoInventoryPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-    const { usuario,token } = useContext(AuthContext);
+  const { usuario } = useContext(AuthContext);
+
+  const rol = usuario?.rol;
 
   const [item, setItem] = useState({
     nombre: "",
@@ -15,12 +17,20 @@ function PropsElementoInventoryPage() {
     descripcion: "",
   });
 
+  // -------------------------------------------------------
   // Cargar datos si NO es creación
+  // -------------------------------------------------------
   useEffect(() => {
     async function cargarItem() {
-      if (id === "new") return;
+      if (id === "new") {
+        if (rol !== "admin") {
+          alert("No tienes permisos para crear inventario.");
+          navigate("/inventory");
+        }
+        return;
+      }
 
-      const respuesta = await $inventarioController.obtenerItemInventario(token,id);
+      const respuesta = await $inventarioController.obtenerItemInventario(id);
 
       if (respuesta.success) {
         setItem(respuesta.data);
@@ -31,15 +41,19 @@ function PropsElementoInventoryPage() {
     }
 
     cargarItem();
-  }, [id, navigate]);
+  }, [id, navigate, rol]);
 
-  // Manejar cambios en inputs
+  // -------------------------------------------------------
+  // Manejar cambios
+  // -------------------------------------------------------
   function handleChange(e) {
     const { name, value } = e.target;
     setItem({ ...item, [name]: value });
   }
 
-  // Guardar cambios (crear o actualizar)
+  // -------------------------------------------------------
+  // Guardar (crear o actualizar)
+  // -------------------------------------------------------
   async function guardar() {
     if (!item.nombre.trim()) {
       alert("El nombre es obligatorio");
@@ -55,9 +69,17 @@ function PropsElementoInventoryPage() {
     let respuesta;
 
     if (id === "new") {
-      respuesta = await $inventarioController.crearItemInventario(token,datos);
+      if (rol !== "admin") {
+        alert("No tienes permisos para crear.");
+        return;
+      }
+      respuesta = await $inventarioController.crearItemInventario(datos);
     } else {
-      respuesta = await $inventarioController.actualizarItemInventario(token,
+      if (rol !== "admin" && rol !== "empleado") {
+        alert("No tienes permisos para editar.");
+        return;
+      }
+      respuesta = await $inventarioController.actualizarItemInventario(
         id,
         datos,
       );
@@ -110,9 +132,12 @@ function PropsElementoInventoryPage() {
         className="form-control mb-3"
       />
 
-      <button className="btn btn-success" onClick={guardar}>
-        Guardar
-      </button>
+      {/* Guardar → admin y empleado (crear solo admin) */}
+      {(rol === "admin" || rol === "empleado") && (
+        <button className="btn btn-success" onClick={guardar}>
+          Guardar
+        </button>
+      )}
 
       <button className="btn btn-secondary ms-2" onClick={() => navigate(-1)}>
         Volver

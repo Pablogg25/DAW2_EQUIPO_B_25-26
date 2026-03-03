@@ -3,27 +3,21 @@ import { AuthContext } from "./AuthContext";
 
 function AuthProvider({ children }) {
   const [usuario, setUsuario] = useState(null);
-  // const [token, setToken] = useState(null);
 
   function login(userData) {
-    // console.log("Auth provider, saving data: ");
-    // console.log(userData);
     setUsuario(userData.user);
-    // setToken(userData.token);
-    sessionStorage.setItem("authToken",userData.token);
+    sessionStorage.setItem("authToken", userData.token);
   }
 
   function logout() {
     setUsuario(null);
-    // setToken(null);
-    sessionStorage.setItem("authToken",null);
-
+    sessionStorage.removeItem("authToken");
   }
 
-  function token(){
-    return sessionStorage.getItem("authToken");
+  function token() {
+    const t = sessionStorage.getItem("authToken");
+    return t && t !== "null" ? t : null;
   }
-
 
   return (
     <AuthContext.Provider value={{ usuario, token, login, logout }}>

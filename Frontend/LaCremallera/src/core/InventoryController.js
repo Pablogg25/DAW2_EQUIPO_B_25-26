@@ -2,48 +2,69 @@ import apiController from "./ApiController";
 
 const $inventarioController = (function () {
   // -------------------------------------------------------
-  // GET /inventario  (con filtro opcional por nombre)
+  // Obtener token automáticamente desde sessionStorage
   // -------------------------------------------------------
-  async function obtenerInventario(authToken, params = {}) {
-    let requestUrl = apiController.getBaseUrl() + "/inventario";
+  function getToken() {
+    const t = sessionStorage.getItem("authToken");
+    return t && t !== "null" ? t : null;
+  }
 
-    if (params.nombre && params.nombre.trim() !== "") {
-      requestUrl += "?nombre=" + encodeURIComponent(params.nombre);
+  // -------------------------------------------------------
+  // Construir headers con token
+  // -------------------------------------------------------
+  function buildHeaders() {
+    return {
+      "Content-Type": "application/json; charset=UTF-8",
+      Authorization: "Bearer " + getToken(),
+    };
+  }
+
+  // -------------------------------------------------------
+  // Procesar respuesta del backend
+  // -------------------------------------------------------
+  async function procesarRespuesta(request) {
+    let respuesta = {};
+
+    try {
+      respuesta = await request.json();
+    } catch {
+      respuesta = { message: "Respuesta no válida del servidor" };
+    }
+
+    if (request.ok) {
+      return {
+        success: true,
+        status: request.status,
+        data: respuesta.data ?? null,
+        message: respuesta.message ?? null,
+      };
+    }
+
+    return {
+      success: false,
+      status: request.status,
+      message: respuesta.message ?? "Error desconocido",
+      detalle: respuesta.detalle ?? null,
+    };
+  }
+
+  // -------------------------------------------------------
+  // GET /inventario
+  // -------------------------------------------------------
+  async function obtenerInventario(params = {}) {
+    let url = apiController.getBaseUrl() + "/inventario";
+
+    if (params.nombre?.trim()) {
+      url += "?nombre=" + encodeURIComponent(params.nombre);
     }
 
     try {
-      const requestBody = {
-        method:"GET",
-        headers: {
-          "Content-type": "application/json; charset=UTF-8",
-          "Authorization": `Bearer ${authToken}`,
-        },
-      };
-      const request = await fetch(requestUrl, requestBody);
-      const contentType = request.headers.get("Content-Type") || "";
+      const request = await fetch(url, {
+        method: "GET",
+        headers: buildHeaders(),
+      });
 
-      let respuesta = {};
-      if (contentType.includes("application/json")) {
-        respuesta = await request.json();
-      }
-
-      if (request.ok) {
-        return { success: true, status: request.status, data: respuesta.data };
-      }
-
-      if (request.status === 404) {
-        return {
-          success: false,
-          status: 404,
-          message: respuesta.message || "No se encontraron resultados",
-        };
-      }
-
-      return {
-        success: false,
-        status: request.status,
-        message: respuesta.message || "Error desconocido",
-      };
+      return procesarRespuesta(request);
     } catch (e) {
       return {
         success: false,
@@ -57,28 +78,16 @@ const $inventarioController = (function () {
   // -------------------------------------------------------
   // GET /inventario/:id
   // -------------------------------------------------------
-  async function obtenerItemInventario(authToken,id) {
-    const requestUrl = apiController.getBaseUrl() + `/inventario/${id}`;
+  async function obtenerItemInventario(id) {
+    const url = apiController.getBaseUrl() + `/inventario/${id}`;
 
     try {
-      const requestBody = {
-        headers: {
-          "Content-type": "application/json; charset=UTF-8",
-          "Authorization": "Bearer " + authToken,
-        },
-      };
-      const request = await fetch(requestUrl,requestBody);
-      const respuesta = await request.json();
+      const request = await fetch(url, {
+        method: "GET",
+        headers: buildHeaders(),
+      });
 
-      if (request.ok) {
-        return { success: true, status: 200, data: respuesta.data };
-      }
-
-      return {
-        success: false,
-        status: request.status,
-        message: respuesta.message,
-      };
+      return procesarRespuesta(request);
     } catch (e) {
       return {
         success: false,
@@ -92,28 +101,16 @@ const $inventarioController = (function () {
   // -------------------------------------------------------
   // GET /inventario/bajo-stock
   // -------------------------------------------------------
-  async function obtenerBajoStock(authToken) {
-    const requestUrl = apiController.getBaseUrl() + "/inventario/bajo-stock";
+  async function obtenerBajoStock() {
+    const url = apiController.getBaseUrl() + "/inventario/bajo-stock";
 
     try {
-      const requestBody = {
-        headers: {
-          "Content-type": "application/json; charset=UTF-8",
-          "Authorization": "Bearer " + authToken,
-        },
-      };
-      const request = await fetch(requestUrl,requestBody);
-      const respuesta = await request.json();
+      const request = await fetch(url, {
+        method: "GET",
+        headers: buildHeaders(),
+      });
 
-      if (request.ok) {
-        return { success: true, status: 200, data: respuesta.data };
-      }
-
-      return {
-        success: false,
-        status: request.status,
-        message: respuesta.message,
-      };
+      return procesarRespuesta(request);
     } catch (e) {
       return {
         success: false,
@@ -127,27 +124,17 @@ const $inventarioController = (function () {
   // -------------------------------------------------------
   // POST /inventario
   // -------------------------------------------------------
-  async function crearItemInventario(authToken,item) {
-    const requestUrl = apiController.getBaseUrl() + "/inventario";
+  async function crearItemInventario(item) {
+    const url = apiController.getBaseUrl() + "/inventario";
 
     try {
-      const request = await fetch(requestUrl, {
+      const request = await fetch(url, {
         method: "POST",
-        headers: { "Content-Type": "application/json","Authorization": "Bearer " + authToken, },
+        headers: buildHeaders(),
         body: JSON.stringify(item),
       });
 
-      const respuesta = await request.json();
-
-      if (request.status === 201) {
-        return { success: true, status: 201, data: respuesta.data };
-      }
-
-      return {
-        success: false,
-        status: request.status,
-        message: respuesta.message,
-      };
+      return procesarRespuesta(request);
     } catch (e) {
       return {
         success: false,
@@ -161,27 +148,17 @@ const $inventarioController = (function () {
   // -------------------------------------------------------
   // PUT /inventario/:id
   // -------------------------------------------------------
-  async function actualizarItemInventario(authToken,id, item) {
-    const requestUrl = apiController.getBaseUrl() + `/inventario/${id}`;
+  async function actualizarItemInventario(id, item) {
+    const url = apiController.getBaseUrl() + `/inventario/${id}`;
 
     try {
-      const request = await fetch(requestUrl, {
+      const request = await fetch(url, {
         method: "PUT",
-        headers: { "Content-Type": "application/json","Authorization": "Bearer " + authToken, },
+        headers: buildHeaders(),
         body: JSON.stringify(item),
       });
 
-      const respuesta = await request.json();
-
-      if (request.ok) {
-        return { success: true, status: 200, data: respuesta.data };
-      }
-
-      return {
-        success: false,
-        status: request.status,
-        message: respuesta.message,
-      };
+      return procesarRespuesta(request);
     } catch (e) {
       return {
         success: false,
@@ -195,26 +172,16 @@ const $inventarioController = (function () {
   // -------------------------------------------------------
   // DELETE /inventario/:id
   // -------------------------------------------------------
-  async function eliminarItemInventario(authToken,id) {
-    const requestUrl = apiController.getBaseUrl() + `/inventario/${id}`;
+  async function eliminarItemInventario(id) {
+    const url = apiController.getBaseUrl() + `/inventario/${id}`;
 
     try {
-      const request = await fetch(requestUrl, {
+      const request = await fetch(url, {
         method: "DELETE",
-        headers: { "Content-Type": "application/json","Authorization": "Bearer " + authToken, },
+        headers: buildHeaders(),
       });
 
-      const respuesta = await request.json();
-
-      if (request.ok) {
-        return { success: true, status: 200, message: respuesta.message };
-      }
-
-      return {
-        success: false,
-        status: request.status,
-        message: respuesta.message,
-      };
+      return procesarRespuesta(request);
     } catch (e) {
       return {
         success: false,
