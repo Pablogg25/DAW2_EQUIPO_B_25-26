@@ -20,7 +20,7 @@ function NotificacionesPage() {
   const navegar = useNavigate();
 
   //useContext
-  const { usuario } = useContext(AuthContext);
+  const { usuario,token } = useContext(AuthContext);
 
   const cargarDatos = async (filtro = -1) => {
     console.log("Cargando datos");
@@ -29,14 +29,14 @@ function NotificacionesPage() {
 
     if (usuario.rol != "admin") {
       console.log("Cargando notificaciones de empleado");
-      datos = await $notificacionesController.getNotificaciones({
+      datos = await $notificacionesController.getNotificaciones(token,{
         receptorId: usuario.usuarioId,
         remitenteId: usuario.usuarioId,
         trabajoId: filtro
       });
     } else {
       console.log("cargando notificaciones admin");
-      datos = await $notificacionesController.getNotificaciones({ trabajoId: filtro });
+      datos = await $notificacionesController.getNotificaciones(token,{ trabajoId: filtro });
     }
 
     if (datos.success) {
@@ -53,14 +53,14 @@ function NotificacionesPage() {
 
     if (usuarios.length == 0) {
       console.log("Cargando datos de usuario");
-      let datosUsuario = await $usersController.getUsers();
+      let datosUsuario = await $usersController.getUsers(token);
       // console.log(datosUsuario);
       setUsuarios(datosUsuario.data);
     }
 
     if (trabajos.length == 0) {
       console.log("Cargando datos de trabajos");
-      let datosTrabajo = await $ordersController.getOrders();
+      let datosTrabajo = await $ordersController.getOrders(token);
       setTrabajos(datosTrabajo.data);
     }
   };
@@ -90,7 +90,7 @@ function NotificacionesPage() {
 
     if (notId) {
       if (confirm("¿Seguro que desea eliminar la notificación?")) {
-        let result = await $notificacionesController.deleteNotificacion(notId);
+        let result = await $notificacionesController.deleteNotificacion(token,notId);
 
         if (result.success) {
           cargarDatos();

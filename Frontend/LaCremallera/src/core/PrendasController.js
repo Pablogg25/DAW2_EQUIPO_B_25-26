@@ -4,19 +4,25 @@ const $prendasController = (function () {
     console.log("PrendasController inicializado");
 
     //params {'usuarioId'=int}
-    async function getPrendas(params) {
+    async function getPrendas(authToken, params = {}) {
         console.log("Prendas controler getPrendas");
 
         let requestUrl = apiController.getBaseUrl() + "/prendas";
 
-        if(params['usuarioId']&&params['usuarioId']!=-1){
-            requestUrl+='?usuarioId='+params['usuarioId'];
+        if (params['usuarioId'] && params['usuarioId'] != -1) {
+            requestUrl += '?usuarioId=' + params['usuarioId'];
         }
 
         try {
+            const requestBody = {
+                headers: {
+                    "Content-type": "application/json; charset=UTF-8",
+                    "Authorization": "Bearer " + authToken,
+                },
+            };
             console.log("Realizando petición a: " + requestUrl);
 
-            const request = await fetch(requestUrl);
+            const request = await fetch(requestUrl, requestBody);
             const respuesta = await request.json();
 
             if (request.status == 200) {
@@ -43,15 +49,21 @@ const $prendasController = (function () {
         }
     }
 
-    async function getPrenda(prendaId) {
+    async function getPrenda(authToken, prendaId) {
         console.log("PrendasControler getPrenda id: " + prendaId);
 
         const requestUrl = apiController.getBaseUrl() + "/prendas/" + prendaId;
 
         try {
+            const requestBody = {
+                headers: {
+                    "Content-type": "application/json; charset=UTF-8",
+                    "Authorization": "Bearer " + authToken,
+                },
+            };
             console.log("Realizando petición a: " + requestUrl);
 
-            const request = await fetch(requestUrl);
+            const request = await fetch(requestUrl, requestBody);
             const respuesta = await request.json();
 
             if (request.status == 200) {
@@ -75,7 +87,7 @@ const $prendasController = (function () {
         }
     }
 
-    async function createPrenda(prendaObj) {
+    async function createPrenda(authToken, prendaObj) {
         console.log("PrendasControler create prenda");
 
         const requestUrl = apiController.getBaseUrl() + "/prendas";
@@ -85,9 +97,11 @@ const $prendasController = (function () {
             headers: {
                 "Content-type": "application/json; charset=UTF-8",
             },
+            "Authorization": "Bearer " + authToken,
         }
 
         try {
+
             console.log("Realizando petición a: " + requestUrl);
 
             const request = await fetch(requestUrl, requestBody);
@@ -116,7 +130,7 @@ const $prendasController = (function () {
         }
     }
 
-    async function updatePrenda(prendaObj, prendaId) {
+    async function updatePrenda(authToken, prendaObj, prendaId) {
         console.log("PrendasControler update prenda id: " + prendaId);
 
         const requestUrl = apiController.getBaseUrl() + "/prendas/" + prendaId;
@@ -125,6 +139,7 @@ const $prendasController = (function () {
             body: JSON.stringify(prendaObj),
             headers: {
                 "Content-type": "application/json; charset=UTF-8",
+                "Authorization": "Bearer " + authToken,
             },
         }
 
@@ -162,7 +177,7 @@ const $prendasController = (function () {
         }
     }
 
-    async function deletePrenda(prendaId) {
+    async function deletePrenda(authToken, prendaId) {
         console.log("prendasController: delete prenda id: " + prendaId);
 
         try {
@@ -170,6 +185,7 @@ const $prendasController = (function () {
                 method: "DELETE",
                 headers: {
                     "Content-type": "application/json; charset=UTF-8",
+                    "Authorization": "Bearer " + authToken,
                 },
             };
             const respuesta = await fetch(apiController.getBaseUrl() + "/prendas/" + prendaId, requestBody);

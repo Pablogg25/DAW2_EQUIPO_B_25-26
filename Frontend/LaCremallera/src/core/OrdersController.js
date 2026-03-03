@@ -5,7 +5,7 @@ const $ordersController = (function () {
     console.log("Inicializando ordersController");
 
     // argumentos: {'empleadoId':int,'estado':string,'prendaId':int} exactos
-    async function getOrders(params) {
+    async function getOrders(authToken,params={}) {
         console.log("ordersController: getOrders");
 
         let requestUrl = apiController.getBaseUrl() + '/trabajos';
@@ -34,9 +34,19 @@ const $ordersController = (function () {
         }
 
         try {
+            const requestBody = {
+                method:"GET",
+                headers: {
+                    "Authorization": `Bearer ${authToken}`,
+                    "Content-type": "application/json; charset=UTF-8",
+                },
+            };
+            console.log(requestBody);
             console.log("Realizando petición a: " + requestUrl);
-            const request = await fetch(requestUrl);
+            const request = await fetch(requestUrl,requestBody);
             const respuesta = await request.json();
+
+            console.log(request);
 
             if (request.status == 200) {
 
@@ -62,7 +72,7 @@ const $ordersController = (function () {
         }
     };
 
-    async function getOrder(trabajoId) {
+    async function getOrder(authToken,trabajoId) {
         console.log("ordersController: getOrder, id:" + trabajoId);
 
         const requestUrl = apiController.getBaseUrl() + '/trabajos/' + trabajoId;
@@ -70,8 +80,14 @@ const $ordersController = (function () {
         //TODO: gestionar errores y códigos de error
 
         try {
+            const requestBody = {
+                headers: {
+                    "Content-type": "application/json; charset=UTF-8",
+                    "Authorization": "Bearer " + authToken,
+                },
+            };
             console.log("Realizando petición a: " + requestUrl);
-            const request = await fetch(requestUrl);
+            const request = await fetch(requestUrl,requestBody);
             const respuesta = await request.json();
 
             if (request.status == 200) {
@@ -95,7 +111,7 @@ const $ordersController = (function () {
         }
     };
 
-    async function createOrder(objOrder) {
+    async function createOrder(authToken,objOrder) {
         console.log("ordersController createOrder ");
 
         const requestUrl = apiController.getBaseUrl() + '/trabajos';
@@ -107,6 +123,7 @@ const $ordersController = (function () {
                 body: JSON.stringify(objOrder),
                 headers: {
                     "Content-type": "application/json; charset=UTF-8",
+                    "Authorization": "Bearer " + authToken,
                 },
             }
             const request = await fetch(requestUrl, requestBody);
@@ -132,18 +149,20 @@ const $ordersController = (function () {
         }
     }
 
-    async function updateOrder(objOrder, trabajoId) {
+    async function updateOrder(authToken,objOrder, trabajoId) {
         console.log("ordersController updateOrder ");
 
         const requestUrl = apiController.getBaseUrl() + '/trabajos/' + trabajoId;
 
         try {
+            
             console.log("Realizando petición a: " + requestUrl);
             const requestBody = {
                 method: "PUT",
                 body: JSON.stringify(objOrder),
                 headers: {
                     "Content-type": "application/json; charset=UTF-8",
+                    "Authorization": "Bearer " + authToken,
                 },
             }
             const request = await fetch(requestUrl, requestBody);
@@ -175,7 +194,7 @@ const $ordersController = (function () {
         }
     }
 
-    async function deleteOrder(trabajoId) {
+    async function deleteOrder(authToken,trabajoId) {
         console.log("ordersController: deleteOrder");
 
         const requestUrl = apiController.getBaseUrl() + "/trabajos/" + trabajoId;
@@ -186,6 +205,7 @@ const $ordersController = (function () {
                 method: "DELETE",
                 headers: {
                     "Content-type": "application/json; charset=UTF-8",
+                    "Authorization": "Bearer " + authToken,
                 },
             };
             const respuesta = await fetch(requestUrl, requestBody);
@@ -212,15 +232,21 @@ const $ordersController = (function () {
         }
     }
 
-    async function getConsumos(trabajoId) {
+    async function getConsumos(authToken,trabajoId) {
         console.log("ordersController: getOrders");
 
         let requestUrl = apiController.getBaseUrl() + '/trabajos/' + trabajoId + '/consumos';
 
         try {
+            const requestBody = {
+                headers: {
+                    "Content-type": "application/json; charset=UTF-8",
+                    "Authorization": "Bearer " + authToken,
+                },
+            };
             console.log("Realizando petición a: " + requestUrl);
 
-            const request = await fetch(requestUrl);
+            const request = await fetch(requestUrl,requestBody);
             const respuesta = await request.json();
 
             if (request.status == 200) {
@@ -247,7 +273,7 @@ const $ordersController = (function () {
         }
     }
 
-    async function asociarConsumo(trabajoId, consumoObj) {
+    async function asociarConsumo(authToken,trabajoId, consumoObj) {
         //consumo: {itemid,cantidad_usada}
         console.log("ordersController: getOrders");
 
@@ -261,6 +287,7 @@ const $ordersController = (function () {
                 body: JSON.stringify(consumoObj),
                 headers: {
                     "Content-type": "application/json; charset=UTF-8",
+                    "Authorization": "Bearer " + authToken,
                 },
             }
             const request = await fetch(requestUrl, requestBody);

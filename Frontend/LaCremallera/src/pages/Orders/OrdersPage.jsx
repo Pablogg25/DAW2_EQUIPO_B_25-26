@@ -18,18 +18,18 @@ function OrdersPage() {
   });
 
   const navegar = useNavigate();
-  const { usuario } = useContext(AuthContext);
+  const { usuario, token } = useContext(AuthContext);
 
   const cargarDatos = async (filtro={}) => {
     let datos;
 
     if (usuario.rol != "admin") {
-      datos = await $ordersController.getOrders({
+      datos = await $ordersController.getOrders(token,{
         empleadoId: usuario.usuarioId,
         ...filtro
       });
     } else {
-      datos = await $ordersController.getOrders(filtro);
+      datos = await $ordersController.getOrders(token,filtro);
     }
 
     if (datos.success) {
@@ -40,12 +40,12 @@ function OrdersPage() {
 
       if (usuariosData.length == 0) {
         console.log("Cargando datos de usuario");
-        let datosUsuario = await $usersController.getUsers([]);
+        let datosUsuario = await $usersController.getUsers(token,[]);
         setUsuarioData(datosUsuario.data);
       }
       if (prendasData.length == 0) {
         console.log("Cargando datos de prendas");
-        let prendas = await $prendasController.getPrendas([]);
+        let prendas = await $prendasController.getPrendas(token,[]);
         setPrendasData(prendas.data);
       }
     } else {
@@ -90,7 +90,7 @@ function OrdersPage() {
     if (orderId) {
       if (confirm("¿Desea borrar el trabajo?")) {
         console.log("Eliminando trabajo");
-        let response = await $ordersController.deleteOrder(orderId);
+        let response = await $ordersController.deleteOrder(token,orderId);
         if (response.success) {
           await cargarDatos();
         } else {

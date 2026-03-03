@@ -4,7 +4,7 @@ const $facturasController = (function () {
     console.log("Inicializar $facturas controller");
 
     //params{'trabajoId':int,'usuarioId':int}
-    async function getFacturas(params) {
+    async function getFacturas(authToken, params) {
         console.log("facturas controller: getFacturas");
 
         let requestUrl = apiController.getBaseUrl() + "/facturas";
@@ -14,7 +14,7 @@ const $facturasController = (function () {
         //añadir cada argumento
         for (let arg in params) {
 
-            if (params[arg]!==-1) {
+            if (params[arg] !== -1) {
                 if (args != '?') {
                     args += '&';
                 }
@@ -28,8 +28,15 @@ const $facturasController = (function () {
             requestUrl += args;
         }
         try {
+            const requestBody = {
+                method:"GET",
+                headers: {
+                    "Content-type": "application/json; charset=UTF-8",
+                    "Authorization": `Bearer ${authToken}`,
+                },
+            };
             console.log("realizando petición a: " + requestUrl);
-            const request = await fetch(requestUrl);
+            const request = await fetch(requestUrl, requestBody);
 
             if (request.status == 200) {
                 const respuesta = await request.json();
@@ -62,13 +69,19 @@ const $facturasController = (function () {
         }
     }
 
-    async function getFactura(facturaId) {
+    async function getFactura(authToken, facturaId) {
         console.log("facturas controller: getFactura id: " + facturaId);
 
         const requestUrl = apiController.getBaseUrl() + "/facturas/" + facturaId;
         try {
+            const requestBody = {
+                headers: {
+                    "Content-type": "application/json; charset=UTF-8",
+                    "Authorization": "Bearer " + authToken,
+                },
+            };
             console.log("realizando petición a: " + requestUrl);
-            const request = await fetch(requestUrl);
+            const request = await fetch(requestUrl, requestBody);
 
             const respuesta = await request.json();
             if (request.status == 200) {
@@ -100,7 +113,7 @@ const $facturasController = (function () {
         }
     }
 
-    async function createFactura(facturaObj) {
+    async function createFactura(authToken, facturaObj) {
         console.log("facturas controller: createFactura ");
         const requestUrl = apiController.getBaseUrl() + "/facturas";
 
@@ -111,6 +124,7 @@ const $facturasController = (function () {
                 body: JSON.stringify(facturaObj),
                 headers: {
                     "Content-type": "application/json; charset=UTF-8",
+                    "Authorization": "Bearer " + authToken,
                 },
             }
             const request = await fetch(requestUrl, requestBody);
@@ -138,7 +152,7 @@ const $facturasController = (function () {
 
     }
 
-    async function updateFactura(facturaObj) {
+    async function updateFactura(authToken, facturaObj) {
         console.log("facturas controller: updatefactura ");
         const requestUrl = apiController.getBaseUrl() + "/facturas/" + facturaObj.facturaId;
 
@@ -149,6 +163,7 @@ const $facturasController = (function () {
                 body: JSON.stringify(facturaObj),
                 headers: {
                     "Content-type": "application/json; charset=UTF-8",
+                    "Authorization": "Bearer " + authToken,
                 },
             }
             const request = await fetch(requestUrl, requestBody);
@@ -174,7 +189,7 @@ const $facturasController = (function () {
         }
     }
 
-    async function deleteFactura(facturaId) {
+    async function deleteFactura(authToken, facturaId) {
         console.log("facturas controller: deleteFactura id: " + facturaId);
 
         const requestUrl = apiController.getBaseUrl() + "/facturas/" + facturaId;
@@ -183,6 +198,7 @@ const $facturasController = (function () {
                 method: "DELETE",
                 headers: {
                     "Content-type": "application/json; charset=UTF-8",
+                    "Authorization": "Bearer " + authToken,
                 },
             };
             console.log("realizando petición a: " + requestUrl);
@@ -214,7 +230,7 @@ const $facturasController = (function () {
         }
     }
 
-    async function asociarTrabajo(facturaId, trabajoId) {
+    async function asociarTrabajo(authToken, facturaId, trabajoId) {
         console.log("facturas controller: asociar trabajo " + trabajoId + " a factura " + facturaId);
         const requestUrl = apiController.getBaseUrl() + "/facturas/" + facturaId + "/asociar-trabajo";
 
@@ -227,6 +243,7 @@ const $facturasController = (function () {
                 }),
                 headers: {
                     "Content-type": "application/json; charset=UTF-8",
+                    "Authorization": "Bearer " + authToken,
                 },
             }
             const request = await fetch(requestUrl, requestBody);
@@ -252,7 +269,7 @@ const $facturasController = (function () {
         }
     }
 
-    async function desasociarTrabajo(facturaId, trabajoId) {
+    async function desasociarTrabajo(authToken, facturaId, trabajoId) {
         console.log("facturas controller: asociar trabajo " + trabajoId + " a factura " + facturaId);
         const requestUrl = apiController.getBaseUrl() + "/facturas/" + facturaId + "/desasociar-trabajo";
 
@@ -265,6 +282,7 @@ const $facturasController = (function () {
                 }),
                 headers: {
                     "Content-type": "application/json; charset=UTF-8",
+                    "Authorization": "Bearer " + authToken,
                 },
             }
             const request = await fetch(requestUrl, requestBody);

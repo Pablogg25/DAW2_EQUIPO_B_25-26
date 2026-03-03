@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import $usersController from "../../core/UsersController";
+import { AuthContext } from "../../context/AuthContext";
 
 function UserFormPage() {
   const [userData, setUserData] = useState({
@@ -19,6 +20,7 @@ function UserFormPage() {
   const navegar = useNavigate();
 
   const { id } = useParams();
+  const { usuario,token } = useContext(AuthContext);
 
   const cargarDatos = async () => {
     console.log("cargando datos");
@@ -26,7 +28,7 @@ function UserFormPage() {
     if (id != 0) {
       console.log("Modo update");
       //obtener datos
-      let datos = await $usersController.getUser(id);
+      let datos = await $usersController.getUser(token,id);
 
       if (datos.success) {
         console.log(datos);
@@ -54,7 +56,7 @@ function UserFormPage() {
 
     if (id != 0) {
       //update
-      const response = await $usersController.updateUser(userData, id);
+      const response = await $usersController.updateUser(token,userData, id);
       success = response.success;
       statusCode = response.estado;
     } else {
@@ -67,7 +69,7 @@ function UserFormPage() {
         );
         return;
       }
-      const response = await $usersController.createUser(userData);
+      const response = await $usersController.createUser(token,userData);
       success = response.success;
       statusCode = response.estado;
     }

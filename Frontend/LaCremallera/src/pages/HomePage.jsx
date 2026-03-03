@@ -5,12 +5,12 @@ import { AuthContext } from "../context/AuthContext";
 
 function HomePage() {
   const [stats, setStats] = useState(null);
-  const { user } = useContext(AuthContext);
+  const { usuario,token } = useContext(AuthContext);
   const navigate = useNavigate();
 
   useEffect(() => {
     async function load() {
-      const data = await $homeController.getDashboardData();
+      const data = await $homeController.getDashboardData(token);
 
       const trabajosPendientes = data.orders.filter(
         (o) => o.estado === "pendiente",
@@ -56,7 +56,7 @@ function HomePage() {
           Gestión moderna para un taller de costura tradicional.
         </p>
         <p className="home-role">
-          Estás conectado como: <strong>{user?.rol}</strong>
+          Estás conectado como: <strong>{usuario?.rol}</strong>
         </p>
       </div>
 

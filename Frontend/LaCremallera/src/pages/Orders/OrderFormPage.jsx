@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { AuthContext } from "../../context/AuthContext";
 
 import $ordersController from "../../core/OrdersController";
 import $usersController from "../../core/UsersController";
@@ -26,6 +27,8 @@ function OrderFormPage() {
   const [inventarioData, setInventarioData] = useState([]);
 
   const { id } = useParams();
+  const { usuario, token } = useContext(AuthContext);
+
   const [nuevoConsumo, setNuevoConsumo] = useState({
     trabajoId: id,
     itemId: 0,
@@ -37,7 +40,7 @@ function OrderFormPage() {
     if (id != 0) {
       // console.log("Modo edit / ver");
       //modo edit
-      let datos = await $ordersController.getOrder(id);
+      let datos = await $ordersController.getOrder(token,id);
       console.log(datos);
       if (datos.success) {
         setOrderData(datos.data);
@@ -45,7 +48,7 @@ function OrderFormPage() {
         //cargar consumos
         // console.log("Realizando petición a consumos");
 
-        let requestConsumo = await $ordersController.getConsumos(id);
+        let requestConsumo = await $ordersController.getConsumos(token,id);
 
         if (requestConsumo.success) {
           // console.log("datos de request consumos"),
@@ -72,7 +75,7 @@ function OrderFormPage() {
     //else modo create
 
     //TODO, cargar empleados y prendas por ids
-    let datosUsuario = await $usersController.getUsers([]);
+    let datosUsuario = await $usersController.getUsers(token,[]);
     if (datosUsuario.success) {
       setUsuarioData(datosUsuario.data);
     } else {
@@ -84,7 +87,7 @@ function OrderFormPage() {
       navegar("/orders");
     }
 
-    let datosPrenda = await $prendasController.getPrendas([]);
+    let datosPrenda = await $prendasController.getPrendas(token,[]);
 
     if (datosPrenda.success) {
       setPrendasData(datosPrenda.data);
@@ -97,7 +100,7 @@ function OrderFormPage() {
       navegar("/orders");
     }
 
-    let datosInventario = await $inventarioController.obtenerInventario([]);
+    let datosInventario = await $inventarioController.obtenerInventario(token,[]);
 
     if (datosInventario.success) {
       setInventarioData(datosInventario.data);
@@ -131,11 +134,11 @@ function OrderFormPage() {
     let statusCode = 0;
     if (id != 0) {
       //update
-      const response = await $ordersController.updateOrder(orderData, id);
+      const response = await $ordersController.updateOrder(token,orderData, id);
       success = response.success;
       statusCode = response.estado;
     } else {
-      const response = await $ordersController.createOrder(orderData);
+      const response = await $ordersController.createOrder(token,orderData);
       success = response.success;
       statusCode = response.estado;
     }
@@ -166,7 +169,7 @@ function OrderFormPage() {
   const enviarDatosConsumo = async () => {
     console.log("Enviar datos de consumo");
 
-    let result = await $ordersController.asociarConsumo(id, nuevoConsumo);
+    let result = await $ordersController.asociarConsumo(token,id, nuevoConsumo);
 
     if (result.success) {
       alert("Datos guardados correctamente");

@@ -1,17 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useContext } from "react";
 import $inventarioController from "../../core/InventoryController.js";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../../context/AuthContext";
 
 function InventaryPage() {
   const [inventario, setInventario] = useState([]);
   const [busqueda, setBusqueda] = useState("");
   const navigate = useNavigate();
+  const { usuario,token } = useContext(AuthContext);
 
   // -------------------------------------------------------
   // Cargar inventario (con o sin búsqueda)
   // -------------------------------------------------------
   async function cargarInventario(nombre = "") {
-    const respuesta = await $inventarioController.obtenerInventario({ nombre });
+    const respuesta = await $inventarioController.obtenerInventario(token,{ nombre });
 
     if (respuesta.success) {
       setInventario(respuesta.data);
@@ -49,7 +51,7 @@ function InventaryPage() {
     );
     if (!seguro) return;
 
-    const respuesta = await $inventarioController.eliminarItemInventario(id);
+    const respuesta = await $inventarioController.eliminarItemInventario(token,id);
 
     if (respuesta.success) {
       alert("Elemento eliminado correctamente");

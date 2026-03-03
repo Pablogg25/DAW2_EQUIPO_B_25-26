@@ -4,7 +4,7 @@ const $calendarioController = (function () {
   // -------------------------------------------------------
   // GET /eventos  (con filtros opcionales)
   // -------------------------------------------------------
-  async function getCalendarios(filtros = {}) {
+  async function getCalendarios(authToken,filtros = {}) {
     let requestUrl = apiController.getBaseUrl() + "/eventos";
 
     const query = [];
@@ -23,7 +23,13 @@ const $calendarioController = (function () {
     }
 
     try {
-      const request = await fetch(requestUrl);
+      const requestBody = {
+                headers: {
+                    "Content-type": "application/json; charset=UTF-8",
+                    "Authorization": "Bearer " + authToken,
+                },
+            };
+      const request = await fetch(requestUrl,requestBody);
       const contentType = request.headers.get("Content-Type") || "";
 
       let respuesta = {};
@@ -62,11 +68,17 @@ const $calendarioController = (function () {
   // -------------------------------------------------------
   // GET /eventos/:id
   // -------------------------------------------------------
-  async function getCalendario(id) {
+  async function getCalendario(authToken,id) {
     const requestUrl = apiController.getBaseUrl() + "/eventos/" + id;
 
     try {
-      const request = await fetch(requestUrl);
+      const requestBody = {
+                headers: {
+                    "Content-type": "application/json; charset=UTF-8",
+                    "Authorization": "Bearer " + authToken,
+                },
+            };
+      const request = await fetch(requestUrl,requestBody);
       const respuesta = await request.json();
 
       if (request.ok) {
@@ -91,13 +103,13 @@ const $calendarioController = (function () {
   // -------------------------------------------------------
   // POST /eventos
   // -------------------------------------------------------
-  async function createCalendario(obj) {
+  async function createCalendario(authToken,obj) {
     const requestUrl = apiController.getBaseUrl() + "/eventos";
 
     try {
       const request = await fetch(requestUrl, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json","Authorization": "Bearer " + authToken, },
         body: JSON.stringify(obj),
       });
 
@@ -125,13 +137,13 @@ const $calendarioController = (function () {
   // -------------------------------------------------------
   // PUT /eventos/:id
   // -------------------------------------------------------
-  async function updateCalendario(id, obj) {
+  async function updateCalendario(authToken,id, obj) {
     const requestUrl = apiController.getBaseUrl() + "/eventos/" + id;
 
     try {
       const request = await fetch(requestUrl, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json","Authorization": "Bearer " + authToken, },
         body: JSON.stringify(obj),
       });
 
@@ -159,12 +171,13 @@ const $calendarioController = (function () {
   // -------------------------------------------------------
   // DELETE /eventos/:id
   // -------------------------------------------------------
-  async function deleteCalendario(id) {
+  async function deleteCalendario(authToken,id) {
     const requestUrl = apiController.getBaseUrl() + "/eventos/" + id;
 
     try {
       const request = await fetch(requestUrl, {
         method: "DELETE",
+        headers: { "Content-Type": "application/json","Authorization": "Bearer " + authToken, },
       });
 
       const respuesta = await request.json();

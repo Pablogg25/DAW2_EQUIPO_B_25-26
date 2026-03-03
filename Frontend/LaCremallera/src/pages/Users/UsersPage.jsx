@@ -1,18 +1,20 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect,useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../../context/AuthContext";
 
 import $usersController from "../../core/UsersController";
 
 function UsersPage() {
   const [users, setUsers] = useState([]);
   const [busqueda, setBusqueda] = useState("");
+  const { usuario,token } = useContext(AuthContext);
 
   const navegar = useNavigate();
 
   const cargarDatos = async (nombre = "") => {
     console.log("Cargando datos");
 
-    let datos = await $usersController.getUsers({'username':nombre});
+    let datos = await $usersController.getUsers(token,{'username':nombre});
 
     if (datos.success) {
       console.log("DATOS RECIVIDOS");
@@ -61,7 +63,7 @@ function UsersPage() {
         console.log("Eliminando usuario");
         //realizar petición de borrado
 
-        let result = await $usersController.deleteUser(userId);
+        let result = await $usersController.deleteUser(token,userId);
 
         //if success
         if (!result.success) {
