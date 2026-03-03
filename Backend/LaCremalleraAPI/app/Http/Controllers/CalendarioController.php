@@ -15,7 +15,6 @@ class CalendarioController extends Controller
             $user = $request->user();
             $query = Calendario::query();
 
-            // Solo se filtramos si NO es admin
             if ($user->rol === 'cliente') {
                 $query->where('usuarioId', $user->usuarioId);
             }
@@ -24,7 +23,6 @@ class CalendarioController extends Controller
                 $query->where('empleadoId', $user->usuarioId);
             }
 
-            // Admin no se filtra, ve todo
             $eventos = $query->get();
 
             return $this->success($eventos);
@@ -45,7 +43,6 @@ class CalendarioController extends Controller
                 return $this->error('Evento no encontrado', 404);
             }
 
-            // Admin puede ver cualquiera
             if ($user->rol !== 'admin') {
 
                 if ($user->rol === 'cliente' && $evento->usuarioId != $user->usuarioId) {
@@ -70,29 +67,23 @@ class CalendarioController extends Controller
 
             $user = $request->user();
 
-            $request->merge([
-                'empleadoId' => $request->empleadoId ?: null,
-                'trabajoId'  => $request->trabajoId ?: null,
-                'usuarioId'  => $request->usuarioId ?: null,
-            ]);
-
             $validated = $request->validate([
                 'titulo' => 'required|string|max:100',
                 'descripcion' => 'nullable|string',
                 'fecha_inicio' => 'required|date',
-                'fecha_fin' => 'required|date',
-                'usuarioId' => 'nullable|integer',
+                'fecha_fin' => 'required|date|after_or_equal:fecha_inicio',
+                'usuarioId' => 'required|integer',
                 'empleadoId' => 'nullable|integer',
                 'trabajoId' => 'nullable|integer',
             ]);
 
-            // Admin puede crear para cualquiera 
-
+            // CLIENTE → no puede elegir usuarioId
             if ($user->rol === 'cliente') {
                 $validated['usuarioId'] = $user->usuarioId;
                 $validated['empleadoId'] = null;
             }
 
+            // EMPLEADO → se asigna a sí mismo
             if ($user->rol === 'empleado') {
                 $validated['empleadoId'] = $user->usuarioId;
             }
@@ -117,7 +108,6 @@ class CalendarioController extends Controller
                 return $this->error('Evento no encontrado', 404);
             }
 
-            // Admin puede editar cualquiera
             if ($user->rol !== 'admin') {
 
                 if ($user->rol === 'cliente' && $evento->usuarioId != $user->usuarioId) {
@@ -129,18 +119,12 @@ class CalendarioController extends Controller
                 }
             }
 
-            $request->merge([
-                'empleadoId' => $request->empleadoId ?: null,
-                'trabajoId'  => $request->trabajoId ?: null,
-                'usuarioId'  => $request->usuarioId ?: null,
-            ]);
-
             $validated = $request->validate([
                 'titulo' => 'required|string|max:100',
                 'descripcion' => 'nullable|string',
                 'fecha_inicio' => 'required|date',
-                'fecha_fin' => 'required|date',
-                'usuarioId' => 'nullable|integer',
+                'fecha_fin' => 'required|date|after_or_equal:fecha_inicio',
+                'usuarioId' => 'required|integer',
                 'empleadoId' => 'nullable|integer',
                 'trabajoId' => 'nullable|integer',
             ]);
