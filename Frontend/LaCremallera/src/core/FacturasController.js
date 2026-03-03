@@ -42,7 +42,7 @@ const $facturasController = (function () {
             console.log("realizando petición a: " + requestUrl);
             const request = await fetch(requestUrl, requestBody);
             const respuesta = await request.json();
-            console.log(respuesta);
+            // console.log(respuesta);
 
             if (request.status == 200) {
 

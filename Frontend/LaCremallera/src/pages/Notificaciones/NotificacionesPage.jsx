@@ -1,6 +1,5 @@
 
 import $notificacionesController from "../../core/NotificacionesController";
-import $usersController from "../../core/UsersController";
 import $ordersController from "../../core/OrdersController";
 
 import { useState, useEffect, useContext } from "react";
@@ -10,7 +9,7 @@ import { AuthContext } from "../../context/AuthContext";
 
 function NotificacionesPage() {
   const [notificaciones, setNotificaciones] = useState([]);
-  const [usuarios, setUsuarios] = useState([]);
+  // const [usuarios, setUsuarios] = useState([]);
   const [trabajos, setTrabajos] = useState([]);
   //datos usuario
   //datos trabajo
@@ -50,13 +49,6 @@ function NotificacionesPage() {
         setNotificaciones([]);
       }
 
-    }
-
-    if (usuarios.length == 0) {
-      console.log("Cargando datos de usuario");
-      let datosUsuario = await $usersController.getUsers();
-      // console.log(datosUsuario);
-      setUsuarios(datosUsuario.data);
     }
 
     if (trabajos.length == 0) {
@@ -120,20 +112,6 @@ function NotificacionesPage() {
     cargarDatos();
   }, []);
 
-  function getUsuarioName(usuarioId) {
-    if (usuarios) {
-      console.log("Buscando nombre de usuario id: " + usuarioId);
-      let index = usuarios.findIndex((p) => p.usuarioId == usuarioId);
-
-      if (index !== -1) {
-        console.log("Encontrado:");
-        console.log(usuarios[index]);
-        return usuarios[index]["nombre"];
-      }
-      return "not found";
-    }
-    return "n/a"
-  }
 
   return (
     <div className="container mt-4 page-fade">
@@ -209,9 +187,9 @@ function NotificacionesPage() {
           <div key={elemento["notificacionId"]} className="fila cols-9">
             <div className="col">{elemento["notificacionId"]}</div>
 
-            <div className="col">{getUsuarioName(elemento["receptorId"])}</div>
+            <div className="col">{elemento["receptor"]["nombre"]}</div>
 
-            <div className="col">{getUsuarioName(elemento["remitenteId"])}</div>
+            <div className="col">{elemento["remitente"]["nombre"]}</div>
 
             <div className="col">{elemento["trabajoId"]}</div>
 

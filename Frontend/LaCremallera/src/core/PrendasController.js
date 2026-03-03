@@ -31,6 +31,7 @@ const $prendasController = (function () {
 
             if (request.status == 200) {
                 console.log("prendasController repuesta 200 OK");
+                // console.log(respuesta);
 
                 return { "data": respuesta.data, "status": 200, "success": true };
 

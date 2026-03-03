@@ -105,16 +105,6 @@ function FacturasPage() {
     cargarDatos();
   }, []);
 
-  function getUsuarioName(usuarioId) {
-    if (usuarios) {
-      let index = usuarios.findIndex((p) => p.usuarioId == usuarioId);
-
-      if (index !== -1) {
-        return usuarios[index].nombre;
-      }
-    }
-  }
-
   function getTotalFactura(factura) {
     if (factura["total_calculado"]) {
       return factura["total_calculado"];
@@ -189,7 +179,7 @@ function FacturasPage() {
           <div key={elemento["facturaId"]} className="fila cols-7">
             <div className="col">{elemento["facturaId"]}</div>
 
-            <div className="col">{getUsuarioName(elemento["usuarioId"])}</div>
+            <div className="col">{elemento["usuario"]["nombre"]}</div>
 
             <div className="col">{elemento["fecha"]}</div>
 
