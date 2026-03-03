@@ -89,14 +89,13 @@ class NotificacionesController extends Controller
                 );
             }
 
-            if (
-                $user->rol === 'cliente' &&
-                $notificacion->receptorId != $user->usuarioId
-            ) {
-                return $this->error(
-                    'No autorizado',
-                    403
-                );
+            if ($user->rol === 'empleado') {
+                if (
+                    $notificacion->receptorId != $user->usuarioId &&
+                    $notificacion->remitenteId != $user->usuarioId
+                ) {
+                    return $this->error('No autorizado', 403);
+                }
             }
 
             return $this->success($notificacion);
