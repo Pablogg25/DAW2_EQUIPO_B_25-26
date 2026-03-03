@@ -7,17 +7,17 @@ function NavBar() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
 
+  const rol = usuario?.rol; // admin | empleado | cliente
+
   const handlePerfil = () => {
     if (!usuario) return;
 
-    // Igual que en UsersPage: usas usuarioId, no id
     const id = usuario.usuarioId;
 
     if (id) {
       setOpen(false);
       navigate("/users/" + id);
     } else {
-      console.log("El usuario no tiene usuarioId:", usuario);
       alert("No se ha podido obtener el id del usuario");
     }
   };
@@ -51,48 +51,70 @@ function NavBar() {
 
       <div className="collapse navbar-collapse" id="mainNavbar">
         <ul className="navbar-nav ms-auto">
-          <li className="nav-item">
-            <NavLink to="/inventory" className="nav-link">
-              Inventario
-            </NavLink>
-          </li>
+          {/* INVENTARIO → admin y empleado */}
+          {(rol === "admin" || rol === "empleado") && (
+            <li className="nav-item">
+              <NavLink to="/inventory" className="nav-link">
+                Inventario
+              </NavLink>
+            </li>
+          )}
 
-          <li className="nav-item">
-            <NavLink to="/orders" className="nav-link">
-              Trabajos
-            </NavLink>
-          </li>
+          {/* TRABAJOS → todos */}
+          {(rol === "admin" || rol === "empleado" || rol === "cliente") && (
+            <li className="nav-item">
+              <NavLink to="/orders" className="nav-link">
+                Trabajos
+              </NavLink>
+            </li>
+          )}
 
-          <li className="nav-item">
-            <NavLink to="/prendas" className="nav-link">
-              Prendas
-            </NavLink>
-          </li>
+          {/* PRENDAS → admin y empleado */}
+          {(rol === "admin" || rol === "empleado") && (
+            <li className="nav-item">
+              <NavLink to="/prendas" className="nav-link">
+                Prendas
+              </NavLink>
+            </li>
+          )}
 
-          <li className="nav-item">
-            <NavLink to="/users" className="nav-link">
-              Usuarios
-            </NavLink>
-          </li>
+          {/* USUARIOS → solo admin */}
+          {rol === "admin" && (
+            <li className="nav-item">
+              <NavLink to="/users" className="nav-link">
+                Usuarios
+              </NavLink>
+            </li>
+          )}
 
-          <li className="nav-item">
-            <NavLink to="/notificaciones" className="nav-link">
-              Notificaciones
-            </NavLink>
-          </li>
+          {/* NOTIFICACIONES → todos */}
+          {(rol === "admin" || rol === "empleado" || rol === "cliente") && (
+            <li className="nav-item">
+              <NavLink to="/notificaciones" className="nav-link">
+                Notificaciones
+              </NavLink>
+            </li>
+          )}
 
-          <li className="nav-item">
-            <NavLink to="/facturas" className="nav-link">
-              Facturas
-            </NavLink>
-          </li>
+          {/* FACTURAS → admin y empleado y cliente */}
+          {(rol === "admin" || rol === "empleado" || rol === "cliente") && (
+            <li className="nav-item">
+              <NavLink to="/facturas" className="nav-link">
+                Facturas
+              </NavLink>
+            </li>
+          )}
 
-          <li className="nav-item">
-            <NavLink to="/calendar" className="nav-link">
-              Calendario
-            </NavLink>
-          </li>
+          {/* CALENDARIO → todos */}
+          {(rol === "admin" || rol === "empleado" || rol === "cliente") && (
+            <li className="nav-item">
+              <NavLink to="/calendar" className="nav-link">
+                Calendario
+              </NavLink>
+            </li>
+          )}
 
+          {/* MENÚ DE USUARIO */}
           {usuario && (
             <li className="nav-item ms-3 position-relative">
               <button

@@ -1,4 +1,4 @@
-import React, { useEffect, useState,useContext } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import $inventarioController from "../../core/InventoryController.js";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
@@ -7,13 +7,15 @@ function InventaryPage() {
   const [inventario, setInventario] = useState([]);
   const [busqueda, setBusqueda] = useState("");
   const navigate = useNavigate();
-  const { usuario,token } = useContext(AuthContext);
+  const { usuario } = useContext(AuthContext);
+
+  const rol = usuario?.rol; // admin | empleado | cliente
 
   // -------------------------------------------------------
-  // Cargar inventario (con o sin búsqueda)
+  // Cargar inventario
   // -------------------------------------------------------
   async function cargarInventario(nombre = "") {
-    const respuesta = await $inventarioController.obtenerInventario(token,{ nombre });
+    const respuesta = await $inventarioController.obtenerInventario({ nombre });
 
     if (respuesta.success) {
       setInventario(respuesta.data);
@@ -25,7 +27,6 @@ function InventaryPage() {
       return;
     }
 
-    console.error("Error al cargar inventario:", respuesta);
     alert("Error al cargar inventario. Código: " + respuesta.status);
   }
 
@@ -34,7 +35,7 @@ function InventaryPage() {
   }, []);
 
   // -------------------------------------------------------
-  // Buscar por nombre
+  // Buscar
   // -------------------------------------------------------
   function handleBuscar(e) {
     const valor = e.target.value;
@@ -43,29 +44,26 @@ function InventaryPage() {
   }
 
   // -------------------------------------------------------
-  // Eliminar item
+  // Eliminar item (solo admin)
   // -------------------------------------------------------
   async function eliminarItem(id) {
+    if (rol !== "admin") {
+      alert("No tienes permisos para eliminar.");
+      return;
+    }
+
     const seguro = window.confirm(
       "¿Seguro que quieres eliminar este elemento?",
     );
     if (!seguro) return;
 
-    const respuesta = await $inventarioController.eliminarItemInventario(token,id);
+    const respuesta = await $inventarioController.eliminarItemInventario(id);
 
     if (respuesta.success) {
       alert("Elemento eliminado correctamente");
       cargarInventario(busqueda);
     } else {
-      if (respuesta.status === 409) {
-        alert(
-          "Error 409: No se puede eliminar porque está asociado a un trabajo.",
-        );
-      } else if (respuesta.status === 404) {
-        alert("Error 404: El elemento no existe.");
-      } else {
-        alert("Error al eliminar. Código: " + respuesta.status);
-      }
+      alert("Error al eliminar. Código: " + respuesta.status);
     }
   }
 
@@ -83,12 +81,15 @@ function InventaryPage() {
       />
 
       <div className="d-flex gap-2 mb-3">
-        <button
-          className="btn btn-success btn-sm"
-          onClick={() => navigate("/inventory/new")}
-        >
-          Crear
-        </button>
+        {/* Crear → solo admin */}
+        {rol === "admin" && (
+          <button
+            className="btn btn-success btn-sm"
+            onClick={() => navigate("/inventory/new")}
+          >
+            Crear
+          </button>
+        )}
       </div>
 
       <div className="tabla-div">
@@ -101,14 +102,14 @@ function InventaryPage() {
           <div className="col">Acciones</div>
         </div>
 
-        {/* Si no hay resultados */}
+        {/* Sin resultados */}
         {inventario.length === 0 && (
           <div className="p-3 text-center text-muted">
             No se ha encontrado ningún elemento del inventario con ese nombre.
           </div>
         )}
 
-        {/* Filas dinámicas */}
+        {/* Filas */}
         {inventario.map((item) => {
           const bajoStock = item.cantidad <= item.stock_minimo;
 
@@ -133,19 +134,25 @@ function InventaryPage() {
               </div>
 
               <div className="col acciones">
-                <button
-                  onClick={() => navigate(`/inventory/${item.itemId}`)}
-                  className="btn btn-outline-secondary btn-sm me-1"
-                >
-                  Ver
-                </button>
+                {/* Ver → admin y empleado */}
+                {(rol === "admin" || rol === "empleado") && (
+                  <button
+                    onClick={() => navigate(`/inventory/${item.itemId}`)}
+                    className="btn btn-outline-secondary btn-sm me-1"
+                  >
+                    Ver
+                  </button>
+                )}
 
-                <button
-                  className="btn btn-outline-danger btn-sm"
-                  onClick={() => eliminarItem(item.itemId)}
-                >
-                  Eliminar
-                </button>
+                {/* Eliminar → solo admin */}
+                {rol === "admin" && (
+                  <button
+                    className="btn btn-outline-danger btn-sm"
+                    onClick={() => eliminarItem(item.itemId)}
+                  >
+                    Eliminar
+                  </button>
+                )}
               </div>
             </div>
           );
