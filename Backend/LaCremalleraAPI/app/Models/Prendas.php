@@ -43,4 +43,13 @@ class Prendas extends Model
     {
         return $this->hasMany(\App\Models\Trabajos::class, 'prendaId', 'prendaId');
     }
+
+    public function usuario()
+    {
+        return $this->belongsTo(
+            \App\Models\Usuarios::class,
+            'usuarioId',
+            'usuarioId'
+        );
+    }
 }

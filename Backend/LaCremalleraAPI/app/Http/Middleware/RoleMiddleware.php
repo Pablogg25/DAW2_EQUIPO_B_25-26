@@ -9,7 +9,7 @@ class RoleMiddleware
 {
     public function handle(Request $request, Closure $next, ...$roles)
     {
-        $user = $request->user();
+        $user = auth('sanctum')->user();
 
         if (!$user) {
             return response()->json([
@@ -18,7 +18,6 @@ class RoleMiddleware
             ], 401);
         }
 
-        // ⚠️ usar rol, no role
         if (!in_array($user->rol, $roles)) {
             return response()->json([
                 'success' => false,

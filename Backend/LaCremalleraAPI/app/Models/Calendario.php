@@ -22,7 +22,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Calendario extends Model
 {
-    protected $table = 'calendario'; // nombre de la tabla en la base de datos
+    protected $table = 'calendarios'; // nombre de la tabla en la base de datos
     protected $primaryKey = 'eventoId'; // clave primaria
 
     public $timestamps = false; // si la tabla no tiene created_at / updated_at

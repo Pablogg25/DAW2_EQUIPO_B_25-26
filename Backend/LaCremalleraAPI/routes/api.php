@@ -8,45 +8,34 @@ use App\Http\Controllers\NotificacionesController;
 use App\Http\Controllers\InventarioController;
 use App\Http\Controllers\FacturasController;
 use App\Http\Controllers\CalendarioController;
-use App\Http\Middleware\Cors;
 
-// El login se quedad public para que se pueda hacer la comprobacion del password
-Route::middleware('cors')->group(function () {
-    Route::post('/usuarios/login', [UsuariosController::class, 'checkPassword']);
-});
+// Ruta publicas para el login
+Route::post('/usuarios/login', [UsuariosController::class, 'checkPassword']);
 
-// El resto seran las rutas protegidas por los permisos a considerar
-Route::middleware(['auth:sanctum', 'cors'])->group(function () {
+// Rutas protegidas
+Route::middleware('auth:sanctum')->group(function () {
 
-    // Usuarios
     Route::prefix('usuarios')->group(function () {
 
-        // Solo admin
         Route::get('/', [UsuariosController::class, 'index'])
             ->middleware('role:admin');
 
-        // Admin o ver propio usuario
         Route::get('/{id}', [UsuariosController::class, 'show'])
             ->middleware('role:admin,empleado,cliente');
 
-        // Crear usuario
         Route::post('/', [UsuariosController::class, 'store'])
             ->middleware('role:admin,empleado');
 
-        // Actualizar usuario
         Route::put('/{id}', [UsuariosController::class, 'update'])
             ->middleware('role:admin,cliente');
 
-        // Cambiar contraseña (propia)
         Route::put('/{id}/password', [UsuariosController::class, 'updatePassword'])
             ->middleware('role:admin,empleado,cliente');
 
-        // Eliminar usuario
         Route::delete('/{id}', [UsuariosController::class, 'destroy'])
             ->middleware('role:admin');
     });
 
-    // Trabajos
     Route::prefix('trabajos')->group(function () {
 
         Route::get('/', [TrabajosController::class, 'index'])
@@ -71,7 +60,6 @@ Route::middleware(['auth:sanctum', 'cors'])->group(function () {
             ->middleware('role:admin,empleado');
     });
 
-    // Prendas
     Route::prefix('prendas')->group(function () {
 
         Route::get('/', [PrendasController::class, 'index'])
@@ -90,7 +78,6 @@ Route::middleware(['auth:sanctum', 'cors'])->group(function () {
             ->middleware('role:admin');
     });
 
-    // Notificaicones
     Route::prefix('notificaciones')->group(function () {
 
         Route::get('/', [NotificacionesController::class, 'index'])
@@ -109,7 +96,6 @@ Route::middleware(['auth:sanctum', 'cors'])->group(function () {
             ->middleware('role:admin');
     });
 
-    // Inventario
     Route::prefix('inventario')->group(function () {
 
         Route::get('/', [InventarioController::class, 'index'])
@@ -131,7 +117,6 @@ Route::middleware(['auth:sanctum', 'cors'])->group(function () {
             ->middleware('role:admin');
     });
 
-    // Facturas
     Route::prefix('facturas')->group(function () {
 
         Route::get('/', [FacturasController::class, 'index'])
@@ -159,7 +144,6 @@ Route::middleware(['auth:sanctum', 'cors'])->group(function () {
             ->middleware('role:admin,empleado');
     });
 
-    //Eventos
     Route::prefix('eventos')->group(function () {
 
         Route::get('/', [CalendarioController::class, 'index'])
@@ -177,10 +161,5 @@ Route::middleware(['auth:sanctum', 'cors'])->group(function () {
         Route::delete('/{id}', [CalendarioController::class, 'destroy'])
             ->middleware('role:admin,empleado');
     });
-
-    // Cors
-    Route::options('{any}', function () {
-        return response()->json([], 200);
-    })->where('any', '.*');
 
 });
