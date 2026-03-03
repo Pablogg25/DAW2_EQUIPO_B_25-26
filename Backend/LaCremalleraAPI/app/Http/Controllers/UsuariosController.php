@@ -16,7 +16,7 @@ class UsuariosController extends Controller
 
             $user = $request->user();
 
-            if ($user->rol !== 'admin') {
+            if (!in_array($user->rol, ['admin', 'empleado'])) {
                 return $this->error('No autorizado', 403);
             }
 

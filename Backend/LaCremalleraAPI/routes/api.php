@@ -18,7 +18,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('usuarios')->group(function () {
 
         Route::get('/', [UsuariosController::class, 'index'])
-            ->middleware('role:admin');
+            ->middleware('role:admin,empleado');
 
         Route::get('/{id}', [UsuariosController::class, 'show'])
             ->middleware('role:admin,empleado,cliente');
@@ -45,7 +45,7 @@ Route::middleware('auth:sanctum')->group(function () {
             ->middleware('role:admin,empleado,cliente');
 
         Route::post('/', [TrabajosController::class, 'store'])
-            ->middleware('role:empleado,cliente');
+            ->middleware('role:admin,empleado,cliente');
 
         Route::put('/{id}', [TrabajosController::class, 'update'])
             ->middleware('role:admin,empleado');
