@@ -18,18 +18,16 @@ class FacturasController extends Controller
             /** @var Usuarios $user */
             $user = $request->user();
 
-            $query = Facturas::with('trabajos');
+            $query = Facturas::with([
+                'trabajos',
+                'usuario:usuarioId,nombre'
+            ]);
 
-            if ($user->rol === 'cliente'||$user->rol === 'empleado') {
+            if ($user->rol === 'cliente' || $user->rol === 'empleado') {
                 $query->where('usuarioId', $user->usuarioId);
             }
 
-            // if ($user->rol === 'empleado') {
-            //     $query->where('empleadoId', $user->usuarioId);
-            // }
-
             return $this->success($query->get());
-
         } catch (\Throwable $e) {
 
             return $this->error('Error al listar facturas', 500, $e->getMessage());
@@ -43,24 +41,30 @@ class FacturasController extends Controller
             /** @var Usuarios $user */
             $user = $request->user();
 
-            $factura = Facturas::with('trabajos')->find($id);
+            $factura = Facturas::with([
+                'trabajos',
+                'usuario:usuarioId,nombre'
+            ])->find($id);
 
             if (!$factura) {
                 return $this->error('Factura no encontrada', 404);
             }
 
-            if ($user->rol === 'cliente' &&
-                $factura->usuarioId != $user->usuarioId) {
+            if (
+                $user->rol === 'cliente' &&
+                $factura->usuarioId != $user->usuarioId
+            ) {
                 return $this->error('No autorizado', 403);
             }
 
-            if ($user->rol === 'empleado' &&
-                $factura->empleadoId != $user->usuarioId) {
+            if (
+                $user->rol === 'empleado' &&
+                $factura->empleadoId != $user->usuarioId
+            ) {
                 return $this->error('No autorizado', 403);
             }
 
             return $this->success($factura);
-
         } catch (\Throwable $e) {
 
             return $this->error('Error al obtener factura', 500, $e->getMessage());
@@ -98,7 +102,6 @@ class FacturasController extends Controller
             $factura = Facturas::create($validated);
 
             return $this->success($factura, 'Factura creada', 201);
-
         } catch (\Throwable $e) {
 
             return $this->error('Error al crear factura', 500, $e->getMessage());
@@ -122,8 +125,10 @@ class FacturasController extends Controller
                 return $this->error('Cliente no puede editar', 403);
             }
 
-            if ($user->rol === 'empleado' &&
-                $factura->empleadoId != $user->usuarioId) {
+            if (
+                $user->rol === 'empleado' &&
+                $factura->empleadoId != $user->usuarioId
+            ) {
                 return $this->error('No autorizado', 403);
             }
 
@@ -143,7 +148,6 @@ class FacturasController extends Controller
             $factura->update($validated);
 
             return $this->success($factura, 'Factura actualizada');
-
         } catch (\Throwable $e) {
 
             return $this->error('Error al actualizar factura', 500, $e->getMessage());
@@ -170,7 +174,6 @@ class FacturasController extends Controller
             $factura->delete();
 
             return $this->success(null, 'Factura eliminada');
-
         } catch (\Throwable $e) {
 
             return $this->error('Error al eliminar factura', 500, $e->getMessage());
@@ -200,7 +203,6 @@ class FacturasController extends Controller
             $factura->trabajos()->syncWithoutDetaching([$trabajo->trabajoId]);
 
             return $this->success(null, 'Trabajo asociado correctamente');
-
         } catch (\Throwable $e) {
 
             return $this->error('Error al asociar trabajo', 500, $e->getMessage());
@@ -224,7 +226,6 @@ class FacturasController extends Controller
             $factura->trabajos()->detach($validated['trabajoId']);
 
             return $this->success(null, 'Trabajo desasociado');
-
         } catch (\Throwable $e) {
 
             return $this->error('Error al desasociar trabajo', 500, $e->getMessage());
@@ -249,7 +250,6 @@ class FacturasController extends Controller
             return $this->success([
                 'total' => $total
             ], 'Total recalculado');
-
         } catch (\Throwable $e) {
 
             return $this->error('Error al calcular total', 500, $e->getMessage());

@@ -15,7 +15,10 @@ class NotificacionesController extends Controller
 
             $user = $request->user();
 
-            $query = Notificaciones::query();
+            $query = Notificaciones::with([
+                'receptor:usuarioId,nombre',
+                'remitente:usuarioId,nombre'
+            ]);
 
             if ($request->has('receptorId')) {
                 $query->where('receptorId', $request->receptorId);
@@ -74,7 +77,10 @@ class NotificacionesController extends Controller
 
             $user = $request->user();
 
-            $notificacion = Notificaciones::find($id);
+            $notificacion = Notificaciones::with([
+                'receptor:usuarioId,nombre',
+                'remitente:usuarioId,nombre'
+            ])->find($id);
 
             if (!$notificacion) {
                 return $this->error(

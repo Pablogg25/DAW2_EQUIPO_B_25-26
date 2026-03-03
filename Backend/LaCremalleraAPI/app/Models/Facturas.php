@@ -29,4 +29,13 @@ class Facturas extends Model
             'trabajoId'
         );
     }
+    
+    public function usuario()
+    {
+        return $this->belongsTo(
+            \App\Models\Usuarios::class,
+            'usuarioId',
+            'usuarioId'
+        );
+    }
 }
