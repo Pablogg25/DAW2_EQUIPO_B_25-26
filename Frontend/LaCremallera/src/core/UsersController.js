@@ -4,7 +4,7 @@ const $usersController = (function () {
   console.log("Inicializando userscontroller");
 
   //params {'username':string} exacto
-  async function getUsers(authToken,params = {}) {
+  async function getUsers(params = {}) {
     console.log("usersController getUsers");
 
     let requestUrl = apiController.getBaseUrl() + "/usuarios";
@@ -13,6 +13,11 @@ const $usersController = (function () {
       requestUrl+='?username='+params['username'];
     } 
     try {
+      const authToken=apiController.getAuthToken();
+
+      if(!authToken){
+        return { data: "ERROR, NO AUTH TOKEN", success: false };
+      }
       const requestBody = {
         headers: {
           "Content-type": "application/json; charset=UTF-8",
@@ -38,10 +43,16 @@ const $usersController = (function () {
     }
   }
 
-  async function getUser(authToken,userId) {
+  async function getUser(userId) {
     const requestUrl = apiController.getBaseUrl() + "/usuarios/" + userId;
 
     try {
+
+      const authToken=apiController.getAuthToken();
+
+      if(!authToken){
+        return { data: "ERROR, NO AUTH TOKEN", success: false };
+      }
       const requestBody = {
         headers: {
           "Content-type": "application/json; charset=UTF-8",
@@ -66,11 +77,16 @@ const $usersController = (function () {
     }
   }
 
-  async function getUserByUsername(authToken,username) {
+  async function getUserByUsername(username) {
     const requestUrl =
       apiController.getBaseUrl() + "/usuarios?username=" + username;
 
     try {
+      const authToken=apiController.getAuthToken();
+
+      if(!authToken){
+        return { data: "ERROR, NO AUTH TOKEN", success: false };
+      }
       const requestBody = {
         headers: {
           "Content-type": "application/json; charset=UTF-8",
@@ -96,10 +112,15 @@ const $usersController = (function () {
     }
   }
 
-  async function createUser(authToken,objUser) {
+  async function createUser(objUser) {
     const requestUrl = apiController.getBaseUrl() + "/usuarios";
 
     try {
+      const authToken=apiController.getAuthToken();
+
+      if(!authToken){
+        return { data: "ERROR, NO AUTH TOKEN", success: false };
+      }
       const requestBody = {
         method: "POST",
         body: JSON.stringify(objUser),
@@ -129,6 +150,7 @@ const $usersController = (function () {
     const requestUrl = apiController.getBaseUrl() + "/usuarios/login";
 
     try {
+      
       const requestBody = {
         method: "POST",
         body: JSON.stringify(objUserCred),
@@ -155,10 +177,15 @@ const $usersController = (function () {
     }
   }
 
-  async function updateUser(authToken,objUser, userId) {
+  async function updateUser(objUser, userId) {
     const requestUrl = apiController.getBaseUrl() + "/usuarios/" + userId;
 
     try {
+      const authToken=apiController.getAuthToken();
+
+      if(!authToken){
+        return { data: "ERROR, NO AUTH TOKEN", success: false };
+      }
       const requestBody = {
         method: "PUT",
         body: JSON.stringify(objUser),
@@ -183,11 +210,16 @@ const $usersController = (function () {
     }
   }
 
-  async function updatePassword(authToken,objPassword, userId) {
+  async function updatePassword(objPassword, userId) {
     const requestUrl =
       apiController.getBaseUrl() + "/usuarios/" + userId + "/password";
 
     try {
+      const authToken=apiController.getAuthToken();
+
+      if(!authToken){
+        return { data: "ERROR, NO AUTH TOKEN", success: false };
+      }
       const requestBody = {
         method: "PUT",
         body: JSON.stringify(objPassword),
@@ -211,10 +243,15 @@ const $usersController = (function () {
     }
   }
 
-  async function deleteUser(authToken,userId) {
+  async function deleteUser(userId) {
     const requestUrl = apiController.getBaseUrl() + "/usuarios/" + userId;
 
     try {
+      const authToken=apiController.getAuthToken();
+
+      if(!authToken){
+        return { data: "ERROR, NO AUTH TOKEN", success: false };
+      }
       const requestBody = {
         method: "DELETE",
         headers: {

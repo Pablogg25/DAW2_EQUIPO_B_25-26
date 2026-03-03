@@ -6,8 +6,13 @@ const apiController = (function () {
     return api_base_url;
   };
 
+  let getAuthToken=function (){
+    return sessionStorage.getItem("authToken");
+  }
+
   return {
     getBaseUrl,
+    getAuthToken,
   };
 })();
 
