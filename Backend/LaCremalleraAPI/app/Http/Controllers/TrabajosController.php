@@ -9,15 +9,14 @@ use Illuminate\Database\QueryException;
 
 class TrabajosController extends Controller
 {
-
     public function index(Request $request)
     {
         try {
 
-            /** @var \App\Models\Usuarios $user */
+            /** @var Usuarios $user */
             $user = $request->user();
 
-            $query = Trabajos::with('prenda');
+            $query = Trabajos::query();
 
             // Filtros opcionales
             if ($request->filled('empleadoId')) {
@@ -34,7 +33,6 @@ class TrabajosController extends Controller
 
             // CLIENTE → solo trabajos de sus prendas
             if ($user->rol === 'cliente') {
-
                 $query->whereHas('prenda', function ($q) use ($user) {
                     $q->where('usuarioId', $user->usuarioId);
                 });
@@ -45,16 +43,16 @@ class TrabajosController extends Controller
                 $query->where('empleadoId', $user->usuarioId);
             }
 
-            $trabajos = $query->get();
+            // CARGAMOS RELACIONES COMPLETAS
+            $trabajos = $query->with([
+                'empleado:usuarioId,nombre',
+                'prenda.usuario:usuarioId,nombre'
+            ])->get();
 
             return $this->success($trabajos);
-        } catch (\Throwable $e) {
 
-            return $this->error(
-                'Error al listar trabajos',
-                500,
-                $e->getMessage()
-            );
+        } catch (\Throwable $e) {
+            return $this->error('Error al listar trabajos', 500, $e->getMessage());
         }
     }
 
@@ -62,10 +60,13 @@ class TrabajosController extends Controller
     {
         try {
 
-            /** @var \App\Models\Usuarios $user */
+            /** @var Usuarios $user */
             $user = $request->user();
 
-            $trabajo = Trabajos::with('prenda')->find($id);
+            $trabajo = Trabajos::with([
+                'empleado:usuarioId,nombre',
+                'prenda.usuario:usuarioId,nombre'
+            ])->find($id);
 
             if (!$trabajo) {
                 return $this->error('Trabajo no encontrado', 404);
@@ -73,7 +74,6 @@ class TrabajosController extends Controller
 
             // CLIENTE
             if ($user->rol === 'cliente') {
-
                 if ($trabajo->prenda->usuarioId != $user->usuarioId) {
                     return $this->error('No autorizado', 403);
                 }
@@ -81,20 +81,15 @@ class TrabajosController extends Controller
 
             // EMPLEADO
             if ($user->rol === 'empleado') {
-
                 if ($trabajo->empleadoId != $user->usuarioId) {
                     return $this->error('No autorizado', 403);
                 }
             }
 
             return $this->success($trabajo);
-        } catch (\Throwable $e) {
 
-            return $this->error(
-                'Error al obtener trabajo',
-                500,
-                $e->getMessage()
-            );
+        } catch (\Throwable $e) {
+            return $this->error('Error al obtener trabajo', 500, $e->getMessage());
         }
     }
 
@@ -115,10 +110,12 @@ class TrabajosController extends Controller
                 'precio'        => 'nullable|numeric',
             ]);
 
+            // Cliente → no puede asignar empleado manualmente
             if ($user->rol === 'cliente') {
-                $validated['usuarioId'] = $user->usuarioId;
+                $validated['empleadoId'] = null;
             }
 
+            // Empleado → se asigna a sí mismo
             if ($user->rol === 'empleado') {
                 $validated['empleadoId'] = $user->usuarioId;
             }
@@ -126,13 +123,9 @@ class TrabajosController extends Controller
             $trabajo = Trabajos::create($validated);
 
             return $this->success($trabajo, 'Trabajo creado', 201);
-        } catch (\Throwable $e) {
 
-            return $this->error(
-                'Error al crear trabajo',
-                500,
-                $e->getMessage()
-            );
+        } catch (\Throwable $e) {
+            return $this->error('Error al crear trabajo', 500, $e->getMessage());
         }
     }
 
@@ -173,13 +166,9 @@ class TrabajosController extends Controller
             $trabajo->update($validated);
 
             return $this->success($trabajo, 'Trabajo actualizado');
-        } catch (\Throwable $e) {
 
-            return $this->error(
-                'Error al actualizar trabajo',
-                500,
-                $e->getMessage()
-            );
+        } catch (\Throwable $e) {
+            return $this->error('Error al actualizar trabajo', 500, $e->getMessage());
         }
     }
 
@@ -217,20 +206,11 @@ class TrabajosController extends Controller
             $trabajo->delete();
 
             return $this->success(null, 'Trabajo eliminado');
+
         } catch (QueryException $e) {
-
-            return $this->error(
-                'Error en base de datos',
-                409,
-                $e->getMessage()
-            );
+            return $this->error('Error en base de datos', 409, $e->getMessage());
         } catch (\Throwable $e) {
-
-            return $this->error(
-                'Error al eliminar trabajo',
-                500,
-                $e->getMessage()
-            );
+            return $this->error('Error al eliminar trabajo', 500, $e->getMessage());
         }
     }
 
@@ -245,13 +225,9 @@ class TrabajosController extends Controller
             }
 
             return $this->success($trabajo->consumos);
-        } catch (\Throwable $e) {
 
-            return $this->error(
-                'Error al obtener consumos',
-                500,
-                $e->getMessage()
-            );
+        } catch (\Throwable $e) {
+            return $this->error('Error al obtener consumos', 500, $e->getMessage());
         }
     }
 
@@ -272,18 +248,10 @@ class TrabajosController extends Controller
 
             $consumo = $trabajo->consumos()->create($validated);
 
-            return $this->success(
-                $consumo,
-                'Consumo asociado correctamente',
-                201
-            );
-        } catch (\Throwable $e) {
+            return $this->success($consumo, 'Consumo asociado correctamente', 201);
 
-            return $this->error(
-                'Error al asociar consumo',
-                500,
-                $e->getMessage()
-            );
+        } catch (\Throwable $e) {
+            return $this->error('Error al asociar consumo', 500, $e->getMessage());
         }
     }
 }

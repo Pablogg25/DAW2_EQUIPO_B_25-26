@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\ConsumosTrabajo;
 use App\Models\Facturas;
+use App\Models\Usuarios;
 
 class Trabajos extends Model
 {
@@ -49,6 +50,15 @@ class Trabajos extends Model
             \App\Models\Prendas::class,
             'prendaId',
             'prendaId'
+        );
+    }
+
+    public function empleado()
+    {
+        return $this->belongsTo(
+            Usuarios::class,
+            'empleadoId',
+            'usuarioId'
         );
     }
 }
