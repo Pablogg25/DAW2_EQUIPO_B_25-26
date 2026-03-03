@@ -38,6 +38,7 @@ function PrendasPage() {
       } else {
         console.log("ERROR: un error inesperado surgió al cargar datos");
         alert("Ha surgido un error al cargar datos. " + datos.status);
+        setPrendas([]);
       }
 
     }

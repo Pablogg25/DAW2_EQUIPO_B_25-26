@@ -18,13 +18,24 @@ const $ordersController = (function () {
         for (let arg in params) {
 
             //params.nombre.trim() !== ""
-            if (params[arg].trim().length !== 0 && params[arg].trim() !== "-1") {
-                //añade un caracter de adición si ya hay otros argumentos
-                if (args != '?') {
-                    args += '&';
+            if (typeof params[arg] == "string") {
+                if (params[arg].trim().length !== 0 && params[arg].trim() !== "-1") {
+                    //añade un caracter de adición si ya hay otros argumentos
+                    if (args != '?') {
+                        args += '&';
+                    }
+                    args += arg + '=' + params[arg];
                 }
-                args += arg + '=' + params[arg];
+            } else {
+                if (params[arg] !== -1) {
+                    //añade un caracter de adición si ya hay otros argumentos
+                    if (args != '?') {
+                        args += '&';
+                    }
+                    args += arg + '=' + params[arg];
+                }
             }
+
 
         }
 
@@ -45,17 +56,17 @@ const $ordersController = (function () {
                     "Content-type": "application/json; charset=UTF-8",
                 },
             };
-            console.log(requestBody);
+            // console.log(requestBody);
             console.log("Realizando petición a: " + requestUrl);
             const request = await fetch(requestUrl, requestBody);
             const respuesta = await request.json();
 
-            console.log(request);
+            // console.log(request);
 
             if (request.status == 200) {
 
                 console.log("OrdersController respuesta OK 200");
-                // console.log(respuesta);
+                console.log(respuesta);
 
                 return { "data": respuesta.data, "status": 200, "success": true };
             }
