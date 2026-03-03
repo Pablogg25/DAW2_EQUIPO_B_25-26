@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import $usersController from "../../core/UsersController";
-// import { AuthContext } from "../../context/AuthContext";
+import { AuthContext } from "../../context/AuthContext";
 
 function UserFormPage() {
   const [userData, setUserData] = useState({
@@ -20,7 +20,9 @@ function UserFormPage() {
   const navegar = useNavigate();
 
   const { id } = useParams();
-  // const { usuario,token } = useContext(AuthContext);
+  const { usuario } = useContext(AuthContext);
+  const rol = usuario?.rol; // admin | empleado | cliente
+
 
   const cargarDatos = async () => {
     console.log("cargando datos");
@@ -231,9 +233,12 @@ function UserFormPage() {
 
         {/* Botones */}
         <div className="d-flex gap-3">
-          <button type="submit" className="btn btn-success">
+          {rol === "admin" && (
+            <button type="submit" className="btn btn-success">
             Enviar datos
           </button>
+          )}
+          
 
           <button
             type="button"

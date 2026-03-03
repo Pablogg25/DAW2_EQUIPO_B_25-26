@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-// import { AuthContext } from "../../context/AuthContext";
+import { AuthContext } from "../../context/AuthContext";
 
 import $prendasController from "../../core/PrendasController";
 import $usersController from "../../core/UsersController";
@@ -9,7 +9,9 @@ function PrendasPage() {
   const [prendas, setPrendas] = useState([]);
   const [usuarios, setUsuarios] = useState([]);
   const [busqueda, setBusqueda] = useState(-1);
-  // const { usuario,token } = useContext(AuthContext);
+  const { usuario } = useContext(AuthContext);
+  const rol = usuario?.rol; // admin | empleado | cliente
+
 
   const navegar = useNavigate();
 
@@ -27,19 +29,19 @@ function PrendasPage() {
     console.log("Cargando datos de prendas");
     let datos = await $prendasController.getPrendas({ "usuarioId": userId });
 
-    if(datos.success){
+    if (datos.success) {
       console.log("Datos recividos");
       setPrendas(datos.data);
-    }else{
-      if(datos.status==404){
+    } else {
+      if (datos.status == 404) {
         setPrendas([]);
-      }else{
+      } else {
         console.log("ERROR: un error inesperado surgió al cargar datos");
         alert("Ha surgido un error al cargar datos. " + datos.status);
       }
-      
+
     }
-    
+
 
     //si success guardar, sino dar aviso
   };
@@ -69,6 +71,12 @@ function PrendasPage() {
 
   const onDeletePrenda = async (prendaId) => {
     console.log("On delete prenda id: " + prendaId);
+
+    if (rol !== "admin") {
+      alert("No tienes permisos para eliminar.");
+      return;
+    }
+
 
     if (prendaId) {
       //hacer confirm para borrar el usuario y luego recargar datos
@@ -117,7 +125,7 @@ function PrendasPage() {
         <div>
           Buscar por usuarios
         </div>
-        
+
         <select className="form-control mb-3"
           value={busqueda}
           onChange={handleBuscar}>
@@ -133,9 +141,12 @@ function PrendasPage() {
       </div>
 
 
-      <button className="btn btn-success mb-3" onClick={() => onCreatePrenda()}>
-        Crear prenda
-      </button>
+      {rol === "admin" && (
+        <button className="btn btn-success mb-3" onClick={() => onCreatePrenda()}>
+          Crear prenda
+        </button>
+      )}
+
 
       <div className="tabla-div">
         {/* Cabecera */}
@@ -173,20 +184,25 @@ function PrendasPage() {
             <div className="col">{elemento["color"]}</div>
             <div className="col">{elemento["talla"]}</div>
 
-            <div className="col acciones">
-              <button
-                className="btn-edit"
-                onClick={() => onEditPrenda(elemento["prendaId"])}
-              >
-                Ver/editar
-              </button>
 
-              <button
-                className="btn-delete"
-                onClick={() => onDeletePrenda(elemento["prendaId"])}
-              >
-                Eliminar
-              </button>
+            <div className="col acciones">
+              {(rol === "admin" || rol === "empleado") && (
+                <button
+                  className="btn-edit"
+                  onClick={() => onEditPrenda(elemento["prendaId"])}
+                >
+                  Ver/editar
+                </button>
+              )}
+
+              {rol === "admin" && (
+                <button
+                  className="btn-delete"
+                  onClick={() => onDeletePrenda(elemento["prendaId"])}
+                >
+                  Eliminar
+                </button>)}
+
             </div>
           </div>
         ))}

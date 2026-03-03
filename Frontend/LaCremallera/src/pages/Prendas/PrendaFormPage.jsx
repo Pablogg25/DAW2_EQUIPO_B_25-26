@@ -1,5 +1,6 @@
 import { useState, useEffect, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { AuthContext } from "../../context/AuthContext";
 
 import $prendasController from "../../core/PrendasController";
 import $usersController from "../../core/UsersController";
@@ -19,6 +20,9 @@ function PrendaFormPage() {
   const navegar = useNavigate();
 
   const { id } = useParams();
+  const { usuario } = useContext(AuthContext);
+
+  const rol = usuario?.rol; // admin | empleado | cliente
 
   const cargarDatos = async () => {
     console.log("Cargando Datos");
@@ -81,7 +85,7 @@ function PrendaFormPage() {
       } else {
         alert(
           "Error, ha surgido un error al procesar su petición.\nCodigo de error: " +
-            result.estado,
+          result.estado,
         );
       }
     }
@@ -179,9 +183,12 @@ function PrendaFormPage() {
 
         {/* Botones */}
         <div className="d-flex gap-3">
-          <button type="submit" className="btn btn-success">
-            Enviar datos
-          </button>
+          {(rol === "admin" || rol === "empleado") && (
+            <button type="submit" className="btn btn-success">
+              Enviar datos
+            </button>
+          )}
+
 
           <button
             type="button"

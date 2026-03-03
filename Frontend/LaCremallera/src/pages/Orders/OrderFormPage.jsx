@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { AuthContext } from "../../context/AuthContext";
 
 import $ordersController from "../../core/OrdersController";
 import $usersController from "../../core/UsersController";
@@ -26,6 +27,8 @@ function OrderFormPage() {
   const [inventarioData, setInventarioData] = useState([]);
 
   const { id } = useParams();
+  const { usuario } = useContext(AuthContext);
+  const rol = usuario?.rol; // admin | empleado | cliente
 
   const [nuevoConsumo, setNuevoConsumo] = useState({
     trabajoId: id,
@@ -56,7 +59,7 @@ function OrderFormPage() {
           // console.log("No se han cargaod bien los consumos");
           alert(
             "Error, ha surgido un error al procesar su petición.\nCodigo de error: " +
-              datos.status,
+            datos.status,
           );
 
           navegar("/orders");
@@ -64,7 +67,7 @@ function OrderFormPage() {
       } else {
         alert(
           "Error, ha surgido un error al procesar su petición.\nCodigo de error: " +
-            datos.status,
+          datos.status,
         );
 
         navegar("/orders");
@@ -79,7 +82,7 @@ function OrderFormPage() {
     } else {
       alert(
         "Error, ha surgido un error al procesar su petición.\nCodigo de error: " +
-          datosUsuario.status,
+        datosUsuario.status,
       );
 
       navegar("/orders");
@@ -92,7 +95,7 @@ function OrderFormPage() {
     } else {
       alert(
         "Error, ha surgido un error al procesar su petición.\nCodigo de error: " +
-          datosUsuario.status,
+        datosUsuario.status,
       );
 
       navegar("/orders");
@@ -111,7 +114,7 @@ function OrderFormPage() {
     } else {
       alert(
         "Error, ha surgido un error al procesar su petición.\nCodigo de error: " +
-          datosUsuario.status,
+        datosUsuario.status,
       );
 
       navegar("/orders");
@@ -151,7 +154,7 @@ function OrderFormPage() {
       } else {
         alert(
           "Error, ha surgido un error al procesar su petición.\nCodigo de error: " +
-            statusCode,
+          statusCode,
         );
       }
     }
@@ -175,7 +178,7 @@ function OrderFormPage() {
     } else {
       alert(
         "Error, ha surgido un error al procesar su petición.\nCodigo de error: " +
-          result.status,
+        result.status,
       );
     }
   };
@@ -344,9 +347,12 @@ function OrderFormPage() {
 
         {/* Botones */}
         <div className="d-flex gap-3">
-          <button type="submit" className="btn btn-success">
-            Enviar datos
-          </button>
+          {(rol === "admin" || rol === "empleado") && (
+            <button type="submit" className="btn btn-success">
+              Enviar datos
+            </button>
+          )}
+
 
           <button
             type="button"

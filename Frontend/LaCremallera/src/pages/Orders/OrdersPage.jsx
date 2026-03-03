@@ -11,16 +11,17 @@ function OrdersPage() {
 
   const [usuariosData, setUsuarioData] = useState([]);
   const [prendasData, setPrendasData] = useState([]);
-  
+
   const [busqueda, setBusqueda] = useState({
-    estado:"",
-    prendaId:-1
+    estado: "",
+    prendaId: -1
   });
 
   const navegar = useNavigate();
   const { usuario } = useContext(AuthContext);
+  const rol = usuario?.rol; // admin | empleado | cliente
 
-  const cargarDatos = async (filtro={}) => {
+  const cargarDatos = async (filtro = {}) => {
     let datos;
 
     if (usuario.rol != "admin") {
@@ -60,14 +61,14 @@ function OrdersPage() {
   // -------------------------------------------------------
   function handleBuscarEstado(e) {
     const valor = e.target.value;
-    let actualizar={...busqueda,["estado"]:valor}
+    let actualizar = { ...busqueda, ["estado"]: valor }
     setBusqueda(actualizar);
     cargarDatos(actualizar);
   }
 
   function handleBuscarPrenda(e) {
     const valor = e.target.value;
-    let actualizar={...busqueda,["prendaId"]:valor}
+    let actualizar = { ...busqueda, ["prendaId"]: valor }
     setBusqueda(actualizar);
     cargarDatos(actualizar);
   }
@@ -86,6 +87,12 @@ function OrdersPage() {
 
   const onDeleteOrder = async (orderId) => {
     console.log("OnDeleteOrder: " + orderId);
+
+    if (rol !== "admin") {
+      alert("No tienes permisos para eliminar.");
+      return;
+    }
+
     //añadir diálogo de confirmación antes de borrar
     if (orderId) {
       if (confirm("¿Desea borrar el trabajo?")) {
@@ -101,7 +108,7 @@ function OrdersPage() {
           } else {
             alert(
               "Error, ha surgido un error al procesar su petición.\nCodigo de error: " +
-                response.estado,
+              response.estado,
             );
           }
         }
@@ -140,7 +147,7 @@ function OrdersPage() {
         <div>
           Buscar por estado
         </div>
-        
+
         <select className="form-control mb-3"
           value={busqueda["estado"]}
           onChange={handleBuscarEstado}>
@@ -149,7 +156,7 @@ function OrdersPage() {
           <option value={"en_proceso"}>En proceso</option>
           <option value={"listo"}>Listo</option>
           <option value={"entregado"}>Entregado</option>
-          
+
         </select>
       </div>
 
@@ -158,7 +165,7 @@ function OrdersPage() {
         <div>
           Buscar por prenda
         </div>
-        
+
         <select className="form-control mb-3"
           value={busqueda["prendaId"]}
           onChange={handleBuscarPrenda}>
@@ -173,9 +180,12 @@ function OrdersPage() {
         </select>
       </div>
 
-      <button className="btn btn-success mb-3" onClick={() => onCreateOrder()}>
-        Crear trabajo
-      </button>
+      {rol === "admin" && (
+        <button className="btn btn-success mb-3" onClick={() => onCreateOrder()}>
+          Crear trabajo
+        </button>
+      )}
+
 
       <div className="tabla-div">
         {/* CABECERA */}
@@ -222,19 +232,24 @@ function OrdersPage() {
             <div className="col">{elemento["estado"]}</div>
 
             <div className="col acciones">
-              <button
-                className="btn-edit"
-                onClick={() => onEditOrder(elemento["trabajoId"])}
-              >
-                Ver/Editar
-              </button>
+              {(rol === "admin" || rol === "empleado") && (
+                <button
+                  className="btn-edit"
+                  onClick={() => onEditOrder(elemento["trabajoId"])}
+                >
+                  Ver/Editar
+                </button>
+              )}
 
-              <button
-                className="btn-delete"
-                onClick={() => onDeleteOrder(elemento["trabajoId"])}
-              >
-                Eliminar
-              </button>
+              {rol === "admin" && (
+                <button
+                  className="btn-delete"
+                  onClick={() => onDeleteOrder(elemento["trabajoId"])}
+                >
+                  Eliminar
+                </button>
+              )}
+
             </div>
           </div>
         ))}

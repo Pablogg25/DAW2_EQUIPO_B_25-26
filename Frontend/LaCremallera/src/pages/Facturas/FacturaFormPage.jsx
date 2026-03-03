@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { AuthContext } from "../../context/AuthContext";
 
 import $facturasController from "../../core/FacturasController";
 import $usersController from "../../core/UsersController";
@@ -12,22 +13,8 @@ function FacturaFormPage() {
     fecha: "",
     pagado: 0,
     total_calculado: null,
-    //   trabajosId
-    trabajos: [],
-    // [{
-    //   "trabajoId": 1,
-    //   "prendaId": 1,
-    //   "empleadoId": 3,
-    //   "descripcion": "Bajo completo y ajuste lateral",
-    //   "fecha_inicio": "2025-11-20",
-    //   "fecha_entrega": "2025-11-25",
-    //   "estado": "en_proceso",
-    //   "precio": "12.50",
-    //   "pivot": {
-    //     "trabajoId": 1,
-    //     "facturaId": 1
-    //   }
-    // }]
+    trabajos: []
+
   });
   const [usuariosData, setUsuariosData] = useState([]);
   const [trabajosData, setTrabajosData] = useState([]);
@@ -42,6 +29,9 @@ function FacturaFormPage() {
   const navegar = useNavigate();
 
   const { id } = useParams();
+  const { usuario } = useContext(AuthContext);
+
+  const rol = usuario?.rol; // admin | empleado | cliente
 
   const cargarDatos = async () => {
     console.log("Cargando datos");
@@ -408,32 +398,41 @@ function FacturaFormPage() {
             ))}
           </select>
 
-          <button className="btn btn-primary mb-3" onClick={handleOnAddItem}>
-            Añadir item
-          </button>
+          {(rol === "admin" || rol === "empleado") && (
+            <button className="btn btn-primary mb-3" onClick={handleOnAddItem}>
+              Añadir item
+            </button>
+          )}
+
 
           <div className="tabla-div">
             <div className="fila cabecera cols-3">
               <div className="col">ID</div>
               <div className="col">Descripción</div>
-              <div className="col">Acciones</div>
+              {(rol === "admin" || rol === "empleado") && (
+                <div className="col">Acciones</div>
+              )}
+
             </div>
 
             {getFullItemList().map((elemento) => (
               <div key={elemento["trabajoId"]} className="fila cols-3">
                 <div className="col">{elemento["trabajoId"]}</div>
                 <div className="col">{elemento["descripcion"]}</div>
-                <div className="col acciones">
-                  <button
-                    className="btn-delete"
-                    onClick={(evento) => {
-                      evento.preventDefault();
-                      handleOnRemoveItem(elemento["trabajoId"]);
-                    }}
-                  >
-                    Eliminar
-                  </button>
-                </div>
+                {(rol === "admin" || rol === "empleado") && (
+                  <div className="col acciones">
+                    <button
+                      className="btn-delete"
+                      onClick={(evento) => {
+                        evento.preventDefault();
+                        handleOnRemoveItem(elemento["trabajoId"]);
+                      }}
+                    >
+                      Eliminar
+                    </button>
+                  </div>
+                )}
+
               </div>
             ))}
           </div>
@@ -452,9 +451,12 @@ function FacturaFormPage() {
 
         {/* Botones */}
         <div className="d-flex gap-3">
-          <button type="submit" className="btn btn-success">
-            Enviar datos
-          </button>
+          {(rol === "admin" || rol === "empleado") && (
+            <button type="submit" className="btn btn-success">
+              Enviar datos
+            </button>
+          )}
+
 
           <button
             type="button"

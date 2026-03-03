@@ -21,6 +21,7 @@ function NotificacionesPage() {
 
   //useContext
   const { usuario } = useContext(AuthContext);
+  const rol = usuario?.rol; // admin | empleado | cliente
 
   const cargarDatos = async (filtro = -1) => {
     console.log("Cargando datos");
@@ -42,13 +43,13 @@ function NotificacionesPage() {
     if (datos.success) {
       setNotificaciones(datos.data);
     } else {
-      if(datos.status==404){
+      if (datos.status == 404) {
         setNotificaciones([]);
-      }else{
+      } else {
         alert("Ha surgido un error al cargar los datos de notificaciones");
         setNotificaciones([]);
       }
-      
+
     }
 
     if (usuarios.length == 0) {
@@ -89,6 +90,10 @@ function NotificacionesPage() {
     console.log("On delete notificación id: " + notId);
 
     if (notId) {
+      if (rol !== "admin" || rol !== "empleado") {
+        alert("No tienes permisos para eliminar.");
+        return;
+      }
       if (confirm("¿Seguro que desea eliminar la notificación?")) {
         let result = await $notificacionesController.deleteNotificacion(notId);
 
@@ -157,12 +162,15 @@ function NotificacionesPage() {
         </select>
       </div>
 
-      <button
-        className="btn btn-success mb-3"
-        onClick={() => onCreateNotificacion()}
-      >
-        Crear Notificación
-      </button>
+      {(rol === "admin" || rol === "empleado") && (
+        <button
+          className="btn btn-success mb-3"
+          onClick={() => onCreateNotificacion()}
+        >
+          Crear Notificación
+        </button>
+      )}
+
 
       <div className="tabla-div">
         {/* CABECERA */}
@@ -222,13 +230,15 @@ function NotificacionesPage() {
               >
                 Ver
               </button>
+              {rol === "admin" && (
+                <button
+                  className="btn-delete"
+                  onClick={() => onDeleteNotificacion(elemento["notificacionId"])}
+                >
+                  Eliminar
+                </button>
+              )}
 
-              <button
-                className="btn-delete"
-                onClick={() => onDeleteNotificacion(elemento["notificacionId"])}
-              >
-                Eliminar
-              </button>
             </div>
           </div>
         ))}

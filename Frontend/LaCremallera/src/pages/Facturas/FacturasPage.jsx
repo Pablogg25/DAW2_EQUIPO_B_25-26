@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../../context/AuthContext";
 
 import $facturasController from "../../core/FacturasController";
 import $usersController from "../../core/UsersController";
@@ -7,34 +8,37 @@ import $usersController from "../../core/UsersController";
 function FacturasPage() {
   const [facturas, setFacturas] = useState([]);
   const [usuarios, setUsuarios] = useState([]);
-  
+
   const [busqueda, setBusqueda] = useState(-1);
 
   const navegar = useNavigate();
+  const { usuario } = useContext(AuthContext);
 
-  const cargarDatos = async (filtro=-1) => {
+  const rol = usuario?.rol; // admin | empleado | cliente
+
+  const cargarDatos = async (filtro = -1) => {
     console.log("Cargando datos");
 
-    let datos = await $facturasController.getFacturas({usuarioId:filtro});
+    let datos = await $facturasController.getFacturas({ usuarioId: filtro });
 
-    if(datos.success){
+    if (datos.success) {
       setFacturas(datos.data);
-    }else{
-      if(datos.status!=404){
-        alert("Ha surgido un error al procesar su petición, "+datos.status);
+    } else {
+      if (datos.status != 404) {
+        alert("Ha surgido un error al procesar su petición, " + datos.status);
       }
       setFacturas([]);
-      
+
     }
-    
+
 
     let datosUsuario = await $usersController.getUsers();
-    if(datosUsuario.success){
+    if (datosUsuario.success) {
       setUsuarios(datosUsuario.data);
-    }else{
+    } else {
       alert("Ha surgido un error al procesar su petición");
     }
-    
+
   };
 
   //filtro
@@ -61,10 +65,40 @@ function FacturasPage() {
     navegar("/facturas/" + facturaId);
   };
 
-  const onDeleteFactura = (facturaId) => {
+  const onDeleteFactura = async (facturaId) => {
     console.log("On delete factura id: " + facturaId);
 
     //ejecutar petición
+
+    if (rol !== "admin") {
+      alert("No tienes permisos para eliminar.");
+      return;
+    }
+
+
+    if (facturaId) {
+      //hacer confirm para borrar el usuario y luego recargar datos
+
+      if (confirm("¿Seguro que desea eliminar la factura?")) {
+        let result = await $facturasController.deleteFactura(facturaId);
+
+        if (result) {
+          cargarDatos();
+          // navegar("/facturas");
+        } else {
+          if (result.estado == 409) {
+            alert(
+              "ERROR: 409: no se puede borrar la factura porque depende de otro elemento de la base de datos",
+            );
+          } else {
+            alert(
+              "Error, ha surgido un error al procesar su petición.\nCodigo de error: " +
+              result.estado,
+            );
+          }
+        }
+      }
+    }
   };
 
   useEffect(() => {
@@ -102,7 +136,7 @@ function FacturasPage() {
         <div>
           Buscar por usuarios
         </div>
-        
+
         <select className="form-control mb-3"
           value={busqueda}
           onChange={handleBuscar}>
@@ -175,12 +209,15 @@ function FacturasPage() {
                 Ver/editar
               </button>
 
-              <button
-                className="btn-delete"
-                onClick={() => onDeleteFactura(elemento["facturaId"])}
-              >
-                Eliminar
-              </button>
+              {rol === "admin" && (
+                <button
+                  className="btn-delete"
+                  onClick={() => onDeleteFactura(elemento["facturaId"])}
+                >
+                  Eliminar
+                </button>
+              )}
+
             </div>
           </div>
         ))}

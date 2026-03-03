@@ -1,30 +1,32 @@
-import { useState, useEffect,useContext } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-// import { AuthContext } from "../../context/AuthContext";
+import { AuthContext } from "../../context/AuthContext";
 
 import $usersController from "../../core/UsersController";
 
 function UsersPage() {
   const [users, setUsers] = useState([]);
   const [busqueda, setBusqueda] = useState("");
-  // const { usuario,token } = useContext(AuthContext);
+  const { usuario } = useContext(AuthContext);
 
   const navegar = useNavigate();
+
+  const rol = usuario?.rol; // admin | empleado | cliente
 
   const cargarDatos = async (nombre = "") => {
     console.log("Cargando datos");
 
-    let datos = await $usersController.getUsers({'username':nombre});
+    let datos = await $usersController.getUsers({ 'username': nombre });
 
     if (datos.success) {
       console.log("DATOS RECIVIDOS");
       setUsers(datos.data);
     } else {
-      if(datos.status!=404){
+      if (datos.status != 404) {
         console.log("ERROR: un error inesperado surgió al cargar datos");
         alert("Ha surgido un error al cargar datos. " + datos.data);
       }
-      
+
     }
   };
 
@@ -37,7 +39,7 @@ function UsersPage() {
     // cargarDatos(valor);
   }
 
-  function startBusqueda(){
+  function startBusqueda() {
     cargarDatos(busqueda);
   }
 
@@ -54,10 +56,14 @@ function UsersPage() {
       navegar("/users/" + userId);
     }
   };
-
+  //eliminar (solo para admin)
   const onDeleteUser = async (userId) => {
     console.log("on delete user: " + userId);
 
+    if (rol !== "admin") {
+      alert("No tienes permisos para eliminar.");
+      return;
+    }
     if (userId) {
       if (confirm("¿Está seguro que desea borrar este usuario?")) {
         console.log("Eliminando usuario");
@@ -93,12 +99,15 @@ function UsersPage() {
         value={busqueda}
         onChange={handleBuscar}
       />
-      <button className="btn btn-success mb-3" onClick={()=>{startBusqueda();}}>
+      <button className="btn btn-success mb-3" onClick={() => { startBusqueda(); }}>
         Aplicar filtro
       </button>
-      <button className="btn btn-success mb-3" onClick={() => onCreateUser()}>
-        Crear Usuario
-      </button>
+      {rol === "admin" && (
+        <button className="btn btn-success mb-3" onClick={() => onCreateUser()}>
+          Crear Usuario
+        </button>
+      )}
+
 
       <div className="tabla-div">
         {/* Cabecera */}
@@ -152,12 +161,15 @@ function UsersPage() {
                 Ver/editar
               </button>
 
-              <button
-                className="btn-delete"
-                onClick={() => onDeleteUser(elemento["usuarioId"])}
-              >
-                Eliminar
-              </button>
+              {rol === "admin" && (
+                <button
+                  className="btn-delete"
+                  onClick={() => onDeleteUser(elemento["usuarioId"])}
+                >
+                  Eliminar
+                </button>
+              )}
+
             </div>
           </div>
         ))}
