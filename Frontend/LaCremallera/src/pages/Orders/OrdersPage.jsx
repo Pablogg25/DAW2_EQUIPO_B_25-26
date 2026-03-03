@@ -2,8 +2,8 @@ import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
 import $ordersController from "../../core/OrdersController";
-import $usersController from "../../core/UsersController";
-import $prendasController from "../../core/PrendasController";
+// import $usersController from "../../core/UsersController";
+// import $prendasController from "../../core/PrendasController";
 import { AuthContext } from "../../context/AuthContext";
 
 function OrdersPage() {
@@ -36,19 +36,6 @@ function OrdersPage() {
     if (datos.success) {
       console.log("DATOS RECIVIDOS");
       setOrders(datos.data);
-
-      //TODO: cargar datos de usuarios y prendas
-
-      if (usuariosData.length == 0) {
-        console.log("Cargando datos de usuario");
-        let datosUsuario = await $usersController.getUsers([]);
-        setUsuarioData(datosUsuario.data);
-      }
-      if (prendasData.length == 0) {
-        console.log("Cargando datos de prendas");
-        let prendas = await $prendasController.getPrendas([]);
-        setPrendasData(prendas.data);
-      }
     } else {
       console.log("ERROR: un error inesperado surgió al cargar datos");
       alert("Ha surgido un error al cargar datos. Compruebe logs.");
@@ -115,24 +102,6 @@ function OrdersPage() {
       }
     }
   };
-
-  function getEmpleadoName(empleadoId) {
-    let index = usuariosData.findIndex((p) => p.usuarioId == empleadoId);
-
-    if (index !== -1) {
-      return usuariosData[index].nombre;
-    }
-    return "n/a";
-  }
-
-  function getPrendaName(prendaId) {
-    let index = prendasData.findIndex((p) => p.prendaId == prendaId);
-
-    if (index !== -1) {
-      return prendasData[index].tipo;
-    }
-    return "n/a";
-  }
 
   useEffect(() => {
     cargarDatos();
@@ -224,8 +193,8 @@ function OrdersPage() {
           <div key={elemento["trabajoId"]} className="fila cols-9">
             <div className="col">{elemento["trabajoId"]}</div>
             <div className="col">{elemento["descripcion"]}</div>
-            <div className="col">{getPrendaName(elemento["prendaId"])}</div>
-            <div className="col">{getEmpleadoName(elemento["empleadoId"])}</div>
+            <div className="col">{elemento["prenda"]["descripcion"]}</div>
+            <div className="col">{elemento["empleado"]["nombre"]}</div>
             <div className="col">{elemento["fecha_inicio"]}</div>
             <div className="col">{elemento["fecha_entrega"]}</div>
             <div className="col">{elemento["precio"]}</div>

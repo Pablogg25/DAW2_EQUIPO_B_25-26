@@ -153,13 +153,13 @@ Route::middleware('auth:sanctum')->group(function () {
         ->middleware('role:admin,empleado,cliente');
 
     Route::post('/', [CalendarioController::class, 'store'])
-        ->middleware('role:admin,empleado,cliente'); 
+        ->middleware('role:admin,empleado,cliente');
 
     Route::put('/{id}', [CalendarioController::class, 'update'])
-        ->middleware('role:admin,empleado,cliente'); 
+        ->middleware('role:admin,empleado,cliente');
 
     Route::delete('/{id}', [CalendarioController::class, 'destroy'])
-        ->middleware('role:admin'); 
+        ->middleware('role:admin');
 });
 
 });
