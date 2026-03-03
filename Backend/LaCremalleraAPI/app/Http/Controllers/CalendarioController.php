@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Calendario;
-use App\Models\Usuarios;
 use Illuminate\Http\Request;
 use Illuminate\Database\QueryException;
 
@@ -14,53 +13,60 @@ class CalendarioController extends Controller
     {
         try {
 
+            $user = $request->user(); 
+
             $query = Calendario::query();
 
-            if ($request->filled('usuarioId')) {
-                $query->where('usuarioId', $request->usuarioId);
+            // Cambio para que filter por rol, antes era por tipo ids
+            if ($user->rol === 'cliente') {
+                $query->where('usuarioId', $user->usuarioId);
             }
 
-            if ($request->filled('empleadoId')) {
-                $query->where('empleadoId', $request->empleadoId);
+            if ($user->rol === 'empleado') {
+                $query->where('empleadoId', $user->usuarioId);
             }
 
-            if ($request->filled('trabajoId')) {
-                $query->where('trabajoId', $request->trabajoId);
+            if ($user->rol === 'admin') {
+                $query->where('usuarioId', $user->usuarioId);
             }
 
-            $calendarios = $query->get();
+            $eventos = $query->get();
 
-            return $this->success($calendarios);
+            return $this->success($eventos);
 
         } catch (\Throwable $e) {
-
-            return $this->error(
-                'Error al listar eventos',
-                500,
-                $e->getMessage()
-            );
+            return $this->error('Error al listar eventos', 500, $e->getMessage());
         }
     }
 
-    public function show(int $id)
+    public function show(Request $request, $id)
     {
         try {
 
-            $calendario = Calendario::find($id);
+            $user = $request->user();
 
-            if (!$calendario) {
+            $evento = Calendario::find($id);
+
+            if (!$evento) {
                 return $this->error('Evento no encontrado', 404);
             }
 
-            return $this->success($calendario);
+            if ($user->rol === 'cliente' && $evento->usuarioId != $user->usuarioId) {
+                return $this->error('No autorizado', 403);
+            }
+
+            if ($user->rol === 'empleado' && $evento->empleadoId != $user->usuarioId) {
+                return $this->error('No autorizado', 403);
+            }
+
+            if ($user->rol === 'admin' && $evento->usuarioId != $user->usuarioId) {
+                return $this->error('No autorizado', 403);
+            }
+
+            return $this->success($evento);
 
         } catch (\Throwable $e) {
-
-            return $this->error(
-                'Error al obtener evento',
-                500,
-                $e->getMessage()
-            );
+            return $this->error('Error al obtener evento', 500, $e->getMessage());
         }
     }
 
@@ -68,145 +74,111 @@ class CalendarioController extends Controller
     {
         try {
 
-            /** @var Usuarios $user */
             $user = $request->user();
 
-            // Convertir strings vacíos a null
             $request->merge([
                 'empleadoId' => $request->empleadoId ?: null,
                 'trabajoId'  => $request->trabajoId ?: null,
-                'usuarioId'  => $request->usuarioId ?: null,
             ]);
 
             $validated = $request->validate([
-                'titulo'        => 'required|string|max:255',
-                'descripcion'   => 'nullable|string',
-                'fecha_inicio'  => 'required|date',
-                'fecha_fin'     => 'required|date|after_or_equal:fecha_inicio',
-                'usuarioId'     => 'nullable|integer',
-                'empleadoId'    => 'nullable|integer',
-                'trabajoId'     => 'nullable|integer',
+                'titulo' => 'required|string|max:100',
+                'descripcion' => 'nullable|string',
+                'fecha_inicio' => 'required|date',
+                'fecha_fin' => 'required|date',
+                'empleadoId' => 'nullable|integer',
+                'trabajoId' => 'nullable|integer',
             ]);
-
-            // Lógica por rol
 
             if ($user->rol === 'cliente') {
                 $validated['usuarioId'] = $user->usuarioId;
             }
 
             if ($user->rol === 'empleado') {
+                $validated['usuarioId'] = $user->usuarioId;
                 $validated['empleadoId'] = $user->usuarioId;
             }
 
-            // Admin puede crear libremente sin obligación
+            if ($user->rol === 'admin') {
+                $validated['usuarioId'] = $user->usuarioId;
+            }
 
-            $calendario = Calendario::create($validated);
+            $evento = Calendario::create($validated);
 
-            return $this->success(
-                $calendario,
-                'Evento creado correctamente',
-                201
-            );
+            return $this->success($evento, 'Evento creado', 201);
 
         } catch (\Throwable $e) {
-
-            return $this->error(
-                'Error al crear evento',
-                500,
-                $e->getMessage()
-            );
+            return $this->error('Error al crear evento', 500, $e->getMessage());
         }
     }
 
-    public function update(Request $request, int $id)
+    public function update(Request $request, $id)
     {
         try {
 
-            /** @var Usuarios $user */
             $user = $request->user();
 
-            $calendario = Calendario::find($id);
+            $evento = Calendario::find($id);
 
-            if (!$calendario) {
+            if (!$evento) {
                 return $this->error('Evento no encontrado', 404);
             }
 
-            // Convertir strings vacíos a null
+            if ($user->rol === 'cliente' && $evento->usuarioId != $user->usuarioId) {
+                return $this->error('No autorizado', 403);
+            }
+
+            if ($user->rol === 'empleado' && $evento->empleadoId != $user->usuarioId) {
+                return $this->error('No autorizado', 403);
+            }
+
             $request->merge([
                 'empleadoId' => $request->empleadoId ?: null,
                 'trabajoId'  => $request->trabajoId ?: null,
-                'usuarioId'  => $request->usuarioId ?: null,
             ]);
 
             $validated = $request->validate([
-                'titulo'        => 'required|string|max:255',
-                'descripcion'   => 'nullable|string',
-                'fecha_inicio'  => 'required|date',
-                'fecha_fin'     => 'required|date|after_or_equal:fecha_inicio',
-                'usuarioId'     => 'nullable|integer',
-                'empleadoId'    => 'nullable|integer',
-                'trabajoId'     => 'nullable|integer',
+                'titulo' => 'required|string|max:100',
+                'descripcion' => 'nullable|string',
+                'fecha_inicio' => 'required|date',
+                'fecha_fin' => 'required|date',
+                'empleadoId' => 'nullable|integer',
+                'trabajoId' => 'nullable|integer',
             ]);
 
-            // 🔐 Restricciones básicas
-            if ($user->rol === 'cliente' &&
-                $calendario->usuarioId !== $user->usuarioId) {
-                return $this->error('No autorizado', 403);
-            }
+            $evento->update($validated);
 
-            if ($user->rol === 'empleado' &&
-                $calendario->empleadoId !== $user->usuarioId) {
-                return $this->error('No autorizado', 403);
-            }
-
-            $calendario->update($validated);
-
-            return $this->success(
-                $calendario,
-                'Evento actualizado correctamente'
-            );
+            return $this->success($evento, 'Evento actualizado');
 
         } catch (\Throwable $e) {
-
-            return $this->error(
-                'Error al actualizar evento',
-                500,
-                $e->getMessage()
-            );
+            return $this->error('Error al actualizar evento', 500, $e->getMessage());
         }
     }
 
-    public function destroy(Request $request, int $id)
+    public function destroy(Request $request, $id)
     {
         try {
 
-            /** @var Usuarios $user */
             $user = $request->user();
 
-            $calendario = Calendario::find($id);
+            if ($user->rol !== 'admin') {
+                return $this->error('Solo admin puede eliminar', 403);
+            }
 
-            if (!$calendario) {
+            $evento = Calendario::find($id);
+
+            if (!$evento) {
                 return $this->error('Evento no encontrado', 404);
             }
 
-            if ($user->rol !== 'admin') {
-                return $this->error('Solo admin puede eliminar eventos', 403);
-            }
+            $evento->delete();
 
-            $calendario->delete();
+            return $this->success(null, 'Evento eliminado');
 
-            return $this->success(
-                null,
-                'Evento eliminado correctamente'
-            );
-
+        } catch (QueryException $e) {
+            return $this->error('Error BD', 409, $e->getMessage());
         } catch (\Throwable $e) {
-
-            return $this->error(
-                'Error al eliminar evento',
-                500,
-                $e->getMessage()
-            );
+            return $this->error('Error al eliminar evento', 500, $e->getMessage());
         }
     }
 }
