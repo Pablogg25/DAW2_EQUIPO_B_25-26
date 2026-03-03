@@ -8,16 +8,14 @@ use Illuminate\Database\QueryException;
 
 class CalendarioController extends Controller
 {
-
     public function index(Request $request)
     {
         try {
 
-            $user = $request->user(); 
-
+            $user = $request->user();
             $query = Calendario::query();
 
-            // Cambio para que filter por rol, antes era por tipo ids
+            // Solo se filtramos si NO es admin
             if ($user->rol === 'cliente') {
                 $query->where('usuarioId', $user->usuarioId);
             }
@@ -26,10 +24,7 @@ class CalendarioController extends Controller
                 $query->where('empleadoId', $user->usuarioId);
             }
 
-            if ($user->rol === 'admin') {
-                $query->where('usuarioId', $user->usuarioId);
-            }
-
+            // Admin no se filtra, ve todo
             $eventos = $query->get();
 
             return $this->success($eventos);
@@ -44,23 +39,22 @@ class CalendarioController extends Controller
         try {
 
             $user = $request->user();
-
             $evento = Calendario::find($id);
 
             if (!$evento) {
                 return $this->error('Evento no encontrado', 404);
             }
 
-            if ($user->rol === 'cliente' && $evento->usuarioId != $user->usuarioId) {
-                return $this->error('No autorizado', 403);
-            }
+            // Admin puede ver cualquiera
+            if ($user->rol !== 'admin') {
 
-            if ($user->rol === 'empleado' && $evento->empleadoId != $user->usuarioId) {
-                return $this->error('No autorizado', 403);
-            }
+                if ($user->rol === 'cliente' && $evento->usuarioId != $user->usuarioId) {
+                    return $this->error('No autorizado', 403);
+                }
 
-            if ($user->rol === 'admin' && $evento->usuarioId != $user->usuarioId) {
-                return $this->error('No autorizado', 403);
+                if ($user->rol === 'empleado' && $evento->empleadoId != $user->usuarioId) {
+                    return $this->error('No autorizado', 403);
+                }
             }
 
             return $this->success($evento);
@@ -79,6 +73,7 @@ class CalendarioController extends Controller
             $request->merge([
                 'empleadoId' => $request->empleadoId ?: null,
                 'trabajoId'  => $request->trabajoId ?: null,
+                'usuarioId'  => $request->usuarioId ?: null,
             ]);
 
             $validated = $request->validate([
@@ -86,21 +81,20 @@ class CalendarioController extends Controller
                 'descripcion' => 'nullable|string',
                 'fecha_inicio' => 'required|date',
                 'fecha_fin' => 'required|date',
+                'usuarioId' => 'nullable|integer',
                 'empleadoId' => 'nullable|integer',
                 'trabajoId' => 'nullable|integer',
             ]);
 
+            // Admin puede crear para cualquiera 
+
             if ($user->rol === 'cliente') {
                 $validated['usuarioId'] = $user->usuarioId;
+                $validated['empleadoId'] = null;
             }
 
             if ($user->rol === 'empleado') {
-                $validated['usuarioId'] = $user->usuarioId;
                 $validated['empleadoId'] = $user->usuarioId;
-            }
-
-            if ($user->rol === 'admin') {
-                $validated['usuarioId'] = $user->usuarioId;
             }
 
             $evento = Calendario::create($validated);
@@ -117,24 +111,28 @@ class CalendarioController extends Controller
         try {
 
             $user = $request->user();
-
             $evento = Calendario::find($id);
 
             if (!$evento) {
                 return $this->error('Evento no encontrado', 404);
             }
 
-            if ($user->rol === 'cliente' && $evento->usuarioId != $user->usuarioId) {
-                return $this->error('No autorizado', 403);
-            }
+            // Admin puede editar cualquiera
+            if ($user->rol !== 'admin') {
 
-            if ($user->rol === 'empleado' && $evento->empleadoId != $user->usuarioId) {
-                return $this->error('No autorizado', 403);
+                if ($user->rol === 'cliente' && $evento->usuarioId != $user->usuarioId) {
+                    return $this->error('No autorizado', 403);
+                }
+
+                if ($user->rol === 'empleado' && $evento->empleadoId != $user->usuarioId) {
+                    return $this->error('No autorizado', 403);
+                }
             }
 
             $request->merge([
                 'empleadoId' => $request->empleadoId ?: null,
                 'trabajoId'  => $request->trabajoId ?: null,
+                'usuarioId'  => $request->usuarioId ?: null,
             ]);
 
             $validated = $request->validate([
@@ -142,6 +140,7 @@ class CalendarioController extends Controller
                 'descripcion' => 'nullable|string',
                 'fecha_inicio' => 'required|date',
                 'fecha_fin' => 'required|date',
+                'usuarioId' => 'nullable|integer',
                 'empleadoId' => 'nullable|integer',
                 'trabajoId' => 'nullable|integer',
             ]);
