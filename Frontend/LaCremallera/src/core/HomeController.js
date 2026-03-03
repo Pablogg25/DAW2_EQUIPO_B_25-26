@@ -4,14 +4,14 @@ import $inventarioController from "./InventoryController.js";
 import $notificacionesController from "./NotificacionesController.js";
 
 const $homeController = {
-  async getDashboardData(authToken) {
+  async getDashboardData() {
     // Llamadas reales a tu API
     const [ordersRes, facturasRes, inventarioRes, notifsRes] =
       await Promise.all([
-        $ordersController.getOrders(authToken,{}), // /trabajos
-        $facturasController.getFacturas(authToken,{}), // /facturas
-        $inventarioController.obtenerInventario(authToken,{}), // /inventario
-        $notificacionesController.getNotificaciones(authToken,{}), // /notificaciones
+        $ordersController.getOrders({}), // /trabajos
+        $facturasController.getFacturas({}), // /facturas
+        $inventarioController.obtenerInventario({}), // /inventario
+        $notificacionesController.getNotificaciones({}), // /notificaciones
       ]);
 
     return {

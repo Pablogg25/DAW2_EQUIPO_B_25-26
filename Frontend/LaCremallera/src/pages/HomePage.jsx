@@ -5,12 +5,12 @@ import { AuthContext } from "../context/AuthContext";
 
 function HomePage() {
   const [stats, setStats] = useState(null);
-  const { usuario,token } = useContext(AuthContext);
+  const { usuario } = useContext(AuthContext);
   const navigate = useNavigate();
 
   useEffect(() => {
     async function load() {
-      const data = await $homeController.getDashboardData(token);
+      const data = await $homeController.getDashboardData();
 
       const trabajosPendientes = data.orders.filter(
         (o) => o.estado === "pendiente",
