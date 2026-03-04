@@ -9,7 +9,7 @@ use App\Http\Controllers\InventarioController;
 use App\Http\Controllers\FacturasController;
 use App\Http\Controllers\CalendarioController;
 
-// Ruta publicas para el login
+// Ruta publica para el login
 Route::post('/usuarios/login', [UsuariosController::class, 'checkPassword']);
 
 // Rutas protegidas
