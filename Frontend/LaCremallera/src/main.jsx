@@ -8,6 +8,8 @@ import AuthProvider from "./context/AuthProvider";
 import { MessageProvider } from "./components/MessageProvider";
 import { ConfirmProvider } from "./components/ConfirmProvider";
 
+import "bootstrap/dist/js/bootstrap.bundle.min.js";
+
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <AuthProvider>
