@@ -45,6 +45,13 @@ function UserFormPage() {
         showMessage("No se pudo procesar la petición " + datos, "error");
         navegar("/users");
       }
+    } else {
+      //modo create
+      if (rol !== "admin") {
+        let actualizar = { ...userData, ["rol"]: "empleado" };
+        setUserData(actualizar);
+      }
+
     }
     //else modo create
   };
@@ -83,7 +90,7 @@ function UserFormPage() {
       //TODO: insertar context para guardar datos de login
       navegar("/users");
     } else {
-      
+
       showMessage("Error, ha surgido un error al procesar su petición.\nCodigo de error: " +
         statusCode, "error");
 
@@ -222,6 +229,7 @@ function UserFormPage() {
             id="rol"
             onChange={handleOnChange}
             className="form-select"
+            disabled={(rol !== "admin")}
           >
             <option value="cliente" selected={userData.rol == "cliente"}>
               Cliente
