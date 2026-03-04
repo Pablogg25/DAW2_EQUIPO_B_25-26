@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
-import { useMessage } from "../../components/UseMessage";
+import { useMessage } from "../../components/useMessage";
 import { useConfirm } from "../../components/useConfirm";
 
 import $usersController from "../../core/UsersController";
@@ -9,84 +9,76 @@ import $usersController from "../../core/UsersController";
 function UsersPage() {
   const [users, setUsers] = useState([]);
   const [busqueda, setBusqueda] = useState("");
+
   const { usuario } = useContext(AuthContext);
   const { showMessage } = useMessage();
   const { confirm } = useConfirm();
 
-  const navegar = useNavigate();
-
+  const navigate = useNavigate();
   const rol = usuario?.rol; // admin | empleado | cliente
 
+  // -------------------------------------------------------
+  // Cargar datos
+  // -------------------------------------------------------
   const cargarDatos = async (nombre = "") => {
-    // console.log("Cargando datos");
-
-    let datos = await $usersController.getUsers({ 'username': nombre });
+    const datos = await $usersController.getUsers({ username: nombre });
 
     if (datos.success) {
-      // console.log("DATOS RECIVIDOS");
       setUsers(datos.data);
     } else {
-      if (datos.status != 404) {
-        // console.log("ERROR: un error inesperado surgió al cargar datos");
-        showMessage("Ha surgido un error al cargar datos. " + datos.data, "error");
-      }else{
-        showMessage("No se encontraron elementos con ese nombre.", "info");
-
+      if (datos.status !== 404) {
+        showMessage("Error al cargar usuarios: " + datos.data, "error");
+      } else {
+        showMessage("No se encontraron usuarios con ese nombre.", "info");
+        setUsers([]);
       }
-
     }
   };
 
   // -------------------------------------------------------
   // Buscar por nombre
   // -------------------------------------------------------
-  function handleBuscar(e) {
-    const valor = e.target.value;
-    setBusqueda(valor);
-    // cargarDatos(valor);
-  }
+  const handleBuscar = (e) => {
+    setBusqueda(e.target.value);
+  };
 
-  function startBusqueda() {
+  const startBusqueda = () => {
     cargarDatos(busqueda);
-  }
+  };
 
+  // -------------------------------------------------------
+  // Crear usuario
+  // -------------------------------------------------------
   const onCreateUser = () => {
-    // console.log("On create user");
-    //TODO: crear formulario de propiedades
-    navegar("/users/0");
+    navigate("/users/0");
   };
 
+  // -------------------------------------------------------
+  // Editar usuario
+  // -------------------------------------------------------
   const onEditUser = (userId) => {
-    // console.log("On edit user id: " + userId);
-    if (userId) {
-      //navegar al formulario
-      navegar("/users/" + userId);
-    }
+    if (userId) navigate("/users/" + userId);
   };
-  //eliminar (solo para admin)
+
+  // -------------------------------------------------------
+  // Eliminar usuario (solo admin)
+  // -------------------------------------------------------
   const onDeleteUser = async (userId) => {
-    // console.log("on delete user: " + userId);
-
     if (rol !== "admin") {
-      showMessage("No tienes permisos para eliminar", "warning");
-
+      showMessage("No tienes permisos para eliminar usuarios.", "warning");
       return;
     }
-    if (userId) {
-      const seguro = await confirm("¿Está seguro que desea borrar este usuario?");
-      if (seguro) {
-        // console.log("Eliminando usuario");
-        //realizar petición de borrado
 
-        let result = await $usersController.deleteUser(userId);
+    const seguro = await confirm("¿Seguro que deseas eliminar este usuario?");
+    if (!seguro) return;
 
-        //if success
-        if (!result.success) {
-          showMessage("No se ha podido procesar su petición \n" + result.data, "error");
-        } else {
-          cargarDatos();
-        }
-      }
+    const result = await $usersController.deleteUser(userId);
+
+    if (!result.success) {
+      showMessage("Error al eliminar usuario: " + result.data, "error");
+    } else {
+      showMessage("Usuario eliminado correctamente.", "success");
+      cargarDatos();
     }
   };
 
@@ -97,7 +89,7 @@ function UsersPage() {
   return (
     <div className="container mt-4 page-fade">
       <h2 className="mb-2">Usuarios</h2>
-      <p className="text-muted mb-3">Lista para realizar CRUD sobre usuarios</p>
+      <p className="text-muted mb-3">Gestión de usuarios del sistema</p>
 
       {/* Buscador */}
       <input
@@ -107,15 +99,17 @@ function UsersPage() {
         value={busqueda}
         onChange={handleBuscar}
       />
-      <button className="btn btn-success mb-3" onClick={() => { startBusqueda(); }}>
+
+      <button className="btn btn-success mb-3 me-2" onClick={startBusqueda}>
         Aplicar filtro
       </button>
-      {rol === "admin" && (
-        <button className="btn btn-success mb-3" onClick={() => onCreateUser()}>
-          Crear Usuario
-        </button>
-      )}
 
+      {rol === "admin" ||
+        (rol === "empleado" && (
+          <button className="btn btn-primary mb-3" onClick={onCreateUser}>
+            Crear Usuario
+          </button>
+        ))}
 
       <div className="tabla-div">
         {/* Cabecera */}
@@ -150,34 +144,33 @@ function UsersPage() {
         </div>
 
         {/* Filas */}
-        {users.map((elemento) => (
-          <div key={elemento["usuarioId"]} className="fila cols-9">
-            <div className="col">{elemento["usuarioId"]}</div>
-            <div className="col">{elemento["nombre"]}</div>
-            <div className="col">{elemento["telefono"]}</div>
-            <div className="col">{elemento["email"]}</div>
-            <div className="col">{elemento["direccion"]}</div>
-            <div className="col">{elemento["username"]}</div>
-            <div className="col">{elemento["rol"]}</div>
-            <div className="col">{elemento["fecha_registro"]}</div>
+        {users.map((u) => (
+          <div key={u.usuarioId} className="fila cols-9">
+            <div className="col">{u.usuarioId}</div>
+            <div className="col">{u.nombre}</div>
+            <div className="col">{u.telefono}</div>
+            <div className="col">{u.email}</div>
+            <div className="col">{u.direccion}</div>
+            <div className="col">{u.username}</div>
+            <div className="col">{u.rol}</div>
+            <div className="col">{u.fecha_registro}</div>
 
             <div className="col acciones">
               <button
                 className="btn-edit"
-                onClick={() => onEditUser(elemento["usuarioId"])}
+                onClick={() => onEditUser(u.usuarioId)}
               >
-                Ver/editar
+                Ver / Editar
               </button>
 
               {rol === "admin" && (
                 <button
                   className="btn-delete"
-                  onClick={() => onDeleteUser(elemento["usuarioId"])}
+                  onClick={() => onDeleteUser(u.usuarioId)}
                 >
                   Eliminar
                 </button>
               )}
-
             </div>
           </div>
         ))}

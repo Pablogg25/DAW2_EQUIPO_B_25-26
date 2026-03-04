@@ -1,11 +1,10 @@
 import { useState, useEffect, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
-import { useMessage } from "../../components/UseMessage";
+import { useMessage } from "../../components/useMessage";
 import { useConfirm } from "../../components/useConfirm";
 
 import $usersController from "../../core/UsersController";
-
 
 function UserFormPage() {
   const [userData, setUserData] = useState({
@@ -20,8 +19,7 @@ function UserFormPage() {
     confirm_password: "",
   });
 
-  const navegar = useNavigate();
-
+  const navigate = useNavigate();
   const { id } = useParams();
   const { usuario } = useContext(AuthContext);
   const { showMessage } = useMessage();
@@ -29,93 +27,116 @@ function UserFormPage() {
 
   const rol = usuario?.rol; // admin | empleado | cliente
 
-
+  // -------------------------------------------------------
+  // Cargar datos
+  // -------------------------------------------------------
   const cargarDatos = async () => {
-    // console.log("cargando datos");
-
-    if (id != 0) {
-      // console.log("Modo update");
-      //obtener datos
-      let datos = await $usersController.getUser(id);
+    if (id !== "0") {
+      const datos = await $usersController.getUser(id);
 
       if (datos.success) {
-        // console.log(datos);
         setUserData(datos.data);
       } else {
-        showMessage("No se pudo procesar la petición " + datos, "error");
-        navegar("/users");
+        showMessage("No se pudo cargar el usuario.", "error");
+        navigate("/users");
       }
     } else {
-      //modo create
+      // modo creación
       if (rol !== "admin") {
-        let actualizar = { ...userData, ["rol"]: "empleado" };
-        setUserData(actualizar);
+        setUserData((prev) => ({ ...prev, rol: "empleado" }));
       }
-
     }
-    //else modo create
   };
 
-  const handleOnSubmit = (evento) => {
-    evento.preventDefault();
-    // console.log("UserFormPage: onSubmit");
+  // -------------------------------------------------------
+  // Validaciones
+  // -------------------------------------------------------
+  const validar = () => {
+    if (!userData.nombre.trim()) {
+      showMessage("El nombre es obligatorio.", "warning");
+      return false;
+    }
 
-    //enviar datos
+    if (!userData.email.trim()) {
+      showMessage("El correo es obligatorio.", "warning");
+      return false;
+    }
+
+    if (!userData.username.trim()) {
+      showMessage("El nombre de usuario es obligatorio.", "warning");
+      return false;
+    }
+
+    if (id === "0") {
+      if (!userData.password.trim()) {
+        showMessage("La contraseña es obligatoria.", "warning");
+        return false;
+      }
+
+      if (userData.password !== userData.confirm_password) {
+        showMessage("Las contraseñas no coinciden.", "warning");
+        return false;
+      }
+    }
+
+    return true;
+  };
+
+  // -------------------------------------------------------
+  // Enviar datos
+  // -------------------------------------------------------
+  const enviarDatos = async () => {
+    if (!validar()) return;
+
+    let response;
+
+    if (id !== "0") {
+      // UPDATE → solo admin puede
+      if (rol !== "admin") {
+        showMessage("No tienes permisos para editar usuarios.", "error");
+        return;
+      }
+
+      response = await $usersController.updateUser(userData, id);
+    } else {
+      // CREATE → admin y empleado
+      response = await $usersController.createUser(userData);
+    }
+
+    if (response.success) {
+      showMessage("Usuario guardado correctamente.", "success");
+      navigate("/users");
+    } else {
+      showMessage(
+        "Error al procesar la petición. Código: " + response.estado,
+        "error",
+      );
+    }
+  };
+
+  // -------------------------------------------------------
+  // Handlers
+  // -------------------------------------------------------
+  const handleOnSubmit = (e) => {
+    e.preventDefault();
     enviarDatos();
   };
 
-  const enviarDatos = async () => {
-    // console.log("Enviando datos");
-    let success;
-    let statusCode = 0;
-
-    if (id != 0) {
-      //update
-      const response = await $usersController.updateUser(userData, id);
-      success = response.success;
-      statusCode = response.estado;
-    } else {
-      //antes comprobar que confirm password es correcto
-
-      if (userData.confirm_password != userData.password) {
-        // console.log("ERROR, confirm password y password no coincide");
-        showMessage("Su contraseña no está confirmada, escríbala correctamente", "warning");
-        return;
-      }
-      const response = await $usersController.createUser(userData);
-      success = response.success;
-      statusCode = response.estado;
-    }
-    if (success) {
-      //TODO: insertar context para guardar datos de login
-      navegar("/users");
-    } else {
-
-      showMessage("Error, ha surgido un error al procesar su petición.\nCodigo de error: " +
-        statusCode, "error");
-
-    }
+  const handleOnCancel = () => {
+    navigate("/users");
   };
 
-  const handleOnCancel = (evento) => {
-    evento.preventDefault();
-    navegar("/users");
-    //vuelve a la página de usuarios
+  const handleOnChange = (e) => {
+    const { name, value } = e.target;
+    setUserData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleOnChange = (evento) => {
-    const { name, value } = evento.target;
-    let actualizar = { ...userData, [name]: value };
-    setUserData(actualizar);
+  const reformatRegisterDate = (registerDate) => {
+    return registerDate?.split(" ")[0] || "";
   };
-
-  function reformatRegisterDate(registerDate) {
-    let newDate = registerDate.split(" ")[0];
-    return newDate;
-  }
 
   useEffect(() => {
-    cargarDatos(id);
+    cargarDatos();
   }, [id]);
 
   return (
@@ -125,11 +146,10 @@ function UserFormPage() {
       <form onSubmit={handleOnSubmit} className="card p-4">
         {/* Nombre */}
         <div className="mb-3">
-          <label className="form-label">Nombre</label>
+          <label className="form-label">Nombre *</label>
           <input
             type="text"
             name="nombre"
-            id="nombre"
             value={userData.nombre}
             onChange={handleOnChange}
             className="form-control"
@@ -142,7 +162,6 @@ function UserFormPage() {
           <input
             type="text"
             name="telefono"
-            id="telefono"
             value={userData.telefono}
             onChange={handleOnChange}
             className="form-control"
@@ -155,7 +174,6 @@ function UserFormPage() {
           <input
             type="text"
             name="direccion"
-            id="direccion"
             value={userData.direccion}
             onChange={handleOnChange}
             className="form-control"
@@ -164,11 +182,10 @@ function UserFormPage() {
 
         {/* Email */}
         <div className="mb-3">
-          <label className="form-label">Correo (único)</label>
+          <label className="form-label">Correo *</label>
           <input
-            type="text"
+            type="email"
             name="email"
-            id="email"
             value={userData.email}
             onChange={handleOnChange}
             className="form-control"
@@ -177,11 +194,10 @@ function UserFormPage() {
 
         {/* Username */}
         <div className="mb-3">
-          <label className="form-label">Nombre de usuario (único)</label>
+          <label className="form-label">Usuario *</label>
           <input
             type="text"
             name="username"
-            id="username"
             value={userData.username}
             onChange={handleOnChange}
             className="form-control"
@@ -189,26 +205,28 @@ function UserFormPage() {
         </div>
 
         {/* Password solo si es creación */}
-        {id == 0 ? (
-          <div className="mb-3">
-            <label className="form-label">Contraseña</label>
-            <input
-              type="password"
-              name="password"
-              id="password"
-              onChange={handleOnChange}
-              className="form-control"
-            />
+        {id === "0" ? (
+          <>
+            <div className="mb-3">
+              <label className="form-label">Contraseña *</label>
+              <input
+                type="password"
+                name="password"
+                onChange={handleOnChange}
+                className="form-control"
+              />
+            </div>
 
-            <label className="form-label mt-2">Confirmar contraseña</label>
-            <input
-              type="password"
-              name="confirm_password"
-              id="confirm_password"
-              onChange={handleOnChange}
-              className="form-control"
-            />
-          </div>
+            <div className="mb-3">
+              <label className="form-label">Confirmar contraseña *</label>
+              <input
+                type="password"
+                name="confirm_password"
+                onChange={handleOnChange}
+                className="form-control"
+              />
+            </div>
+          </>
         ) : (
           <div className="mb-3">
             <label className="form-label">Fecha de registro</label>
@@ -226,31 +244,30 @@ function UserFormPage() {
           <label className="form-label">Rol</label>
           <select
             name="rol"
-            id="rol"
+            value={userData.rol}
             onChange={handleOnChange}
             className="form-select"
-            disabled={(rol !== "admin")}
+            disabled={
+              // admin puede editar siempre
+              rol !== "admin" ||
+              // empleado solo puede crear, no editar
+              id !== "0"
+            }
           >
-            <option value="cliente" selected={userData.rol == "cliente"}>
-              Cliente
-            </option>
-            <option value="empleado" selected={userData.rol == "empleado"}>
-              Empleado
-            </option>
-            <option value="admin" selected={userData.rol == "admin"}>
-              Admin
-            </option>
+            <option value="cliente">Cliente</option>
+            <option value="empleado">Empleado</option>
+            <option value="admin">Admin</option>
           </select>
         </div>
 
         {/* Botones */}
         <div className="d-flex gap-3">
-          {rol === "admin" && (
-            <button type="submit" className="btn btn-success">
-              Enviar datos
-            </button>
-          )}
-
+          {rol === "admin" ||
+            (rol === "empleado" && (
+              <button type="submit" className="btn btn-success">
+                Guardar
+              </button>
+            ))}
 
           <button
             type="button"

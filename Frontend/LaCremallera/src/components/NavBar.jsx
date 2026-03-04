@@ -1,29 +1,19 @@
 import { NavLink, useNavigate } from "react-router-dom";
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 
 function NavBar() {
   const { usuario, logout } = useContext(AuthContext);
-  const [open, setOpen] = useState(false);
   const navigate = useNavigate();
 
   const rol = usuario?.rol; // admin | empleado | cliente
 
   const handlePerfil = () => {
     if (!usuario) return;
-
-    const id = usuario.usuarioId;
-
-    if (id) {
-      setOpen(false);
-      navigate("/users/" + id);
-    } else {
-      alert("No se ha podido obtener el id del usuario");
-    }
+    navigate("/users/" + usuario.usuarioId);
   };
 
   const handleLogout = () => {
-    setOpen(false);
     logout();
   };
 
@@ -51,7 +41,7 @@ function NavBar() {
 
       <div className="collapse navbar-collapse" id="mainNavbar">
         <ul className="navbar-nav ms-auto">
-          {/* INVENTARIO → admin y empleado */}
+          {/* INVENTARIO → admin, empleado */}
           {(rol === "admin" || rol === "empleado") && (
             <li className="nav-item">
               <NavLink to="/inventory" className="nav-link">
@@ -60,7 +50,7 @@ function NavBar() {
             </li>
           )}
 
-          {/* TRABAJOS → todos */}
+          {/* TRABAJOS → admin, empleado, cliente */}
           {(rol === "admin" || rol === "empleado" || rol === "cliente") && (
             <li className="nav-item">
               <NavLink to="/orders" className="nav-link">
@@ -69,7 +59,7 @@ function NavBar() {
             </li>
           )}
 
-          {/* PRENDAS → admin y empleado */}
+          {/* PRENDAS → admin, empleado */}
           {(rol === "admin" || rol === "empleado") && (
             <li className="nav-item">
               <NavLink to="/prendas" className="nav-link">
@@ -78,8 +68,8 @@ function NavBar() {
             </li>
           )}
 
-          {/* USUARIOS → solo admin */}
-          {rol === "admin" && (
+          {/* USUARIOS → admin y empleado */}
+          {(rol === "admin" || rol === "empleado") && (
             <li className="nav-item">
               <NavLink to="/users" className="nav-link">
                 Usuarios
@@ -87,7 +77,7 @@ function NavBar() {
             </li>
           )}
 
-          {/* NOTIFICACIONES → todos */}
+          {/* NOTIFICACIONES → admin, empleado, cliente */}
           {(rol === "admin" || rol === "empleado" || rol === "cliente") && (
             <li className="nav-item">
               <NavLink to="/notificaciones" className="nav-link">
@@ -96,7 +86,7 @@ function NavBar() {
             </li>
           )}
 
-          {/* FACTURAS → admin y empleado y cliente */}
+          {/* FACTURAS → admin, empleado, cliente */}
           {(rol === "admin" || rol === "empleado" || rol === "cliente") && (
             <li className="nav-item">
               <NavLink to="/facturas" className="nav-link">
@@ -105,7 +95,7 @@ function NavBar() {
             </li>
           )}
 
-          {/* CALENDARIO → todos */}
+          {/* CALENDARIO → admin, empleado, cliente */}
           {(rol === "admin" || rol === "empleado" || rol === "cliente") && (
             <li className="nav-item">
               <NavLink to="/calendar" className="nav-link">
@@ -114,33 +104,32 @@ function NavBar() {
             </li>
           )}
 
-          {/* MENÚ DE USUARIO */}
+          {/* MENÚ DE USUARIO (Bootstrap dropdown) */}
           {usuario && (
-            <li className="nav-item ms-3 position-relative">
+            <li className="nav-item dropdown ms-3">
               <button
-                className="btn btn-secondary"
-                onClick={() => setOpen(!open)}
+                className="btn btn-secondary dropdown-toggle"
+                data-bs-toggle="dropdown"
               >
                 {usuario.nombre || usuario.username || "Usuario"}
               </button>
 
-              {open && (
-                <div
-                  className="position-absolute bg-white rounded shadow p-2"
-                  style={{ right: 0, top: "100%", minWidth: "150px" }}
-                >
+              <ul className="dropdown-menu dropdown-menu-end">
+                <li>
                   <button className="dropdown-item" onClick={handlePerfil}>
                     Perfil
                   </button>
+                </li>
 
+                <li>
                   <button
                     className="dropdown-item text-danger"
                     onClick={handleLogout}
                   >
                     Cerrar sesión
                   </button>
-                </div>
-              )}
+                </li>
+              </ul>
             </li>
           )}
         </ul>
