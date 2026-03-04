@@ -100,6 +100,33 @@ class UsuariosSeeder extends Seeder
                 'username' => 'elena_cli',
                 'password' => Hash::make('elecli'),
                 'rol' => 'cliente'
+            ],
+            [
+                'nombre' => 'Cliente Demo',
+                'telefono' => '611333444',
+                'email' => 'cliente.demo@cremallera.com',
+                'direccion' => 'C/ Cliente 10',
+                'username' => 'cliente',
+                'password' => Hash::make('cliente'),
+                'rol' => 'cliente'
+            ],
+            [
+                'nombre' => 'Empleado Demo',
+                'telefono' => '611444555',
+                'email' => 'empleado.demo@cremallera.com',
+                'direccion' => 'C/ Empleado 22',
+                'username' => 'empleado',
+                'password' => Hash::make('empleado'),
+                'rol' => 'empleado'
+            ],
+            [
+                'nombre' => 'Administrador Demo',
+                'telefono' => '611555666',
+                'email' => 'admin.demo@cremallera.com',
+                'direccion' => 'C/ Administrador 1',
+                'username' => 'admin',
+                'password' => Hash::make('admin'),
+                'rol' => 'admin'
             ]
         ]);
     }
