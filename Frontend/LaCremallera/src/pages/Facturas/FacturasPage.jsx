@@ -120,6 +120,9 @@ function FacturasPage() {
   return (
     <div className="container mt-4 page-fade">
       <h2 className="mb-3">Facturas</h2>
+      <div>
+        Lista de facturas asignadas al usuario
+      </div>
 
       {/* Buscador */}
       <div>
