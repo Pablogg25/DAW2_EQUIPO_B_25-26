@@ -86,14 +86,47 @@ function CalendarFormPage() {
   }
 
   // -------------------------------------------------------
-  // Guardar (crear o actualizar)
+  // Guardar (crear o actualizar) con VALIDACIONES
   // -------------------------------------------------------
   async function guardar() {
+    // VALIDACIONES DE CAMPOS
     if (!evento.titulo.trim()) {
-      showMessage("El título es obligatorio", "warning");
+      showMessage("El título es obligatorio.", "warning");
       return;
     }
 
+    if (!evento.fecha_inicio) {
+      showMessage("Debes indicar la fecha y hora de inicio.", "warning");
+      return;
+    }
+
+    if (!evento.fecha_fin) {
+      showMessage("Debes indicar la fecha y hora de fin.", "warning");
+      return;
+    }
+
+    const inicio = new Date(evento.fecha_inicio);
+    const fin = new Date(evento.fecha_fin);
+
+    if (isNaN(inicio.getTime())) {
+      showMessage("La fecha de inicio no es válida.", "warning");
+      return;
+    }
+
+    if (isNaN(fin.getTime())) {
+      showMessage("La fecha de fin no es válida.", "warning");
+      return;
+    }
+
+    if (fin < inicio) {
+      showMessage(
+        "La fecha de fin no puede ser anterior a la de inicio.",
+        "warning",
+      );
+      return;
+    }
+
+    // PETICIÓN A LA API
     let respuesta;
 
     try {
@@ -136,7 +169,7 @@ function CalendarFormPage() {
     <div className="container mt-4 page-fade">
       <h2>{id === "new" ? "Crear evento" : "Editar evento"}</h2>
 
-      <label>Título</label>
+      <label>Título *</label>
       <input
         type="text"
         name="titulo"
@@ -145,7 +178,7 @@ function CalendarFormPage() {
         className="form-control mb-2"
       />
 
-      <label>Fecha inicio</label>
+      <label>Fecha inicio *</label>
       <input
         type="datetime-local"
         name="fecha_inicio"
@@ -154,7 +187,7 @@ function CalendarFormPage() {
         className="form-control mb-2"
       />
 
-      <label>Fecha fin</label>
+      <label>Fecha fin *</label>
       <input
         type="datetime-local"
         name="fecha_fin"

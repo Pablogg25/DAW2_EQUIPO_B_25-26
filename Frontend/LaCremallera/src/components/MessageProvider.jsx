@@ -55,6 +55,6 @@ const styles = {
   },
   info: { background: "#3498db" },
   success: { background: "#2ecc71" },
-  warning: { background: "#f1c40f", color: "#000" },
+  warning: { background: "#f1c40f", color: "#ffffff" },
   error: { background: "#e74c3c" },
 };
