@@ -37,12 +37,12 @@ function OrderFormPage() {
   });
 
   const cargarDatos = async () => {
-    console.log("cargando datos OrderFormPage");
+    //console.log("cargando datos OrderFormPage");
     if (id != 0) {
       // console.log("Modo edit / ver");
       //modo edit
       let datos = await $ordersController.getOrder(id);
-      console.log(datos);
+      //console.log(datos);
       if (datos.success) {
         setOrderData(datos.data);
 
@@ -125,7 +125,7 @@ function OrderFormPage() {
 
   const handleOnSubmit = (evento) => {
     evento.preventDefault();
-    console.log("OrdersFormPage: onsubmit");
+    //console.log("OrdersFormPage: onsubmit");
 
     enviarDatos();
   };
@@ -163,12 +163,12 @@ function OrderFormPage() {
   //formulario consumos
   const handleOnSubmitConsumos = (evento) => {
     evento.preventDefault();
-    console.log("OrderFormPage handle on submit consumos");
+    //console.log("OrderFormPage handle on submit consumos");
     enviarDatosConsumo();
   };
 
   const enviarDatosConsumo = async () => {
-    console.log("Enviar datos de consumo");
+    //console.log("Enviar datos de consumo");
 
     let result = await $ordersController.asociarConsumo(id, nuevoConsumo);
 

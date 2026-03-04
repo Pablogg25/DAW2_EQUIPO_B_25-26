@@ -25,14 +25,14 @@ function PrendaFormPage() {
   const rol = usuario?.rol; // admin | empleado | cliente
 
   const cargarDatos = async () => {
-    console.log("Cargando Datos");
+    // console.log("Cargando Datos");
 
     let datosUsuario = await $usersController.getUsers([]);
 
     setUsuariosData(datosUsuario.data);
 
     if (id != 0) {
-      console.log("modo update");
+      // console.log("modo update");
 
       let datos = await $prendasController.getPrenda(id);
 
@@ -48,25 +48,25 @@ function PrendaFormPage() {
 
   const handleOnSubmit = (evento) => {
     evento.preventDefault();
-    console.log("PrendaFormPage: onSubmit");
+    // console.log("PrendaFormPage: onSubmit");
 
     enviarDatos();
   };
 
   const enviarDatos = async () => {
-    console.log("Enviar datos");
-    console.log(prendaData);
+    // console.log("Enviar datos");
+    // console.log(prendaData);
 
     let success;
     let result;
 
     if (id != 0) {
-      console.log("actualizar");
+      // console.log("actualizar");
       let setearPrenda = { ...prendaData, ["prendaId"]: id };
       result = await $prendasController.updatePrenda(setearPrenda);
       success = result.success;
     } else {
-      console.log("crear");
+      // console.log("crear");
       result = await $prendasController.createPrenda(prendaData);
       success = result.success;
     }

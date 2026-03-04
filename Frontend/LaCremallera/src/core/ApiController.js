@@ -7,7 +7,8 @@ const apiController = (function () {
   };
 
   let getAuthToken=function (){
-    return sessionStorage.getItem("authToken");
+    const t = sessionStorage.getItem("authToken");
+    return t && t !== "null" ? t : null;
   }
 
   return {

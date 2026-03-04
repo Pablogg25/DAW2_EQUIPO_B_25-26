@@ -34,10 +34,10 @@ function OrdersPage() {
     }
 
     if (datos.success) {
-      console.log("DATOS RECIVIDOS");
+      //console.log("DATOS RECIVIDOS");
       setOrders(datos.data);
     } else {
-      console.log("ERROR: un error inesperado surgió al cargar datos");
+      //console.log("ERROR: un error inesperado surgió al cargar datos");
       alert("Ha surgido un error al cargar datos. Compruebe logs.");
     }
   };
@@ -61,19 +61,19 @@ function OrdersPage() {
   }
 
   const onCreateOrder = () => {
-    console.log("on create order");
+    //console.log("on create order");
     navegar("/orders/0");
   };
 
   const onEditOrder = (orderId) => {
-    console.log("OnEditOrder id:" + orderId);
+    //console.log("OnEditOrder id:" + orderId);
     if (orderId) {
       navegar("/orders/" + orderId);
     }
   };
 
   const onDeleteOrder = async (orderId) => {
-    console.log("OnDeleteOrder: " + orderId);
+    //console.log("OnDeleteOrder: " + orderId);
 
     if (rol !== "admin") {
       alert("No tienes permisos para eliminar.");
@@ -83,7 +83,7 @@ function OrdersPage() {
     //añadir diálogo de confirmación antes de borrar
     if (orderId) {
       if (confirm("¿Desea borrar el trabajo?")) {
-        console.log("Eliminando trabajo");
+        //console.log("Eliminando trabajo");
         let response = await $ordersController.deleteOrder(orderId);
         if (response.success) {
           await cargarDatos();
@@ -110,6 +110,9 @@ function OrdersPage() {
   return (
     <div className="container mt-4 page-fade">
       <h2 className="mb-3">Trabajos</h2>
+      <div>
+        Mirar trabajos asignados a empleados
+      </div>
 
       {/* Buscador */}
       <div>

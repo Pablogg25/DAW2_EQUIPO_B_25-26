@@ -14,16 +14,16 @@ function UsersPage() {
   const rol = usuario?.rol; // admin | empleado | cliente
 
   const cargarDatos = async (nombre = "") => {
-    console.log("Cargando datos");
+    // console.log("Cargando datos");
 
     let datos = await $usersController.getUsers({ 'username': nombre });
 
     if (datos.success) {
-      console.log("DATOS RECIVIDOS");
+      // console.log("DATOS RECIVIDOS");
       setUsers(datos.data);
     } else {
       if (datos.status != 404) {
-        console.log("ERROR: un error inesperado surgió al cargar datos");
+        // console.log("ERROR: un error inesperado surgió al cargar datos");
         alert("Ha surgido un error al cargar datos. " + datos.data);
       }
 
@@ -44,13 +44,13 @@ function UsersPage() {
   }
 
   const onCreateUser = () => {
-    console.log("On create user");
+    // console.log("On create user");
     //TODO: crear formulario de propiedades
     navegar("/users/0");
   };
 
   const onEditUser = (userId) => {
-    console.log("On edit user id: " + userId);
+    // console.log("On edit user id: " + userId);
     if (userId) {
       //navegar al formulario
       navegar("/users/" + userId);
@@ -58,7 +58,7 @@ function UsersPage() {
   };
   //eliminar (solo para admin)
   const onDeleteUser = async (userId) => {
-    console.log("on delete user: " + userId);
+    // console.log("on delete user: " + userId);
 
     if (rol !== "admin") {
       alert("No tienes permisos para eliminar.");
@@ -66,7 +66,7 @@ function UsersPage() {
     }
     if (userId) {
       if (confirm("¿Está seguro que desea borrar este usuario?")) {
-        console.log("Eliminando usuario");
+        // console.log("Eliminando usuario");
         //realizar petición de borrado
 
         let result = await $usersController.deleteUser(userId);

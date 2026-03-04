@@ -34,7 +34,7 @@ function FacturaFormPage() {
   const rol = usuario?.rol; // admin | empleado | cliente
 
   const cargarDatos = async () => {
-    console.log("Cargando datos");
+    //console.log("Cargando datos");
 
     if (usuariosData.length == 0) {
       // let datosUsuario = await $usuariosController.getUsuarios();
@@ -72,19 +72,19 @@ function FacturaFormPage() {
 
   const handeOnSubmit = (evento) => {
     evento.preventDefault();
-    console.log("FacturaFormPage onSubmit");
+    //console.log("FacturaFormPage onSubmit");
     enviarDatos();
   };
 
   const enviarDatos = async () => {
-    console.log("Enviar datos");
+    //console.log("Enviar datos");
 
-    console.log(facturaDatos);
+    //console.log(facturaDatos);
 
     let result;
 
     if (id != 0) {
-      console.log("Modo update");
+      //console.log("Modo update");
 
       let datos = { ...facturaDatos, ["facturaId"]: id };
       result = await $facturasController.updateFactura(datos);
@@ -92,49 +92,49 @@ function FacturaFormPage() {
       if (result.success) {
         //se realiza creación correctamente
         for (let add of trabajosAdd) {
-          console.log("asociando trabajo id: " + add);
+          //console.log("asociando trabajo id: " + add);
           let resultAdd = await $facturasController.asociarTrabajo(id, add);
 
           if (!resultAdd.success) {
-            console.log("error en asociación");
+            //console.log("error en asociación");
             alert("Ha surgido un error al asociar trabajos");
             navegar("/facturas");
             break;
           }
-          console.log("añadido correctamente");
+          //console.log("añadido correctamente");
         }
         for (let rem of trabajosRemove) {
-          console.log("desasociando trabajo id: " + rem);
+          //console.log("desasociando trabajo id: " + rem);
           let resultAdd = await $facturasController.desasociarTrabajo(id, rem);
 
           if (!resultAdd.success) {
-            console.log("error en desasociado");
+            //console.log("error en desasociado");
             alert("Ha surgido un error al desasociar trabajos");
             navegar("/facturas");
             break;
           }
-          console.log("quitado correctamente");
+          //console.log("quitado correctamente");
           navegar("/facturas");
         }
       } else {
         alert("Ha surgido un error al enviar datos");
       }
     } else {
-      console.log("Modo create");
+      //console.log("Modo create");
       result = await $facturasController.createFactura(facturaDatos);
 
       if (result.success) {
         for (let add of trabajosAdd) {
-          console.log("asociando trabajo id: " + add);
+          //console.log("asociando trabajo id: " + add);
           let resultAdd = await $facturasController.asociarTrabajo(id, add);
 
           if (!resultAdd.success) {
-            console.log("error en asociación");
+            //console.log("error en asociación");
             alert("Ha surgido un error al asociar trabajos");
             navegar("/facturas");
             break;
           }
-          console.log("añadido correctamente");
+          //console.log("añadido correctamente");
         }
       }
     }
@@ -220,7 +220,7 @@ function FacturaFormPage() {
   };
 
   function getFullItemList() {
-    console.log("Obtener datos de añadir");
+    //console.log("Obtener datos de añadir");
 
     let listaAnadir = [];
 
@@ -234,8 +234,8 @@ function FacturaFormPage() {
       }
     }
 
-    console.log(listaAnadir);
-    console.log("Obtener lista sin los que se quitan");
+    //console.log(listaAnadir);
+    //console.log("Obtener lista sin los que se quitan");
 
     let listaSinQuitados = [];
 
@@ -247,12 +247,12 @@ function FacturaFormPage() {
       }
     }
 
-    console.log(listaSinQuitados);
+    //console.log(listaSinQuitados);
 
     // let fullList = [...listaQuitados, ...listaAnadir];
     let fullList = [...listaSinQuitados, ...listaAnadir];
-    console.log("Get full list item list total:");
-    console.log(fullList);
+    //console.log("Get full list item list total:");
+    //console.log(fullList);
 
     return fullList;
   }

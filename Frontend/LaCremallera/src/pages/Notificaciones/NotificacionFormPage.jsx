@@ -27,7 +27,7 @@ function NotificacionFormPage() {
   const { id } = useParams();
 
   const cargarDatos = async () => {
-    console.log("Cargando datos");
+    //console.log("Cargando datos");
 
     if (usuariosData.length == 0) {
       let datosUsuario = await $usersController.getUsers();
@@ -74,19 +74,19 @@ function NotificacionFormPage() {
 
   const handeOnSubmit = (evento) => {
     evento.preventDefault();
-    console.log("NotificacionFormPage onSubmit");
+    //console.log("NotificacionFormPage onSubmit");
     enviarDatos();
   };
 
   const enviarDatos = async () => {
-    console.log("Enviar datos");
+    //console.log("Enviar datos");
 
     // console.log(notificacionData);
 
     let result;
 
     if (id == 0) {
-      console.log("Modo create");
+      //console.log("Modo create");
       result =
         await $notificacionesController.createNotificacion(notificacionData);
     }
