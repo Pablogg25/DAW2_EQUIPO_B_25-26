@@ -5,6 +5,7 @@ import { useMessage } from "../../components/UseMessage";
 import { useConfirm } from "../../components/useConfirm";
 
 import $ordersController from "../../core/OrdersController";
+import $prendasController from "../../core/PrendasController";
 
 function OrdersPage() {
   const [orders, setOrders] = useState([]);
@@ -54,6 +55,17 @@ function OrdersPage() {
         );
       }
       setOrders([]);
+    }
+
+    let datosPrenda=await $prendasController.getPrendas();
+
+    if(datosPrenda.success){
+      setPrendasData(datosPrenda.data);
+    }else{
+      showMessage(
+          "Error al cargar trabajos. Código: " + datosPrenda.status,
+          "error",
+        );
     }
   };
 
