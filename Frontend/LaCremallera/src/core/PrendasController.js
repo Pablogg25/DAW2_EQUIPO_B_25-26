@@ -47,7 +47,7 @@ const $prendasController = (function () {
             return { "data": request.message, "status": request.status, "success": false };
 
         } catch (e) {
-            console.log("Excepción en petición:");
+            //console.log("Excepción en petición:");
             console.log(e);
 
             return { "data": e, "success": false };
