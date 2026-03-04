@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import $calendarioController from "../../core/CalendaryController";
 import { AuthContext } from "../../context/AuthContext";
 
-import { useMessage } from "../../components/useMessage";
+import { useMessage } from "../../components/UseMessage";
 import { useConfirm } from "../../components/useConfirm";
 
 function CalendarFormPage() {

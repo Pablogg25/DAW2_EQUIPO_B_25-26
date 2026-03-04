@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import $inventarioController from "../../core/InventoryController.js";
-import { AuthContext } from "../../context/AuthContext";
+import { AuthContext } from "../../context/AuthContext.jsx";
 
-import { useMessage } from "../../components/useMessage";
-import { useConfirm } from "../../components/useConfirm";
+import { useMessage } from "../../components/UseMessage.jsx";
+import { useConfirm } from "../../components/useConfirm.jsx";
 
 function PropsElementoInventoryPage() {
   const { id } = useParams();

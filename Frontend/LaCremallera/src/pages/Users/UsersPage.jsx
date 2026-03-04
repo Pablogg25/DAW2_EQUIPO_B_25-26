@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
-import { useMessage } from "../../components/useMessage";
+import { useMessage } from "../../components/UseMessage";
 import { useConfirm } from "../../components/useConfirm";
 
 import $usersController from "../../core/UsersController";
