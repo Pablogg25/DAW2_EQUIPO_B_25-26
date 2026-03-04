@@ -2,11 +2,11 @@
 import apiController from "./ApiController";
 
 const $ordersController = (function () {
-    console.log("Inicializando ordersController");
+    // console.log("Inicializando ordersController");
 
     // argumentos: {'empleadoId':int,'estado':string,'prendaId':int} exactos
     async function getOrders(params = {}) {
-        console.log("ordersController: getOrders");
+        // console.log("ordersController: getOrders");
 
         let requestUrl = apiController.getBaseUrl() + '/trabajos';
 
@@ -57,7 +57,7 @@ const $ordersController = (function () {
                 },
             };
             // console.log(requestBody);
-            console.log("Realizando petición a: " + requestUrl);
+            // console.log("Realizando petición a: " + requestUrl);
             const request = await fetch(requestUrl, requestBody);
             const respuesta = await request.json();
 
@@ -65,22 +65,22 @@ const $ordersController = (function () {
 
             if (request.status == 200) {
 
-                console.log("OrdersController respuesta OK 200");
+                // console.log("OrdersController respuesta OK 200");
                 // console.log(respuesta);
 
                 return { "data": respuesta.data, "status": 200, "success": true };
             }
 
             //else error
-            if (request.status == 404) {
-                console.log("Orders controller respuesta NOT FOUND 404")
-            }
-            console.log("error al obtener datos");
+            // if (request.status == 404) {
+            //     console.log("Orders controller respuesta NOT FOUND 404")
+            // }
+            // console.log("error al obtener datos");
             return { "data": respuesta.message, "status": request.status, "success": false };
 
 
         } catch (e) {
-            console.log("Excepción en petición:");
+            // console.log("Excepción en petición:");
             console.log(e);
 
             return { "data": e, "success": false };
@@ -88,7 +88,7 @@ const $ordersController = (function () {
     };
 
     async function getOrder(trabajoId) {
-        console.log("ordersController: getOrder, id:" + trabajoId);
+        // console.log("ordersController: getOrder, id:" + trabajoId);
 
         const requestUrl = apiController.getBaseUrl() + '/trabajos/' + trabajoId;
 
@@ -105,25 +105,25 @@ const $ordersController = (function () {
                     "Authorization": "Bearer " + authToken,
                 },
             };
-            console.log("Realizando petición a: " + requestUrl);
+            // console.log("Realizando petición a: " + requestUrl);
             const request = await fetch(requestUrl, requestBody);
             const respuesta = await request.json();
 
             if (request.status == 200) {
 
-                console.log("OrdersController respuesta OK 200");
+                // console.log("OrdersController respuesta OK 200");
                 // console.log(respuesta);
 
                 return { "data": respuesta.data, "status": 200, "success": true };
             }
 
             //else error
-            console.log("error al obtener datos");
+            // console.log("error al obtener datos");
             return { "data": respuesta.message, "status": request.status, "success": false };
 
 
         } catch (e) {
-            console.log("Excepción en petición:");
+            // console.log("Excepción en petición:");
             console.log(e);
 
             return { "data": e, "success": false };
@@ -131,7 +131,7 @@ const $ordersController = (function () {
     };
 
     async function createOrder(objOrder) {
-        console.log("ordersController createOrder ");
+        // console.log("ordersController createOrder ");
 
         const requestUrl = apiController.getBaseUrl() + '/trabajos';
 
@@ -140,7 +140,7 @@ const $ordersController = (function () {
             if (!authToken) {
                 return { data: "ERROR, NO AUTH TOKEN", success: false };
             }
-            console.log("Realizando petición a: " + requestUrl);
+            // console.log("Realizando petición a: " + requestUrl);
             const requestBody = {
                 method: "POST",
                 body: JSON.stringify(objOrder),
@@ -154,18 +154,18 @@ const $ordersController = (function () {
             const datos = await request.json();
 
             if (request.status == 201) {
-                console.log("Respuesta 201: CREATED");
+                // console.log("Respuesta 201: CREATED");
                 return { estado: 201, data: datos.data, "success": true };
             }
-            if (request.status == 400) {
-                console.log("Respuesta 400: VALIDATION ERROR");
-                // console.log(datos);
-                // return { estado: 400, data: datos, "success": false };
-            }
+            // if (request.status == 400) {
+            //     console.log("Respuesta 400: VALIDATION ERROR");
+            //     // console.log(datos);
+            //     // return { estado: 400, data: datos, "success": false };
+            // }
 
             return { estado: request.status, data: datos.message, "success": false };
         } catch (e) {
-            console.log("Excepción en petición:");
+            // console.log("Excepción en petición:");
             console.log(e);
 
             return { "data": e, "success": false };
@@ -173,7 +173,7 @@ const $ordersController = (function () {
     }
 
     async function updateOrder(objOrder, trabajoId) {
-        console.log("ordersController updateOrder ");
+        // console.log("ordersController updateOrder ");
 
         const requestUrl = apiController.getBaseUrl() + '/trabajos/' + trabajoId;
 
@@ -182,7 +182,7 @@ const $ordersController = (function () {
             if (!authToken) {
                 return { data: "ERROR, NO AUTH TOKEN", success: false };
             }
-            console.log("Realizando petición a: " + requestUrl);
+            // console.log("Realizando petición a: " + requestUrl);
             const requestBody = {
                 method: "PUT",
                 body: JSON.stringify(objOrder),
@@ -196,24 +196,24 @@ const $ordersController = (function () {
             const datos = await request.json();
 
             if (request.status == 200) {
-                console.log("Respuesta 200: OK");
+                // console.log("Respuesta 200: OK");
                 return { estado: 200, data: datos.data, "success": true };
             }
-            if (request.status == 404) {
-                console.log("Respuesta 404: NOT FOUND");
-                // console.log(datos);
-                // return { estado: 404, data: datos, "success": false };
-            }
-            if (request.status == 400) {
-                console.log("Respuesta 400: VALIDATION ERROR");
-                // console.log(datos);
-                // return { estado: 400, data: datos, "success": false };
-            }
+            // if (request.status == 404) {
+            //     console.log("Respuesta 404: NOT FOUND");
+            //     // console.log(datos);
+            //     // return { estado: 404, data: datos, "success": false };
+            // }
+            // if (request.status == 400) {
+            //     console.log("Respuesta 400: VALIDATION ERROR");
+            //     // console.log(datos);
+            //     // return { estado: 400, data: datos, "success": false };
+            // }
 
             return { estado: request.status, data: datos.message, "success": false };
 
         } catch (e) {
-            console.log("Excepción en petición:");
+            // console.log("Excepción en petición:");
             console.log(e);
 
             return { "data": e, "success": false };
@@ -221,7 +221,7 @@ const $ordersController = (function () {
     }
 
     async function deleteOrder(trabajoId) {
-        console.log("ordersController: deleteOrder");
+        // console.log("ordersController: deleteOrder");
 
         const requestUrl = apiController.getBaseUrl() + "/trabajos/" + trabajoId;
 
@@ -230,7 +230,7 @@ const $ordersController = (function () {
             if (!authToken) {
                 return { data: "ERROR, NO AUTH TOKEN", success: false };
             }
-            console.log("Realizando petición a: " + requestUrl);
+            // console.log("Realizando petición a: " + requestUrl);
             const requestBody = {
                 method: "DELETE",
                 headers: {
@@ -243,27 +243,27 @@ const $ordersController = (function () {
             const datos = await respuesta.json();
 
             if (respuesta.status == 200) {
-                console.log("Respuesta 200: OK");
+                // console.log("Respuesta 200: OK");
                 return { estado: 200, data: datos.data, success: true };
             }
-            if (respuesta.status == 404) {
-                console.log("Respuesta 404: NOT FOUND");
-                // return { estado: 404, data: datos, success: false };
-            }
-            if (respuesta.status == 409) {
-                console.log("Respuesta 409 CONSTRAINT");
-            }
+            // if (respuesta.status == 404) {
+            //     console.log("Respuesta 404: NOT FOUND");
+            //     // return { estado: 404, data: datos, success: false };
+            // }
+            // if (respuesta.status == 409) {
+            //     console.log("Respuesta 409 CONSTRAINT");
+            // }
             return { estado: respuesta.status, data: datos.message, success: false };
 
         } catch (e) {
-            console.log("$negocioApi: Resultado error");
+            // console.log("$negocioApi: Resultado error");
             console.log(e);
             return { "data": e, "success": false };
         }
     }
 
     async function getConsumos(trabajoId) {
-        console.log("ordersController: getOrders");
+        // console.log("ordersController: getOrders");
 
         let requestUrl = apiController.getBaseUrl() + '/trabajos/' + trabajoId + '/consumos';
 
@@ -278,29 +278,29 @@ const $ordersController = (function () {
                     "Authorization": "Bearer " + authToken,
                 },
             };
-            console.log("Realizando petición a: " + requestUrl);
+            // console.log("Realizando petición a: " + requestUrl);
 
             const request = await fetch(requestUrl, requestBody);
             const respuesta = await request.json();
 
             if (request.status == 200) {
 
-                console.log("OrdersController consumos respuesta OK 200");
+                // console.log("OrdersController consumos respuesta OK 200");
                 // console.log(respuesta);
 
                 return { "data": respuesta.data, "status": 200, "success": true };
             }
 
             //else error
-            if (request.status == 404) {
-                console.log("Orders controller respuesta NOT FOUND 404")
-            }
-            console.log("error al obtener datos");
+            // if (request.status == 404) {
+            //     console.log("Orders controller respuesta NOT FOUND 404")
+            // }
+            // console.log("error al obtener datos");
             return { "data": respuesta.message, "status": request.status, "success": false };
 
 
         } catch (e) {
-            console.log("Excepción en petición:");
+            // console.log("Excepción en petición:");
             console.log(e);
 
             return { "data": e, "success": false };
@@ -309,12 +309,12 @@ const $ordersController = (function () {
 
     async function asociarConsumo(trabajoId, consumoObj) {
         //consumo: {itemid,cantidad_usada}
-        console.log("ordersController: getOrders");
+        // console.log("ordersController: getOrders");
 
         let requestUrl = apiController.getBaseUrl() + '/trabajos/' + trabajoId + '/consumos';
 
         try {
-            console.log("Realizando petición a: " + requestUrl);
+            // console.log("Realizando petición a: " + requestUrl);
             const authToken = apiController.getAuthToken();
             if (!authToken) {
                 return { data: "ERROR, NO AUTH TOKEN", success: false };
@@ -331,23 +331,22 @@ const $ordersController = (function () {
             const respuesta = await request.json();
 
             if (request.status == 201) {
-
-                console.log("OrdersController respuesta CREATED 201");
+                // console.log("OrdersController respuesta CREATED 201");
                 // console.log(respuesta);
 
                 return { "data": respuesta.data, "status": 201, "success": true };
             }
 
             //else error
-            if (request.status == 404) {
-                console.log("Orders controller respuesta NOT FOUND 404")
-            }
-            console.log("error al obtener datos");
+            // if (request.status == 404) {
+            //     console.log("Orders controller respuesta NOT FOUND 404")
+            // }
+            // console.log("error al obtener datos");
             return { "data": respuesta.message, "status": request.status, "success": false };
 
 
         } catch (e) {
-            console.log("Excepción en petición:");
+            // console.log("Excepción en petición:");
             console.log(e);
 
             return { "data": e, "success": false };

@@ -1,14 +1,14 @@
 import apiController from "./ApiController";
 
 const $usersController = (function () {
-  console.log("Inicializando userscontroller");
+  // console.log("Inicializando userscontroller");
 
   //params {'username':string} exacto
   async function getUsers(params = {}) {
-    console.log("usersController getUsers");
+    // console.log("usersController getUsers");
 
     let requestUrl = apiController.getBaseUrl() + "/usuarios";
-    console.log(params);
+    // console.log(params);
     if(params['username'] && params['username'].trim() !== ""){
       requestUrl+='?username='+params['username'];
     } 
@@ -24,12 +24,12 @@ const $usersController = (function () {
           "Authorization": "Bearer "+authToken,
         },
       };
-      console.log("Realizando petición a: " + requestUrl);
+      // console.log("Realizando petición a: " + requestUrl);
       const request = await fetch(requestUrl,requestBody);
       const respuesta = await request.json();
 
       if (request.status === 200) {
-        console.log("usersController respuesta 200 OK");
+        // console.log("usersController respuesta 200 OK");
         return { data: respuesta.data, status: 200, success: true };
       }
 
@@ -59,7 +59,7 @@ const $usersController = (function () {
           "Authorization": "Bearer "+authToken,
         },
       };
-      console.log("Realizando petición a: " + requestUrl);
+      // console.log("Realizando petición a: " + requestUrl);
       const request = await fetch(requestUrl,requestBody);
       const respuesta = await request.json();
 
@@ -94,7 +94,7 @@ const $usersController = (function () {
         },
       };
 
-      console.log("Realizando petición a: " + requestUrl);
+      // console.log("Realizando petición a: " + requestUrl);
       const request = await fetch(requestUrl,requestBody);
       const respuesta = await request.json();
 
@@ -130,7 +130,7 @@ const $usersController = (function () {
         },
       };
 
-      console.log("Realizando petición a: " + requestUrl);
+      // console.log("Realizando petición a: " + requestUrl);
       const request = await fetch(requestUrl, requestBody);
       const datos = await request.json();
 
@@ -145,7 +145,7 @@ const $usersController = (function () {
   }
 
   async function loginUser(objUserCred) {
-    console.log("usersController loginUser");
+    // console.log("usersController loginUser");
 
     const requestUrl = apiController.getBaseUrl() + "/usuarios/login";
 
@@ -159,7 +159,7 @@ const $usersController = (function () {
         },
       };
 
-      console.log("Realizando petición a: " + requestUrl);
+      // console.log("Realizando petición a: " + requestUrl);
       const request = await fetch(requestUrl, requestBody);
       const respuesta = await request.json();
 
@@ -167,12 +167,15 @@ const $usersController = (function () {
         return { data: respuesta.data, status: 200, success: true };
       }
 
+      // console.log(respuesta)
+
       return {
         data: respuesta.message,
         status: request.status,
         success: false,
       };
     } catch (e) {
+      console.log(e)
       return { data: e, success: false };
     }
   }
@@ -196,7 +199,7 @@ const $usersController = (function () {
         },
       };
 
-      console.log("Realizando petición a: " + requestUrl);
+      // console.log("Realizando petición a: " + requestUrl);
       const request = await fetch(requestUrl, requestBody);
       const datos = await request.json();
 
@@ -229,7 +232,7 @@ const $usersController = (function () {
         },
       };
 
-      console.log("Realizando petición a: " + requestUrl);
+      // console.log("Realizando petición a: " + requestUrl);
       const request = await fetch(requestUrl, requestBody);
       const datos = await request.json();
 
@@ -260,7 +263,7 @@ const $usersController = (function () {
         },
       };
 
-      console.log("Realizando petición a: " + requestUrl);
+      // console.log("Realizando petición a: " + requestUrl);
       const respuesta = await fetch(requestUrl, requestBody);
       const datos = await respuesta.json();
 
