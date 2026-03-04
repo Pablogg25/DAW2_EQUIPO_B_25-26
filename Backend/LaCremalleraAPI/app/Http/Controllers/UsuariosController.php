@@ -92,15 +92,26 @@ class UsuariosController extends Controller
 
             $user = $request->user();
 
-            $request->validate([
+            $validated = $request->validate([
                 'nombre' => 'required|string|max:255',
-                'username' => 'required|string|unique:usuarios,username',
+                'telefono' => 'nullable|string|max:20',
+                'direccion' => 'nullable|string|max:255',
+                'username' => 'required|string|max:100|unique:usuarios,username',
                 'email' => 'required|email|unique:usuarios,email',
                 'password' => 'required|string|min:6',
-                'rol' => 'nullable|in:cliente,empleado,admin'
+                'rol' => 'nullable|in:admin,empleado,cliente'
             ]);
 
-            $rol = $request->rol ?? 'cliente';
+            // si no envían rol → cliente
+            $rol = $validated['rol'] ?? 'cliente';
+
+            // cliente no puede crear usuarios
+            if ($user->rol === 'cliente') {
+                return $this->error(
+                    'Cliente no puede crear usuarios',
+                    403
+                );
+            }
 
             // empleado solo puede crear clientes
             if ($user->rol === 'empleado' && $rol !== 'cliente') {
@@ -110,15 +121,17 @@ class UsuariosController extends Controller
                 );
             }
 
+            // admin puede crear cualquier rol
+
             $usuario = new Usuarios();
 
-            $usuario->nombre = $request->nombre;
-            $usuario->telefono = $request->telefono;
-            $usuario->email = $request->email;
-            $usuario->direccion = $request->direccion;
-            $usuario->username = $request->username;
+            $usuario->nombre = $validated['nombre'];
+            $usuario->telefono = $validated['telefono'] ?? null;
+            $usuario->email = $validated['email'];
+            $usuario->direccion = $validated['direccion'] ?? null;
+            $usuario->username = $validated['username'];
             $usuario->rol = $rol;
-            $usuario->password = $request->password;
+            $usuario->password = $validated['password'];
 
             $usuario->save();
 
