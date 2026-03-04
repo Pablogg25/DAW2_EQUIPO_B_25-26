@@ -3,10 +3,16 @@ import { useParams, useNavigate } from "react-router-dom";
 import $inventarioController from "../../core/InventoryController.js";
 import { AuthContext } from "../../context/AuthContext";
 
+import { useMessage } from "../../components/useMessage";
+import { useConfirm } from "../../components/useConfirm";
+
 function PropsElementoInventoryPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { usuario } = useContext(AuthContext);
+
+  const { showMessage } = useMessage();
+  const { confirm } = useConfirm();
 
   const rol = usuario?.rol;
 
@@ -24,24 +30,33 @@ function PropsElementoInventoryPage() {
     async function cargarItem() {
       if (id === "new") {
         if (rol !== "admin") {
-          alert("No tienes permisos para crear inventario.");
+          showMessage("No tienes permisos para crear inventario.", "warning");
           navigate("/inventory");
         }
         return;
       }
 
-      const respuesta = await $inventarioController.obtenerItemInventario(id);
+      try {
+        const respuesta = await $inventarioController.obtenerItemInventario(id);
 
-      if (respuesta.success) {
-        setItem(respuesta.data);
-      } else {
-        alert("Error al cargar el item. Código: " + respuesta.status);
+        if (respuesta.success) {
+          setItem(respuesta.data);
+        } else {
+          showMessage(
+            respuesta.message ||
+              "Error al cargar el item. Código: " + respuesta.status,
+            "error",
+          );
+          navigate("/inventory");
+        }
+      } catch (error) {
+        showMessage("No se pudo conectar con el servidor.", "error");
         navigate("/inventory");
       }
     }
 
     cargarItem();
-  }, [id, navigate, rol]);
+  }, [id, navigate, rol, showMessage]);
 
   // -------------------------------------------------------
   // Manejar cambios
@@ -56,7 +71,7 @@ function PropsElementoInventoryPage() {
   // -------------------------------------------------------
   async function guardar() {
     if (!item.nombre.trim()) {
-      alert("El nombre es obligatorio");
+      showMessage("El nombre es obligatorio", "warning");
       return;
     }
 
@@ -68,28 +83,37 @@ function PropsElementoInventoryPage() {
 
     let respuesta;
 
-    if (id === "new") {
-      if (rol !== "admin") {
-        alert("No tienes permisos para crear.");
-        return;
-      }
-      respuesta = await $inventarioController.crearItemInventario(datos);
-    } else {
-      if (rol !== "admin" && rol !== "empleado") {
-        alert("No tienes permisos para editar.");
-        return;
-      }
-      respuesta = await $inventarioController.actualizarItemInventario(
-        id,
-        datos,
-      );
-    }
+    try {
+      if (id === "new") {
+        if (rol !== "admin") {
+          showMessage("No tienes permisos para crear.", "warning");
+          return;
+        }
 
-    if (respuesta.success) {
-      alert("Guardado correctamente");
-      navigate("/inventory");
-    } else {
-      alert("Error al guardar. Código: " + respuesta.status);
+        respuesta = await $inventarioController.crearItemInventario(datos);
+      } else {
+        if (rol !== "admin" && rol !== "empleado") {
+          showMessage("No tienes permisos para editar.", "warning");
+          return;
+        }
+
+        respuesta = await $inventarioController.actualizarItemInventario(
+          id,
+          datos,
+        );
+      }
+
+      if (respuesta.success) {
+        showMessage("Guardado correctamente", "success");
+        navigate("/inventory");
+      } else {
+        showMessage(
+          respuesta.message || "Error al guardar. Código: " + respuesta.status,
+          "error",
+        );
+      }
+    } catch (error) {
+      showMessage("No se pudo conectar con el servidor.", "error");
     }
   }
 

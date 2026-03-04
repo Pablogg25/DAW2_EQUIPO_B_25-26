@@ -3,11 +3,17 @@ import $inventarioController from "../../core/InventoryController.js";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 
+import { useMessage } from "../../components/UseMessage";
+import { useConfirm } from "../../components/useConfirm";
+
 function InventaryPage() {
   const [inventario, setInventario] = useState([]);
   const [busqueda, setBusqueda] = useState("");
   const navigate = useNavigate();
   const { usuario } = useContext(AuthContext);
+
+  const { showMessage } = useMessage();
+  const { confirm } = useConfirm();
 
   const rol = usuario?.rol; // admin | empleado | cliente
 
@@ -15,19 +21,29 @@ function InventaryPage() {
   // Cargar inventario
   // -------------------------------------------------------
   async function cargarInventario(nombre = "") {
-    const respuesta = await $inventarioController.obtenerInventario({ nombre });
+    try {
+      const respuesta = await $inventarioController.obtenerInventario({
+        nombre,
+      });
 
-    if (respuesta.success) {
-      setInventario(respuesta.data);
-      return;
+      if (respuesta.success) {
+        setInventario(respuesta.data);
+        return;
+      }
+
+      if (respuesta.status === 404) {
+        setInventario([]);
+        showMessage("No se encontraron elementos con ese nombre.", "info");
+        return;
+      }
+
+      showMessage(
+        "Error al cargar inventario. Código: " + respuesta.status,
+        "error",
+      );
+    } catch (error) {
+      showMessage("No se pudo conectar con el servidor.", "error");
     }
-
-    if (respuesta.status === 404) {
-      setInventario([]);
-      return;
-    }
-
-    alert("Error al cargar inventario. Código: " + respuesta.status);
   }
 
   useEffect(() => {
@@ -48,22 +64,24 @@ function InventaryPage() {
   // -------------------------------------------------------
   async function eliminarItem(id) {
     if (rol !== "admin") {
-      alert("No tienes permisos para eliminar.");
+      showMessage("No tienes permisos para eliminar.", "warning");
       return;
     }
 
-    const seguro = window.confirm(
-      "¿Seguro que quieres eliminar este elemento?",
-    );
+    const seguro = await confirm("¿Seguro que quieres eliminar este elemento?");
     if (!seguro) return;
 
-    const respuesta = await $inventarioController.eliminarItemInventario(id);
+    try {
+      const respuesta = await $inventarioController.eliminarItemInventario(id);
 
-    if (respuesta.success) {
-      alert("Elemento eliminado correctamente");
-      cargarInventario(busqueda);
-    } else {
-      alert("Error al eliminar. Código: " + respuesta.status);
+      if (respuesta.success) {
+        showMessage("Elemento eliminado correctamente", "success");
+        cargarInventario(busqueda);
+      } else {
+        showMessage("Error al eliminar. Código: " + respuesta.status, "error");
+      }
+    } catch (error) {
+      showMessage("No se pudo conectar con el servidor.", "error");
     }
   }
 

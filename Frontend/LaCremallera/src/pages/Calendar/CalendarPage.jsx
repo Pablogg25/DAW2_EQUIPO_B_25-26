@@ -7,6 +7,9 @@ import $calendarioController from "../../core/CalendaryController";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 
+import { useMessage } from "../../components/useMessage";
+import { useConfirm } from "../../components/useConfirm";
+
 function CalendarPage() {
   const [eventos, setEventos] = useState([]);
   const [eventosDia, setEventosDia] = useState([]);
@@ -16,37 +19,52 @@ function CalendarPage() {
   const navigate = useNavigate();
   const { usuario } = useContext(AuthContext);
 
+  const { showMessage } = useMessage();
+  const { confirm } = useConfirm();
+
   const rol = usuario?.rol;
   const usuarioId = usuario?.usuarioId;
 
+  // -------------------------------------------------------
+  // Cargar eventos
+  // -------------------------------------------------------
   async function cargarEventos() {
-    const respuesta = await $calendarioController.getCalendarios();
+    try {
+      const respuesta = await $calendarioController.getCalendarios();
 
-    if (!respuesta.success) {
+      if (!respuesta.success) {
+        showMessage(respuesta.message || "Error al cargar eventos.", "error");
+        setEventos([]);
+        return;
+      }
+
+      const eventosAdaptados = respuesta.data.map((ev) => ({
+        id: ev.eventoId,
+        title: ev.titulo,
+        start: ev.fecha_inicio,
+        end: ev.fecha_fin,
+        extendedProps: {
+          descripcion: ev.descripcion,
+          usuarioId: ev.usuarioId,
+          empleadoId: ev.empleadoId,
+          trabajoId: ev.trabajoId,
+        },
+      }));
+
+      setEventos(eventosAdaptados);
+    } catch (error) {
+      showMessage("No se pudo conectar con el servidor.", "error");
       setEventos([]);
-      return;
     }
-
-    const eventosAdaptados = respuesta.data.map((ev) => ({
-      id: ev.eventoId,
-      title: ev.titulo,
-      start: ev.fecha_inicio,
-      end: ev.fecha_fin,
-      extendedProps: {
-        descripcion: ev.descripcion,
-        usuarioId: ev.usuarioId,
-        empleadoId: ev.empleadoId,
-        trabajoId: ev.trabajoId,
-      },
-    }));
-
-    setEventos(eventosAdaptados);
   }
 
   useEffect(() => {
     cargarEventos();
   }, []);
 
+  // -------------------------------------------------------
+  // Click en un día
+  // -------------------------------------------------------
   function handleDateClick(info) {
     const fecha = new Date(info.dateStr);
     setFechaSeleccionada(info.dateStr);
@@ -63,26 +81,39 @@ function CalendarPage() {
     setEventosDia(filtrados);
   }
 
+  // -------------------------------------------------------
+  // Eliminar evento
+  // -------------------------------------------------------
   async function eliminarEvento(ev) {
     if (rol !== "admin") {
-      alert("Solo el administrador puede eliminar eventos.");
+      showMessage("Solo el administrador puede eliminar eventos.", "warning");
       return;
     }
 
-    const seguro = window.confirm("¿Seguro que quieres eliminar este evento?");
+    const seguro = await confirm("¿Seguro que quieres eliminar este evento?");
     if (!seguro) return;
 
-    const respuesta = await $calendarioController.deleteCalendario(ev.id);
+    try {
+      const respuesta = await $calendarioController.deleteCalendario(ev.id);
 
-    if (respuesta.success) {
-      alert("Evento eliminado");
-      cargarEventos();
-      setEventosDia(eventosDia.filter((e) => e.id !== ev.id));
-    } else {
-      alert("Error al eliminar. Código: " + respuesta.status);
+      if (respuesta.success) {
+        showMessage("Evento eliminado correctamente", "success");
+        cargarEventos();
+        setEventosDia(eventosDia.filter((e) => e.id !== ev.id));
+      } else {
+        showMessage(
+          respuesta.message || "Error al eliminar. Código: " + respuesta.status,
+          "error",
+        );
+      }
+    } catch (error) {
+      showMessage("No se pudo conectar con el servidor.", "error");
     }
   }
 
+  // -------------------------------------------------------
+  // Eventos del mes visible
+  // -------------------------------------------------------
   const eventosMes = eventos.filter((ev) => {
     if (!mesVisible) return false;
     const fecha = new Date(ev.start);
@@ -106,6 +137,7 @@ function CalendarPage() {
       )}
 
       <div className="d-flex gap-3">
+        {/* CALENDARIO */}
         <div style={{ flex: 2 }}>
           <FullCalendar
             plugins={[dayGridPlugin, interactionPlugin]}
@@ -124,6 +156,7 @@ function CalendarPage() {
           />
         </div>
 
+        {/* LISTA DE EVENTOS */}
         <div
           style={{
             flex: 1,
@@ -136,6 +169,7 @@ function CalendarPage() {
         >
           <h4>Eventos</h4>
 
+          {/* SIN FECHA SELECCIONADA → MOSTRAR MES */}
           {!fechaSeleccionada && (
             <>
               <p className="text-muted">Eventos del mes actual:</p>
@@ -177,6 +211,7 @@ function CalendarPage() {
             </>
           )}
 
+          {/* CON FECHA SELECCIONADA → MOSTRAR DÍA */}
           {fechaSeleccionada && (
             <>
               <p className="text-muted">Eventos del día {fechaSeleccionada}:</p>

@@ -342,3 +342,15 @@ select:focus {
   padding: 2rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
+
+/* Animación mensajes */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
