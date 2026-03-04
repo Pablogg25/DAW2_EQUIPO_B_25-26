@@ -54,11 +54,11 @@ function AppEnrutador() {
             }
           />
 
-          {/* INVENTARIO */}
+          {/* INVENTARIO → admin, empleado */}
           <Route
             path="/inventory"
             element={
-              <RoleRoute roles={["empleado", "admin"]}>
+              <RoleRoute roles={["admin", "empleado"]}>
                 <InventaryPage />
               </RoleRoute>
             }
@@ -66,17 +66,17 @@ function AppEnrutador() {
           <Route
             path="/inventory/:id"
             element={
-              <RoleRoute roles={["empleado", "admin"]}>
+              <RoleRoute roles={["admin", "empleado"]}>
                 <PropsElementoInventoryPage />
               </RoleRoute>
             }
           />
 
-          {/* TRABAJOS */}
+          {/* TRABAJOS → admin, empleado, cliente */}
           <Route
             path="/orders"
             element={
-              <RoleRoute roles={["empleado", "admin"]}>
+              <RoleRoute roles={["admin", "empleado", "cliente"]}>
                 <OrdersPage />
               </RoleRoute>
             }
@@ -84,17 +84,17 @@ function AppEnrutador() {
           <Route
             path="/orders/:id"
             element={
-              <RoleRoute roles={["empleado", "admin"]}>
+              <RoleRoute roles={["admin", "empleado", "cliente"]}>
                 <OrderFormPage />
               </RoleRoute>
             }
           />
 
-          {/* PRENDAS */}
+          {/* PRENDAS → admin, empleado */}
           <Route
             path="/prendas"
             element={
-              <RoleRoute roles={["empleado", "admin"]}>
+              <RoleRoute roles={["admin", "empleado"]}>
                 <PrendasPage />
               </RoleRoute>
             }
@@ -102,17 +102,17 @@ function AppEnrutador() {
           <Route
             path="/prendas/:id"
             element={
-              <RoleRoute roles={["empleado", "admin"]}>
+              <RoleRoute roles={["admin", "empleado"]}>
                 <PrendaFormPage />
               </RoleRoute>
             }
           />
 
-          {/* USUARIOS */}
+          {/* USUARIOS → admin, empleado, cliente */}
           <Route
             path="/users"
             element={
-              <RoleRoute roles={["admin"]}>
+              <RoleRoute roles={["admin", "empleado"]}>
                 <UsersPage />
               </RoleRoute>
             }
@@ -120,17 +120,17 @@ function AppEnrutador() {
           <Route
             path="/users/:id"
             element={
-              <RoleRoute roles={["admin"]}>
+              <RoleRoute roles={["admin", "empleado", "cliente"]}>
                 <UserFormPage />
               </RoleRoute>
             }
           />
 
-          {/* NOTIFICACIONES */}
+          {/* NOTIFICACIONES → admin, empleado, cliente */}
           <Route
             path="/notificaciones"
             element={
-              <RoleRoute roles={["empleado", "admin"]}>
+              <RoleRoute roles={["admin", "empleado", "cliente"]}>
                 <NotificacionesPage />
               </RoleRoute>
             }
@@ -138,17 +138,17 @@ function AppEnrutador() {
           <Route
             path="/notificaciones/:id"
             element={
-              <RoleRoute roles={["empleado", "admin"]}>
+              <RoleRoute roles={["admin", "empleado", "cliente"]}>
                 <NotificacionFormPage />
               </RoleRoute>
             }
           />
 
-          {/* FACTURAS */}
+          {/* FACTURAS → admin, empleado, cliente */}
           <Route
             path="/facturas"
             element={
-              <RoleRoute roles={["empleado", "admin"]}>
+              <RoleRoute roles={["admin", "empleado", "cliente"]}>
                 <FacturasPage />
               </RoleRoute>
             }
@@ -156,17 +156,17 @@ function AppEnrutador() {
           <Route
             path="/facturas/:id"
             element={
-              <RoleRoute roles={["empleado", "admin"]}>
+              <RoleRoute roles={["admin", "empleado", "cliente"]}>
                 <FacturaFormPage />
               </RoleRoute>
             }
           />
 
-          {/* CALENDARIO */}
+          {/* CALENDARIO → admin, empleado, cliente */}
           <Route
             path="/calendar"
             element={
-              <RoleRoute roles={["empleado", "admin"]}>
+              <RoleRoute roles={["admin", "empleado", "cliente"]}>
                 <CalendarPage />
               </RoleRoute>
             }
@@ -174,7 +174,7 @@ function AppEnrutador() {
           <Route
             path="/calendar/:id"
             element={
-              <RoleRoute roles={["empleado", "admin"]}>
+              <RoleRoute roles={["admin", "empleado", "cliente"]}>
                 <CalendarFormPage />
               </RoleRoute>
             }
