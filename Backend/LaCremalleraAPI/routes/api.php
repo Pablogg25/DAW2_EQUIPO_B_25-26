@@ -27,7 +27,7 @@ Route::middleware('auth:sanctum')->group(function () {
             ->middleware('role:admin,empleado');
 
         Route::put('/{id}', [UsuariosController::class, 'update'])
-            ->middleware('role:admin,cliente');
+            ->middleware('role:admin');
 
         Route::put('/{id}/password', [UsuariosController::class, 'updatePassword'])
             ->middleware('role:admin,empleado,cliente');
