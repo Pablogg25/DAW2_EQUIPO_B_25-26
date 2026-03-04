@@ -25,15 +25,15 @@ function UserFormPage() {
 
 
   const cargarDatos = async () => {
-    console.log("cargando datos");
+    // console.log("cargando datos");
 
     if (id != 0) {
-      console.log("Modo update");
+      // console.log("Modo update");
       //obtener datos
       let datos = await $usersController.getUser(id);
 
       if (datos.success) {
-        console.log(datos);
+        // console.log(datos);
         setUserData(datos.data);
       } else {
         alert("ERROR, " + datos);
@@ -45,14 +45,14 @@ function UserFormPage() {
 
   const handleOnSubmit = (evento) => {
     evento.preventDefault();
-    console.log("UserFormPage: onSubmit");
+    // console.log("UserFormPage: onSubmit");
 
     //enviar datos
     enviarDatos();
   };
 
   const enviarDatos = async () => {
-    console.log("Enviando datos");
+    // console.log("Enviando datos");
     let success;
     let statusCode = 0;
 
@@ -65,7 +65,7 @@ function UserFormPage() {
       //antes comprobar que confirm password es correcto
 
       if (userData.confirm_password != userData.password) {
-        console.log("ERROR, confirm password y password no coincide");
+        // console.log("ERROR, confirm password y password no coincide");
         alert(
           "ERROR: su contraseña no está confirmada, escríbala correctamente",
         );

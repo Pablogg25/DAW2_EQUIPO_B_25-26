@@ -17,7 +17,7 @@ function FacturasPage() {
   const rol = usuario?.rol; // admin | empleado | cliente
 
   const cargarDatos = async (filtro = -1) => {
-    console.log("Cargando datos");
+    //console.log("Cargando datos");
 
     let datos = await $facturasController.getFacturas({ usuarioId: filtro });
 
@@ -52,21 +52,21 @@ function FacturasPage() {
   }
 
   const onCreateFactura = () => {
-    console.log("On create factura");
+    //console.log("On create factura");
 
     //navegar
     navegar("/facturas/0");
   };
 
   const onEditFactura = (facturaId) => {
-    console.log("On edit factura id: " + facturaId);
+    //console.log("On edit factura id: " + facturaId);
 
     //navegar
     navegar("/facturas/" + facturaId);
   };
 
   const onDeleteFactura = async (facturaId) => {
-    console.log("On delete factura id: " + facturaId);
+    //console.log("On delete factura id: " + facturaId);
 
     //ejecutar petición
 

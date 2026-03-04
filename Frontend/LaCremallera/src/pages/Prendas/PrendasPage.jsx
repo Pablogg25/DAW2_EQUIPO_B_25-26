@@ -16,27 +16,27 @@ function PrendasPage() {
   const navegar = useNavigate();
 
   const cargarDatos = async (userId = -1) => {
-    console.log("Cargando datos");
+    // console.log("Cargando datos");
 
     //obtener datos de controlador
 
     //si datos de usuario no estan inicializados cargar y cachear:
     if (usuarios.length == 0) {
-      console.log("Cargando datos de usuarios");
+      // console.log("Cargando datos de usuarios");
       let datosUsuario = await $usersController.getUsers([]);
       setUsuarios(datosUsuario.data);
     }
-    console.log("Cargando datos de prendas");
+    // console.log("Cargando datos de prendas");
     let datos = await $prendasController.getPrendas({ "usuarioId": userId });
 
     if (datos.success) {
-      console.log("Datos recividos");
+      // console.log("Datos recividos");
       setPrendas(datos.data);
     } else {
       if (datos.status == 404) {
         setPrendas([]);
       } else {
-        console.log("ERROR: un error inesperado surgió al cargar datos");
+        // console.log("ERROR: un error inesperado surgió al cargar datos");
         alert("Ha surgido un error al cargar datos. " + datos.status);
         setPrendas([]);
       }
@@ -57,21 +57,21 @@ function PrendasPage() {
   }
 
   const onCreatePrenda = () => {
-    console.log("On create Prenda");
+    // console.log("On create Prenda");
 
     //navegar a formulario
     navegar("/prendas/0");
   };
 
   const onEditPrenda = (prendaId) => {
-    console.log("On edit prenda id: " + prendaId);
+    // console.log("On edit prenda id: " + prendaId);
 
     //navegar al id
     navegar("/prendas/" + prendaId);
   };
 
   const onDeletePrenda = async (prendaId) => {
-    console.log("On delete prenda id: " + prendaId);
+    // console.log("On delete prenda id: " + prendaId);
 
     if (rol !== "admin") {
       alert("No tienes permisos para eliminar.");

@@ -23,19 +23,19 @@ function NotificacionesPage() {
   const rol = usuario?.rol; // admin | empleado | cliente
 
   const cargarDatos = async (filtro = -1) => {
-    console.log("Cargando datos");
+    //console.log("Cargando datos");
 
     let datos;
 
     if (usuario.rol != "admin") {
-      console.log("Cargando notificaciones de empleado");
+      //console.log("Cargando notificaciones de empleado");
       datos = await $notificacionesController.getNotificaciones({
         receptorId: usuario.usuarioId,
         remitenteId: usuario.usuarioId,
         trabajoId: filtro
       });
     } else {
-      console.log("cargando notificaciones admin");
+      //console.log("cargando notificaciones admin");
       datos = await $notificacionesController.getNotificaciones({ trabajoId: filtro });
     }
 
@@ -52,7 +52,7 @@ function NotificacionesPage() {
     }
 
     if (trabajos.length == 0) {
-      console.log("Cargando datos de trabajos");
+      //console.log("Cargando datos de trabajos");
       let datosTrabajo = await $ordersController.getOrders();
       setTrabajos(datosTrabajo.data);
     }
@@ -69,17 +69,17 @@ function NotificacionesPage() {
   }
 
   const onCreateNotificacion = () => {
-    console.log("On create notificacion");
+    //console.log("On create notificacion");
     navegar("/notificaciones/0");
   };
 
   const onViewNotificacion = (notificacionId) => {
-    console.log("On view Notificacion id: " + notificacionId);
+    //console.log("On view Notificacion id: " + notificacionId);
     navegar("/notificaciones/" + notificacionId);
   };
 
   const onDeleteNotificacion = async (notId) => {
-    console.log("On delete notificación id: " + notId);
+    //console.log("On delete notificación id: " + notId);
 
     if (notId) {
       if (rol !== "admin" || rol !== "empleado") {
