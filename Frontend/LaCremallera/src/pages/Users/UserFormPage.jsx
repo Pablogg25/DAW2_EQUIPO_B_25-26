@@ -1,8 +1,11 @@
 import { useState, useEffect, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { AuthContext } from "../../context/AuthContext";
+import { useMessage } from "../../components/UseMessage";
+import { useConfirm } from "../../components/useConfirm";
 
 import $usersController from "../../core/UsersController";
-import { AuthContext } from "../../context/AuthContext";
+
 
 function UserFormPage() {
   const [userData, setUserData] = useState({
@@ -21,6 +24,9 @@ function UserFormPage() {
 
   const { id } = useParams();
   const { usuario } = useContext(AuthContext);
+  const { showMessage } = useMessage();
+  const { confirm } = useConfirm();
+
   const rol = usuario?.rol; // admin | empleado | cliente
 
 
@@ -36,7 +42,7 @@ function UserFormPage() {
         // console.log(datos);
         setUserData(datos.data);
       } else {
-        alert("ERROR, " + datos);
+        showMessage("No se pudo procesar la petición " + datos, "error");
         navegar("/users");
       }
     }
@@ -66,9 +72,7 @@ function UserFormPage() {
 
       if (userData.confirm_password != userData.password) {
         // console.log("ERROR, confirm password y password no coincide");
-        alert(
-          "ERROR: su contraseña no está confirmada, escríbala correctamente",
-        );
+        showMessage("Su contraseña no está confirmada, escríbala correctamente", "warning");
         return;
       }
       const response = await $usersController.createUser(userData);
@@ -79,10 +83,10 @@ function UserFormPage() {
       //TODO: insertar context para guardar datos de login
       navegar("/users");
     } else {
-      alert(
-        "Error, ha surgido un error al procesar su petición.\nCodigo de error: " +
-          statusCode,
-      );
+      
+      showMessage("Error, ha surgido un error al procesar su petición.\nCodigo de error: " +
+        statusCode, "error");
+
     }
   };
 
@@ -235,10 +239,10 @@ function UserFormPage() {
         <div className="d-flex gap-3">
           {rol === "admin" && (
             <button type="submit" className="btn btn-success">
-            Enviar datos
-          </button>
+              Enviar datos
+            </button>
           )}
-          
+
 
           <button
             type="button"

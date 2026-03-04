@@ -1,6 +1,8 @@
 import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
+import { useMessage } from "../../components/UseMessage";
+import { useConfirm } from "../../components/useConfirm";
 
 import $usersController from "../../core/UsersController";
 
@@ -8,6 +10,8 @@ function UsersPage() {
   const [users, setUsers] = useState([]);
   const [busqueda, setBusqueda] = useState("");
   const { usuario } = useContext(AuthContext);
+  const { showMessage } = useMessage();
+  const { confirm } = useConfirm();
 
   const navegar = useNavigate();
 
@@ -24,7 +28,10 @@ function UsersPage() {
     } else {
       if (datos.status != 404) {
         // console.log("ERROR: un error inesperado surgió al cargar datos");
-        alert("Ha surgido un error al cargar datos. " + datos.data);
+        showMessage("Ha surgido un error al cargar datos. " + datos.data, "error");
+      }else{
+        showMessage("No se encontraron elementos con ese nombre.", "info");
+
       }
 
     }
@@ -61,11 +68,13 @@ function UsersPage() {
     // console.log("on delete user: " + userId);
 
     if (rol !== "admin") {
-      alert("No tienes permisos para eliminar.");
+      showMessage("No tienes permisos para eliminar", "warning");
+
       return;
     }
     if (userId) {
-      if (confirm("¿Está seguro que desea borrar este usuario?")) {
+      const seguro = await confirm("¿Está seguro que desea borrar este usuario?");
+      if (seguro) {
         // console.log("Eliminando usuario");
         //realizar petición de borrado
 
@@ -73,8 +82,7 @@ function UsersPage() {
 
         //if success
         if (!result.success) {
-          alert("ERROR, no se ha podido procesar su petición");
-          alert("ERROR: " + result.data);
+          showMessage("No se ha podido procesar su petición \n" + result.data, "error");
         } else {
           cargarDatos();
         }

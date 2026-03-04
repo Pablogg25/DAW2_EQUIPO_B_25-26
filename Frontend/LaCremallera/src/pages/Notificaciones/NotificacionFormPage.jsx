@@ -5,6 +5,8 @@ import $notificacionesController from "../../core/NotificacionesController";
 import $usersController from "../../core/UsersController";
 import $ordersController from "../../core/OrdersController";
 import { AuthContext } from "../../context/AuthContext";
+import { useMessage } from "../../components/UseMessage";
+import { useConfirm } from "../../components/useConfirm";
 
 function NotificacionFormPage() {
   const [notificacionData, setNotificacionData] = useState({
@@ -21,6 +23,8 @@ function NotificacionFormPage() {
   const [trabajosData, setTrabajosData] = useState([]);
 
   const navegar = useNavigate();
+  const { showMessage } = useMessage();
+  const { confirm } = useConfirm();
   //useContext
   const { usuario } = useContext(AuthContext);
 
@@ -35,9 +39,10 @@ function NotificacionFormPage() {
       if (datosUsuario.success) {
         setUsuariosData(datosUsuario.data);
       } else {
-        alert(
+        showMessage(
           "Error, ha surgido un error al procesar su petición.\nCodigo de error: " +
           datosUsuario.status,
+          "error",
         );
 
         navegar("/notificaciones");
@@ -50,9 +55,11 @@ function NotificacionFormPage() {
       if (datosTrabajo.success) {
         setTrabajosData(datosTrabajo.data);
       } else {
-        alert(
+
+        showMessage(
           "Error, ha surgido un error al procesar su petición.\nCodigo de error: " +
           datosTrabajo.status,
+          "error",
         );
 
         navegar("/notificaciones");
@@ -64,9 +71,10 @@ function NotificacionFormPage() {
       if (datosNot.success) {
         setNotificacionData(datosNot.data);
       } else {
-        alert(
+        showMessage(
           "Error, ha surgido un error al procesar su petición.\nCodigo de error: " +
           datosNot.status,
+          "error",
         );
       }
     }
@@ -92,7 +100,10 @@ function NotificacionFormPage() {
     }
 
     if (result.success) {
-      alert("Datos enviados correctamente");
+      showMessage(
+        "Datos enviados correctamente",
+        "info",
+      );
       navegar("/notificaciones");
     } else {
       if (result.estado == 404) {
@@ -101,10 +112,15 @@ function NotificacionFormPage() {
         alert(
           "Error 400: error de validación: compruebe que los campos están correctamente rellenados",
         );
-      } else {
-        alert(
+        showMessage(
           "Error, ha surgido un error al procesar su petición.\nCodigo de error: " +
           result.estado,
+          "error",
+        );
+      } else {
+        showMessage(
+          "Error 400: error de validación: compruebe que los campos están correctamente rellenados",
+          "error",
         );
       }
     }
@@ -213,7 +229,7 @@ function NotificacionFormPage() {
             id="trabajoId"
             onChange={handleOnChange}
             value={notificacionData.trabajoId}
-            className="form-select" 
+            className="form-select"
             disabled={id != 0}
           >
             {trabajosData.map((elemento) => (

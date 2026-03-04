@@ -1,6 +1,9 @@
 import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
+import { useMessage } from "../../components/UseMessage";
+import { useConfirm } from "../../components/useConfirm";
+
 
 import $prendasController from "../../core/PrendasController";
 import $usersController from "../../core/UsersController";
@@ -10,6 +13,9 @@ function PrendasPage() {
   const [usuarios, setUsuarios] = useState([]);
   const [busqueda, setBusqueda] = useState(-1);
   const { usuario } = useContext(AuthContext);
+  const { showMessage } = useMessage();
+  const { confirm } = useConfirm();
+
   const rol = usuario?.rol; // admin | empleado | cliente
 
 
@@ -34,17 +40,18 @@ function PrendasPage() {
       setPrendas(datos.data);
     } else {
       if (datos.status == 404) {
+        showMessage("No se encontraron elementos con ese usuario.", "info");
+
         setPrendas([]);
       } else {
         // console.log("ERROR: un error inesperado surgió al cargar datos");
-        alert("Ha surgido un error al cargar datos. " + datos.status);
+        showMessage("Ha surgido un error al cargar datos. " + datos.status, "error");
+
         setPrendas([]);
       }
 
     }
 
-
-    //si success guardar, sino dar aviso
   };
 
   // -------------------------------------------------------
@@ -74,7 +81,8 @@ function PrendasPage() {
     // console.log("On delete prenda id: " + prendaId);
 
     if (rol !== "admin") {
-      alert("No tienes permisos para eliminar.");
+      showMessage("No tienes permisos para eliminar.", "warning");
+
       return;
     }
 
@@ -82,7 +90,8 @@ function PrendasPage() {
     if (prendaId) {
       //hacer confirm para borrar el usuario y luego recargar datos
 
-      if (confirm("¿Seguro que desea eliminar la prenda?")) {
+      let seguro = await confirm("¿Seguro que desea eliminar la prenda?");
+      if (seguro) {
         let result = await $prendasController.deletePrenda(prendaId);
 
         if (result) {
@@ -90,14 +99,19 @@ function PrendasPage() {
           navegar("/prendas");
         } else {
           if (result.estado == 409) {
-            alert(
+
+            showMessage(
               "ERROR: 409: no se puede borrar la prenda porque depende de otro elemento de la base de datos",
-            );
+              "error");
+
           } else {
             alert(
               "Error, ha surgido un error al procesar su petición.\nCodigo de error: " +
               result.estado,
             );
+            showMessage(
+              "Error, ha surgido un error al procesar su petición.\nCodigo de error: " + result.estado,
+              "error");
           }
         }
       }

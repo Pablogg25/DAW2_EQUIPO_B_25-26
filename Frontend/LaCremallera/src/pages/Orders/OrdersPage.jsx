@@ -1,15 +1,15 @@
 import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../../context/AuthContext";
+import { useMessage } from "../../components/UseMessage";
+import { useConfirm } from "../../components/useConfirm";
 
 import $ordersController from "../../core/OrdersController";
-// import $usersController from "../../core/UsersController";
-// import $prendasController from "../../core/PrendasController";
-import { AuthContext } from "../../context/AuthContext";
 
 function OrdersPage() {
   const [orders, setOrders] = useState([]);
 
-  const [usuariosData, setUsuarioData] = useState([]);
+  // const [usuariosData, setUsuarioData] = useState([]);
   const [prendasData, setPrendasData] = useState([]);
 
   const [busqueda, setBusqueda] = useState({
@@ -19,6 +19,9 @@ function OrdersPage() {
 
   const navegar = useNavigate();
   const { usuario } = useContext(AuthContext);
+  const { showMessage } = useMessage();
+  const { confirm } = useConfirm();
+
   const rol = usuario?.rol; // admin | empleado | cliente
 
   const cargarDatos = async (filtro = {}) => {
@@ -38,7 +41,19 @@ function OrdersPage() {
       setOrders(datos.data);
     } else {
       //console.log("ERROR: un error inesperado surgió al cargar datos");
-      alert("Ha surgido un error al cargar datos. Compruebe logs.");
+
+      if (datos.status == 404) {
+        showMessage(
+          "No se han encontrado notificaciones",
+          "info",
+        );
+      } else {
+        showMessage(
+          "Error al cargar trabajos. Código: " + datos.status,
+          "error",
+        );
+      }
+      setOrders([]);
     }
   };
 
@@ -76,26 +91,31 @@ function OrdersPage() {
     //console.log("OnDeleteOrder: " + orderId);
 
     if (rol !== "admin") {
-      alert("No tienes permisos para eliminar.");
+      showMessage("No tienes permisos para eliminar.", "warning");
+
       return;
     }
 
     //añadir diálogo de confirmación antes de borrar
     if (orderId) {
-      if (confirm("¿Desea borrar el trabajo?")) {
+      let seguro = await confirm("¿Desea borrar el trabajo?");
+      if (seguro) {
         //console.log("Eliminando trabajo");
         let response = await $ordersController.deleteOrder(orderId);
         if (response.success) {
           await cargarDatos();
         } else {
           if (response.estado == 409) {
-            alert(
+            showMessage(
               "Error 409: No se puede eliminar el trabajo debido a que depende de otro elemento",
+              "error",
             );
           } else {
-            alert(
+
+            showMessage(
               "Error, ha surgido un error al procesar su petición.\nCodigo de error: " +
               response.estado,
+              "error",
             );
           }
         }

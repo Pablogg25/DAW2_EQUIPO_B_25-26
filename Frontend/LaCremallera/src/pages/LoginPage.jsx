@@ -1,13 +1,19 @@
 import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import $usersController from "../core/UsersController";
 import { AuthContext } from "../context/AuthContext";
+import { useMessage } from "../components/UseMessage";
+import { useConfirm } from "../components/useConfirm";
+
+import $usersController from "../core/UsersController";
 
 function LoginPage() {
   const [userCred, setUserCred] = useState({ login: "", password: "" });
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
+
+  const { showMessage } = useMessage();
+  const { confirm } = useConfirm();
 
   const handleOnSubmit = async (event) => {
     event.preventDefault();
@@ -26,16 +32,16 @@ function LoginPage() {
 
       if (userData.success) {
         login(userData.data); // Guardar usuario en contexto
-        alert("Login correcto");
+        showMessage("Login correcto","info");
         navigate("/");
       } else {
-        alert("No se pudo obtener la información del usuario");
+        showMessage("No se pudo obtener la información del usuario","error");
       }
     } else {
       if (response.status == 401) {
-        alert("Credenciales incorrectas");
+        showMessage("Credenciales incorrectas","error");
       } else {
-        alert("Error en login. Código: " + response.status);
+        showMessage("Error en login. Código: " + response.status,"error");
       }
 
     }

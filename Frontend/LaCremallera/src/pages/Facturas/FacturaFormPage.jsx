@@ -1,6 +1,8 @@
 import { useState, useEffect, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
+import { useMessage } from "../../components/UseMessage";
+import { useConfirm } from "../../components/useConfirm";
 
 import $facturasController from "../../core/FacturasController";
 import $usersController from "../../core/UsersController";
@@ -30,6 +32,8 @@ function FacturaFormPage() {
 
   const { id } = useParams();
   const { usuario } = useContext(AuthContext);
+  const { showMessage } = useMessage();
+  const { confirm } = useConfirm();
 
   const rol = usuario?.rol; // admin | empleado | cliente
 
@@ -44,8 +48,12 @@ function FacturaFormPage() {
         setUsuariosData(datosUsuario.data);
         // setUsuariosData(datosUsuario.data);
       } else {
-        alert("Ha surgido un error al cargar datos");
-        navegar("/notificaciones");
+        showMessage(
+          "Error, ha surgido un error al procesar su petición.\nCodigo de error: " +
+          datosUsuario.status,
+          "error",
+        );
+        navegar("/facturas");
       }
     }
 
@@ -55,8 +63,12 @@ function FacturaFormPage() {
       if (datosTrabajo.success) {
         setTrabajosData(datosTrabajo.data);
       } else {
-        alert("Ha surgido un error al cargar datos");
-        navegar("/notificaciones");
+        showMessage(
+          "Error, ha surgido un error al procesar su petición.\nCodigo de error: " +
+          datosTrabajo.status,
+          "error",
+        );
+        navegar("/facturas");
       }
     }
 
@@ -65,8 +77,12 @@ function FacturaFormPage() {
     if (datosFactura.success) {
       setFacturaDatos(datosFactura.data);
     } else {
-      alert("Ha surgido un error al cargar datos");
-      navegar("/notificaciones");
+      showMessage(
+        "Error, ha surgido un error al procesar su petición.\nCodigo de error: " +
+        datosFactura.status,
+        "error",
+      );
+      navegar("/facturas");
     }
   };
 
@@ -97,7 +113,11 @@ function FacturaFormPage() {
 
           if (!resultAdd.success) {
             //console.log("error en asociación");
-            alert("Ha surgido un error al asociar trabajos");
+            showMessage(
+              "Error, ha surgido un error al procesar su petición.\nCodigo de error: " +
+              resultAdd.estado,
+              "error",
+            );
             navegar("/facturas");
             break;
           }
@@ -109,7 +129,11 @@ function FacturaFormPage() {
 
           if (!resultAdd.success) {
             //console.log("error en desasociado");
-            alert("Ha surgido un error al desasociar trabajos");
+            showMessage(
+              "Error, ha surgido un error al procesar su petición.\nCodigo de error: " +
+              resultAdd.estado,
+              "error",
+            );
             navegar("/facturas");
             break;
           }
@@ -117,7 +141,11 @@ function FacturaFormPage() {
           navegar("/facturas");
         }
       } else {
-        alert("Ha surgido un error al enviar datos");
+        showMessage(
+          "Error, ha surgido un error al procesar su petición.\nCodigo de error: " +
+          result.estado,
+          "error",
+        );
       }
     } else {
       //console.log("Modo create");
@@ -130,7 +158,11 @@ function FacturaFormPage() {
 
           if (!resultAdd.success) {
             //console.log("error en asociación");
-            alert("Ha surgido un error al asociar trabajos");
+            showMessage(
+              "Error, ha surgido un error al procesar su petición.\nCodigo de error: " +
+              resultAdd.estado,
+              "error",
+            );
             navegar("/facturas");
             break;
           }
@@ -138,14 +170,8 @@ function FacturaFormPage() {
         }
       }
     }
-    //por cada operación de añadir o eliminar realizr operaciónd el controler
+    //por cada operación de añadir o eliminar realizr operación del controler
 
-    // if (result.success) {
-    //     alert("Datos enviados correctamente");
-    //     navegar("/facturas");
-    // } else {
-    //     alert("Ha surgido un error al enviar datos");
-    // }
   };
 
   const handleOnCancel = (evento) => {
@@ -249,7 +275,6 @@ function FacturaFormPage() {
 
     //console.log(listaSinQuitados);
 
-    // let fullList = [...listaQuitados, ...listaAnadir];
     let fullList = [...listaSinQuitados, ...listaAnadir];
     //console.log("Get full list item list total:");
     //console.log(fullList);
@@ -268,7 +293,6 @@ function FacturaFormPage() {
       }
     }
 
-    // setSelectTrabajo(listaOptions[0].trabajoId);
 
     return listaOptions;
   }
@@ -277,35 +301,7 @@ function FacturaFormPage() {
     cargarDatos();
   }, []);
 
-  function formatDateToInput(date) {
-    if (!date) {
-      return "";
-    }
-    //2026-02-18 17:24:20" does not conform to the required format, "yyyy-MM-dd"
-    // console.log("Parsing date: "+date);
 
-    let dateObj = new Date(date);
-    let newFormat = dateObj.toISOString().split("T")[0];
-    // console.log("Parsing "+date+" to "+newFormat);
-
-    return newFormat;
-  }
-
-  // function getTotalFactura(factura) {
-  //     if (factura["total_calculado"]) {
-  //         return factura["total_calculado"];
-  //     }
-  //     //else está vacío
-  //     if (!factura["trabajos"]) {
-  //         return 0;
-  //     }
-  //     //else calcular
-  //     let calc = 0;
-  //     for (let t of factura["trabajos"]) {
-  //         calc += parseInt(t["precio"]);
-  //     }
-  //     return calc;
-  // }
 
   function calcularTotalFactura() {
     let factura = facturaDatos;

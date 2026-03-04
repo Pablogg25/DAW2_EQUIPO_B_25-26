@@ -1,6 +1,8 @@
 import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
+import { useMessage } from "../../components/UseMessage";
+import { useConfirm } from "../../components/useConfirm";
 
 import $facturasController from "../../core/FacturasController";
 import $usersController from "../../core/UsersController";
@@ -13,6 +15,8 @@ function FacturasPage() {
 
   const navegar = useNavigate();
   const { usuario } = useContext(AuthContext);
+  const { showMessage } = useMessage();
+  const { confirm } = useConfirm();
 
   const rol = usuario?.rol; // admin | empleado | cliente
 
@@ -25,7 +29,15 @@ function FacturasPage() {
       setFacturas(datos.data);
     } else {
       if (datos.status != 404) {
-        alert("Ha surgido un error al procesar su petición, " + datos.status);
+        showMessage(
+          "Ha surgido un error al procesar su petición, " + datos.status,
+          "error",
+        );
+      } else {
+        showMessage(
+          "No se han encontrado notificaciones",
+          "info",
+        );
       }
       setFacturas([]);
 
@@ -36,7 +48,10 @@ function FacturasPage() {
     if (datosUsuario.success) {
       setUsuarios(datosUsuario.data);
     } else {
-      alert("Ha surgido un error al procesar su petición");
+      showMessage(
+        "Ha surgido un error al procesar su petición, código: " + datosUsuario.status,
+        "error",
+      );
     }
 
   };
@@ -71,29 +86,31 @@ function FacturasPage() {
     //ejecutar petición
 
     if (rol !== "admin") {
-      alert("No tienes permisos para eliminar.");
+      showMessage("No tienes permisos para eliminar.", "warning");
       return;
     }
 
 
     if (facturaId) {
       //hacer confirm para borrar el usuario y luego recargar datos
-
-      if (confirm("¿Seguro que desea eliminar la factura?")) {
+      let seguro = await confirm("¿Desea borrar la factura?");
+      if (seguro) {
         let result = await $facturasController.deleteFactura(facturaId);
 
-        if (result) {
+        if (result.success) {
           cargarDatos();
           // navegar("/facturas");
         } else {
           if (result.estado == 409) {
-            alert(
-              "ERROR: 409: no se puede borrar la factura porque depende de otro elemento de la base de datos",
+            showMessage(
+              "Error 409: No se puede eliminar la factura debido a que depende de otro elemento",
+              "error",
             );
           } else {
-            alert(
+            showMessage(
               "Error, ha surgido un error al procesar su petición.\nCodigo de error: " +
-              result.estado,
+              result.status,
+              "error",
             );
           }
         }

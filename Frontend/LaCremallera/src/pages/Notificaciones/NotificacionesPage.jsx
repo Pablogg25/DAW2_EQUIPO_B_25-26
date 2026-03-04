@@ -1,22 +1,21 @@
-
-import $notificacionesController from "../../core/NotificacionesController";
-import $ordersController from "../../core/OrdersController";
-
 import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { AuthContext } from "../../context/AuthContext";
+import { useMessage } from "../../components/UseMessage";
+import { useConfirm } from "../../components/useConfirm";
+
+import $notificacionesController from "../../core/NotificacionesController";
+import $ordersController from "../../core/OrdersController";
 
 function NotificacionesPage() {
   const [notificaciones, setNotificaciones] = useState([]);
-  // const [usuarios, setUsuarios] = useState([]);
   const [trabajos, setTrabajos] = useState([]);
-  //datos usuario
-  //datos trabajo
-
   const [busqueda, setBusqueda] = useState(-1);
 
   const navegar = useNavigate();
+  const { showMessage } = useMessage();
+  const { confirm } = useConfirm();
 
   //useContext
   const { usuario } = useContext(AuthContext);
@@ -43,9 +42,14 @@ function NotificacionesPage() {
       setNotificaciones(datos.data);
     } else {
       if (datos.status == 404) {
+        showMessage("No se han encotrado notificaciones","info");
         setNotificaciones([]);
       } else {
-        alert("Ha surgido un error al cargar los datos de notificaciones");
+        showMessage(
+              "Error, ha surgido un error al procesar su petición.\nCodigo de error: " +
+              datos.estado,
+              "error",
+            );
         setNotificaciones([]);
       }
 
@@ -83,10 +87,12 @@ function NotificacionesPage() {
 
     if (notId) {
       if (rol !== "admin" || rol !== "empleado") {
-        alert("No tienes permisos para eliminar.");
+      showMessage("No tienes permisos para eliminar.", "warning");
+
         return;
       }
-      if (confirm("¿Seguro que desea eliminar la notificación?")) {
+      let seguro = await confirm("¿Desea borrar el la notificacion?");
+      if (seguro) {
         let result = await $notificacionesController.deleteNotificacion(notId);
 
         if (result.success) {
@@ -94,13 +100,15 @@ function NotificacionesPage() {
           navegar("/notificaciones");
         } else {
           if (result.estado == 409) {
-            alert(
-              "Error 409: no se puede eliminar la notificación porque es dependiente de otro elemento en la base de datos",
+            showMessage(
+              "Error 409: No se puede eliminar el notificacion debido a que depende de otro elemento",
+              "error",
             );
           } else {
-            alert(
+            showMessage(
               "Error, ha surgido un error al procesar su petición.\nCodigo de error: " +
               result.estado,
+              "error",
             );
           }
         }

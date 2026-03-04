@@ -1,6 +1,8 @@
 import { useState, useEffect, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
+import { useMessage } from "../../components/UseMessage";
+import { useConfirm } from "../../components/useConfirm";
 
 import $ordersController from "../../core/OrdersController";
 import $usersController from "../../core/UsersController";
@@ -28,6 +30,9 @@ function OrderFormPage() {
 
   const { id } = useParams();
   const { usuario } = useContext(AuthContext);
+  const { showMessage } = useMessage();
+  const { confirm } = useConfirm();
+
   const rol = usuario?.rol; // admin | empleado | cliente
 
   const [nuevoConsumo, setNuevoConsumo] = useState({
@@ -57,17 +62,19 @@ function OrderFormPage() {
           setConsumoDatos(requestConsumo.data);
         } else {
           // console.log("No se han cargaod bien los consumos");
-          alert(
+          showMessage(
             "Error, ha surgido un error al procesar su petición.\nCodigo de error: " +
-            datos.status,
+            requestConsumo.estado,
+            "error",
           );
 
           navegar("/orders");
         }
       } else {
-        alert(
+        showMessage(
           "Error, ha surgido un error al procesar su petición.\nCodigo de error: " +
           datos.status,
+          "error",
         );
 
         navegar("/orders");
@@ -80,9 +87,10 @@ function OrderFormPage() {
     if (datosUsuario.success) {
       setUsuarioData(datosUsuario.data);
     } else {
-      alert(
+      showMessage(
         "Error, ha surgido un error al procesar su petición.\nCodigo de error: " +
         datosUsuario.status,
+        "error",
       );
 
       navegar("/orders");
@@ -93,9 +101,10 @@ function OrderFormPage() {
     if (datosPrenda.success) {
       setPrendasData(datosPrenda.data);
     } else {
-      alert(
+      showMessage(
         "Error, ha surgido un error al procesar su petición.\nCodigo de error: " +
-        datosUsuario.status,
+        datosPrenda.status,
+        "error",
       );
 
       navegar("/orders");
@@ -112,9 +121,10 @@ function OrderFormPage() {
         cantidad_usada: 0,
       });
     } else {
-      alert(
+      showMessage(
         "Error, ha surgido un error al procesar su petición.\nCodigo de error: " +
-        datosUsuario.status,
+        datosInventario.status,
+        "error",
       );
 
       navegar("/orders");
@@ -148,13 +158,15 @@ function OrderFormPage() {
       navegar("/orders");
     } else {
       if (statusCode == 400) {
-        alert(
+        showMessage(
           "Error de validación: compruebe que ha rellenado correctamente los campos",
+          "error",
         );
       } else {
-        alert(
+        showMessage(
           "Error, ha surgido un error al procesar su petición.\nCodigo de error: " +
           statusCode,
+          "error",
         );
       }
     }
@@ -174,11 +186,16 @@ function OrderFormPage() {
 
     if (result.success) {
       alert("Datos guardados correctamente");
+      showMessage(
+        "Datos guardados correctamente",
+        "info",
+      );
       cargarDatos();
     } else {
-      alert(
+      showMessage(
         "Error, ha surgido un error al procesar su petición.\nCodigo de error: " +
         result.status,
+        "error",
       );
     }
   };

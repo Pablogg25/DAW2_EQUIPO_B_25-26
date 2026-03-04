@@ -2,6 +2,9 @@ import { useState, useEffect, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 
+import { useMessage } from "../../components/UseMessage";
+import { useConfirm } from "../../components/useConfirm";
+
 import $prendasController from "../../core/PrendasController";
 import $usersController from "../../core/UsersController";
 
@@ -21,6 +24,8 @@ function PrendaFormPage() {
 
   const { id } = useParams();
   const { usuario } = useContext(AuthContext);
+  const { showMessage } = useMessage();
+  const { confirm } = useConfirm();
 
   const rol = usuario?.rol; // admin | empleado | cliente
 
@@ -40,7 +45,10 @@ function PrendaFormPage() {
       if (datos.success) {
         setPrendaData(datos.data);
       } else {
-        alert("Ha surgido un error inesperado al procesar la petición");
+        showMessage(
+          "Error al cargar inventario. Código: " + datos.status,
+          "error",
+        );
         navegar("/prendas");
       }
     }
@@ -79,14 +87,19 @@ function PrendaFormPage() {
       navegar("/prendas");
     } else {
       if (result.estado == 400) {
-        alert(
+        showMessage(
           "Error de validación, compruebe que los campos están correctamente formateados",
+
+          "warning"
         );
       } else {
         alert(
           "Error, ha surgido un error al procesar su petición.\nCodigo de error: " +
           result.estado,
         );
+        showMessage("Error, ha surgido un error al procesar su petición.\nCodigo de error: " +
+          result.estado, "error");
+
       }
     }
   };
