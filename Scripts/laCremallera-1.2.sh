@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 # CONFIGURACIÓN
 APP_NAME="LaCremallera"
 APP_PATH="/var/www/DAW2_EQUIPO_B_25-26"
@@ -14,7 +16,6 @@ DB_PASSWORD="admin"
 PHP_VERSION="8.3"
 SERVER_IP=$(curl -s ifconfig.me)
 
-# Colores
 GREEN="\033[0;32m"
 RED="\033[0;31m"
 WHITE="\033[0m"
@@ -23,23 +24,23 @@ echo -e " Instalación automática $APP_NAME"
 
 # ACTUALIZAR SISTEMA
 echo "Actualizando sistema"
-sudo apt update || { echo -e "${RED}Error al actualizar el sistema.${WHITE}"; exit 1; }
-sudo apt upgrade -y || { echo -e "${RED}Error al actualizar paquetes.${WHITE}"; exit 1; }
+sudo apt update
+sudo apt upgrade -y
 
 # INSTALAR NGINX
 echo "Instalando Nginx"
-sudo apt-get install -y nginx || { echo -e "${RED}Error al instalar Nginx.${WHITE}"; exit 1; }
+sudo apt install -y nginx
 sudo systemctl enable nginx
-sudo systemctl start nginx || { echo -e "${RED}Error al iniciar Nginx.${WHITE}"; exit 1; }
+sudo systemctl start nginx
 
-# INSTALAR PHP 8.3
+# INSTALAR PHP
 echo "Instalando PHP $PHP_VERSION"
-sudo apt-get install -y php$PHP_VERSION php$PHP_VERSION-fpm php$PHP_VERSION-cli \
+sudo apt install -y php$PHP_VERSION php$PHP_VERSION-fpm php$PHP_VERSION-cli \
 php$PHP_VERSION-mysql php$PHP_VERSION-xml php$PHP_VERSION-mbstring \
-php$PHP_VERSION-curl php$PHP_VERSION-zip php$PHP_VERSION-bcmath unzip git curl || { echo -e "${RED}Error al instalar PHP.${WHITE}"; exit 1; }
+php$PHP_VERSION-curl php$PHP_VERSION-zip php$PHP_VERSION-bcmath unzip git curl
 
 sudo systemctl enable php$PHP_VERSION-fpm
-sudo systemctl start php$PHP_VERSION-fpm || { echo -e "${RED}Error al iniciar PHP.${WHITE}"; exit 1; }
+sudo systemctl start php$PHP_VERSION-fpm
 
 # INSTALAR COMPOSER
 echo "Instalando Composer"
@@ -50,47 +51,56 @@ sudo mv composer.phar /usr/local/bin/composer
 # INSTALAR NODE
 echo "Instalando Node.js"
 curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
-sudo apt install nodejs -y || exit 1
+sudo apt install nodejs -y
 
 # INSTALAR MYSQL
 echo "Instalando MySQL"
-sudo apt install mysql-server -y || exit 1
+sudo apt install mysql-server -y
 sudo systemctl enable mysql
-sudo systemctl start mysql || { echo -e "${RED}Error al iniciar MySQL.${WHITE}"; exit 1; }
+sudo systemctl start mysql
 
 # CONFIGURAR BASE DE DATOS
-echo "Verificando existencia de la base de datos"
-DB_EXISTS=$(mysql -u $DB_USER -p$DB_PASSWORD -e "SHOW DATABASES LIKE '$DB_NAME';" | grep "$DB_NAME" > /dev/null; echo "$?")
-if [ "$DB_EXISTS" -eq 0 ]; then
-  echo -e "${GREEN}La base de datos $DB_NAME ya existe. No se creará nuevamente.${WHITE}"
+echo "Configurando base de datos"
+
+DB_EXISTS=$(sudo mysql -e "SHOW DATABASES LIKE '$DB_NAME';" | grep "$DB_NAME" || true)
+
+if [ "$DB_EXISTS" = "$DB_NAME" ]; then
+  echo -e "${GREEN}La base de datos ya existe.${WHITE}"
 else
-  echo "Creando base de datos $DB_NAME"
+  echo "Creando base de datos y usuario..."
+
   sudo mysql <<EOF
-    CREATE DATABASE $DB_NAME CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-    CREATE USER IF NOT EXISTS '$DB_USER'@'localhost' IDENTIFIED BY '$DB_PASSWORD';
-    GRANT ALL PRIVILEGES ON $DB_NAME.* TO '$DB_USER'@'localhost';
-    FLUSH PRIVILEGES;
+CREATE DATABASE $DB_NAME CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER IF NOT EXISTS '$DB_USER'@'localhost' IDENTIFIED BY '$DB_PASSWORD';
+GRANT ALL PRIVILEGES ON $DB_NAME.* TO '$DB_USER'@'localhost';
+FLUSH PRIVILEGES;
 EOF
+
 fi
 
 # CLONAR REPOSITORIO
 echo "Clonando repositorio"
+
 if [ -d "$APP_PATH" ]; then
-  echo "El directorio $APP_PATH ya existe, lo eliminaremos para evitar conflictos."
+  echo "Eliminando instalación anterior..."
   sudo rm -rf $APP_PATH
 fi
 
-git clone $GIT_REPO $APP_PATH || exit 1
+git clone $GIT_REPO $APP_PATH
 
-# CONFIGURAR BACKEND (LARAVEL)
+# CONFIGURAR BACKEND
 echo "Configurando Backend Laravel"
-cd $BACKEND_PATH || exit 1
 
-composer install --no-dev --optimize-autoloader || exit 1
+cd $BACKEND_PATH
 
-cp .env.example .env
+composer install --no-dev --optimize-autoloader
 
-# Configurar la base de datos en Laravel
+# Crear .env solo si no existe
+if [ ! -f ".env" ]; then
+  cp .env.example .env
+fi
+
+# Configurar variables
 sed -i "s/DB_DATABASE=.*/DB_DATABASE=$DB_NAME/" .env
 sed -i "s/DB_USERNAME=.*/DB_USERNAME=$DB_USER/" .env
 sed -i "s/DB_PASSWORD=.*/DB_PASSWORD=$DB_PASSWORD/" .env
@@ -99,13 +109,14 @@ sed -i "s/APP_DEBUG=.*/APP_DEBUG=false/" .env
 
 php artisan key:generate
 
-# Asegurarse de que los directorios tengan permisos correctos
-sudo chown -R ubuntu:www-data $APP_PATH
+# PERMISOS
+sudo chown -R www-data:www-data $APP_PATH
 sudo find $APP_PATH -type d -exec chmod 755 {} \;
 sudo find $APP_PATH -type f -exec chmod 644 {} \;
 
+# MIGRACIONES
 php artisan migrate --force
-php artisan migrate --seed --force
+php artisan db:seed --force
 
 php artisan storage:link
 php artisan config:cache
@@ -114,13 +125,15 @@ php artisan view:cache
 
 # CONFIGURAR FRONTEND
 echo "Configurando Frontend React"
-cd $FRONTEND_PATH || exit 1
 
-npm install || exit 1
-npm run build || exit 1
+cd $FRONTEND_PATH
+
+npm install
+npm run build
 
 # CONFIGURAR NGINX
 echo "Configurando Nginx"
+
 NGINX_CONF="/etc/nginx/sites-available/$APP_NAME"
 
 sudo tee $NGINX_CONF > /dev/null <<EOL
@@ -128,7 +141,6 @@ server {
     listen 80;
     server_name $SERVER_IP;
 
-    # FRONTEND
     root $FRONTEND_PATH/dist;
     index index.html;
 
@@ -136,13 +148,11 @@ server {
         try_files \$uri \$uri/ /index.html;
     }
 
-    # API LARAVEL
     location /api {
-        root $BACKEND_PATH/public;
         try_files \$uri \$uri/ /index.php?\$query_string;
     }
 
-    location ~ \.php\$ {
+    location ~ \.php$ {
         root $BACKEND_PATH/public;
         include snippets/fastcgi-php.conf;
         fastcgi_pass unix:/run/php/php$PHP_VERSION-fpm.sock;
@@ -160,13 +170,9 @@ EOL
 sudo ln -sf $NGINX_CONF /etc/nginx/sites-enabled/
 sudo rm -f /etc/nginx/sites-enabled/default
 
-sudo nginx -t || exit 1
+sudo nginx -t
 sudo systemctl restart nginx
 
-# FINAL
-echo -e " INSTALACIÓN COMPLETADA CON ÉXITO "
-echo -e "${GREEN}Puedes acceder al frontend en:${WHITE}"
-echo -e "http://$SERVER_IP"
-echo -e "${GREEN}Y a la API en:${WHITE}"
-echo -e "http://$SERVER_IP/api"
-echo -e "${WHITE}¡Recuerda revisar los logs si algo no funciona correctamente!"
+echo -e "${GREEN} INSTALACIÓN COMPLETADA ${WHITE}"
+echo -e "Frontend: http://$SERVER_IP"
+echo -e "API: http://$SERVER_IP/api"
