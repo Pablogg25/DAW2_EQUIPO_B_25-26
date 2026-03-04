@@ -12,12 +12,12 @@ import $inventarioController from "../../core/InventoryController";
 function OrderFormPage() {
   const [orderData, setOrderData] = useState({
     descripcion: "",
-    empleado: 0,
-    estado: "",
+    empleado: 1,
+    estado: "pendiente",
     fecha_entrega: "",
     fecha_inicio: "",
     precio: 0,
-    prenda: "",
+    prendaId: 1,
     trabajo_id: 0,
   });
 
@@ -42,46 +42,7 @@ function OrderFormPage() {
   });
 
   const cargarDatos = async () => {
-    //console.log("cargando datos OrderFormPage");
-    if (id != 0) {
-      // console.log("Modo edit / ver");
-      //modo edit
-      let datos = await $ordersController.getOrder(id);
-      //console.log(datos);
-      if (datos.success) {
-        setOrderData(datos.data);
-
-        //cargar consumos
-        // console.log("Realizando petición a consumos");
-
-        let requestConsumo = await $ordersController.getConsumos(id);
-
-        if (requestConsumo.success) {
-          // console.log("datos de request consumos"),
-          // console.log(requestConsumo.data);
-          setConsumoDatos(requestConsumo.data);
-        } else {
-          // console.log("No se han cargaod bien los consumos");
-          showMessage(
-            "Error, ha surgido un error al procesar su petición.\nCodigo de error: " +
-            requestConsumo.estado,
-            "error",
-          );
-
-          navegar("/orders");
-        }
-      } else {
-        showMessage(
-          "Error, ha surgido un error al procesar su petición.\nCodigo de error: " +
-          datos.status,
-          "error",
-        );
-
-        navegar("/orders");
-      }
-    }
-    //else modo create
-
+    
     //TODO, cargar empleados y prendas por ids
     let datosUsuario = await $usersController.getUsers([]);
     if (datosUsuario.success) {
@@ -129,6 +90,52 @@ function OrderFormPage() {
 
       navegar("/orders");
     }
+    //console.log("cargando datos OrderFormPage");
+    if (id != 0) {
+      // console.log("Modo edit / ver");
+      //modo edit
+      let datos = await $ordersController.getOrder(id);
+      //console.log(datos);
+      if (datos.success) {
+        setOrderData(datos.data);
+
+        //cargar consumos
+        // console.log("Realizando petición a consumos");
+
+        let requestConsumo = await $ordersController.getConsumos(id);
+
+        if (requestConsumo.success) {
+          // console.log("datos de request consumos"),
+          // console.log(requestConsumo.data);
+          setConsumoDatos(requestConsumo.data);
+        } else {
+          // console.log("No se han cargaod bien los consumos");
+          showMessage(
+            "Error, ha surgido un error al procesar su petición.\nCodigo de error: " +
+            requestConsumo.estado,
+            "error",
+          );
+
+          navegar("/orders");
+        }
+      } else {
+        showMessage(
+          "Error, ha surgido un error al procesar su petición.\nCodigo de error: " +
+          datos.status,
+          "error",
+        );
+
+        navegar("/orders");
+      }
+    }{
+      let defaultPrenda=datosPrenda.data[0]["prendaId"];
+      let defaultEmpleado=datosUsuario.data[0]["usuarioId"];
+      let actualizar={...orderData,["prendaId"]:defaultPrenda,["empleadoId"]:defaultEmpleado};
+      setOrderData(actualizar);
+
+    }
+    //else modo create
+
   };
 
   const navegar = useNavigate();
@@ -143,6 +150,7 @@ function OrderFormPage() {
   const enviarDatos = async () => {
     let success;
     let statusCode = 0;
+    console.log(orderData);
     if (id != 0) {
       //update
       const response = await $ordersController.updateOrder(orderData, id);

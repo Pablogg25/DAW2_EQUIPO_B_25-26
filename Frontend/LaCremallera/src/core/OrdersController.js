@@ -152,6 +152,8 @@ const $ordersController = (function () {
             const request = await fetch(requestUrl, requestBody);
 
             const datos = await request.json();
+            // console.log(request);
+            // console.log(datos)
 
             if (request.status == 201) {
                 // console.log("Respuesta 201: CREATED");

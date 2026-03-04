@@ -86,7 +86,7 @@ function NotificacionesPage() {
     //console.log("On delete notificación id: " + notId);
 
     if (notId) {
-      if (rol !== "admin" || rol !== "empleado") {
+      if (rol !== "admin" && rol !== "empleado") {
       showMessage("No tienes permisos para eliminar.", "warning");
 
         return;

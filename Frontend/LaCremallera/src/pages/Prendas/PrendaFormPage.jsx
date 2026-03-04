@@ -11,7 +11,7 @@ import $usersController from "../../core/UsersController";
 function PrendaFormPage() {
   const [prendaData, setPrendaData] = useState({
     prendaId: 0,
-    usuarioId: 0,
+    usuarioId: 1,
     tipo: "",
     descripcion: "",
     color: "",
