@@ -133,7 +133,6 @@ function PrendasPage() {
   return (
     <div className="container mt-4 page-fade">
       <h2 className="mb-2">Prendas</h2>
-      <p className="text-muted mb-3">Lista para realizar CRUD sobre prendas registradas en la bbdd</p>
 
       {/* Buscador */}
       <div>

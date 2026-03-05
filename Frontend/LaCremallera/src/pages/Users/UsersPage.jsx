@@ -89,8 +89,7 @@ function UsersPage() {
   return (
     <div className="container mt-4 page-fade">
       <h2 className="mb-2">Usuarios</h2>
-      <p className="text-muted mb-3">Gestión de usuarios del sistema</p>
-
+      
       {/* Buscador */}
       <input
         type="text"

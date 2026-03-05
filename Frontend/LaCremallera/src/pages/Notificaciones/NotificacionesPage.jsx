@@ -124,9 +124,6 @@ function NotificacionesPage() {
   return (
     <div className="container mt-4 page-fade">
       <h2 className="mb-2">Notificaciones</h2>
-      <p className="text-muted mb-3">
-        Lista de notificaciones recividas en el servidor
-      </p>
 
       {/* Buscador */}
       <div>

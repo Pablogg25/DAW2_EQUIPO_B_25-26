@@ -142,10 +142,7 @@ function OrdersPage() {
   return (
     <div className="container mt-4 page-fade">
       <h2 className="mb-3">Trabajos</h2>
-      <div>
-        Mirar trabajos asignados a empleados
-      </div>
-
+      
       {/* Buscador */}
       <div>
         <div>
